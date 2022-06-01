@@ -1,0 +1,22 @@
+oro:
+    stripe:
+        channel_type:
+            label: Stripe
+        settings:
+            label: Stripe
+            labels:
+                label: Labels
+                tooltip: This label is used on the checkout screens.
+            short_labels:
+                label: Short Labels
+                tooltip: This label is used in order history.
+            api_public_key.label: API Public Key
+            api_secret_key.label: API Secret Key
+            signing_secret:
+                label: Webhook signing secret
+                tooltip: Use Signing secret value for specified webhook endpoint in Stripe Dashboard.
+            payment_action.label: Payment Action
+            payment_action.manual: Manual (Authorize)
+            payment_action.automatic: Automatic (Capture)
+            user_monitoring.label: User Monitoring
+            user_monitoring.tooltip: When this option is enabled, the Stripe.js script will be loaded on all storefront pages to allow Stripe to detect suspicious behavior

@@ -1,0 +1,56 @@
+/* @theme: default; */
+
+/* stylelint-disable selector-class-pattern */
+
+.stripe-payment-tmp-container {
+    // stylelint-disable-next-line declaration-no-important
+    position: absolute !important;
+    max-width: 230px;
+    width: 100%;
+}
+
+.stripe-card-element:empty::before {
+    // to preserve proper dimensions for the element even though it is empty
+    content: '\00A0';
+}
+
+.stripe-card-element,
+.stripe-payment-tmp-container__mounted {
+    width: 100%;
+
+    @include base-ui-element(
+        $use-base-style-for-input,
+        $input-padding,
+        $input-font-size,
+        $input-font-family,
+        $input-line-height,
+        $input-border,
+        $input-border-radius,
+        $input-background-color,
+        $input-color
+    );
+
+    @include element-state('hover') {
+        border-color: $input-border-color-hover-state;
+    }
+}
+
+.StripeElement {
+    @include element-state('focus') {
+        @include element-state('hover') {
+            border-color: $input-border-color-focus-state;
+            outline: 0;
+        }
+
+        box-shadow: $input-box-shadow-focus-state;
+    }
+}
+
+.StripeElement--invalid {
+    @include element-state('hover') {
+        border-color: $input-border-color-error-state;
+    }
+
+    border-color: $input-border-color-error-state;
+    box-shadow: $input-box-shadow-error-state;
+}

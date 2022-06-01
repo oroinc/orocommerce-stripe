@@ -1,0 +1,17 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+              themes:
+                  - '@OroStripe/layouts/default/imports/oro_checkout_single_page/layout.html.twig'
+
+        - '@add':
+            id: stripe_payment_temporary_container
+            blockType: container
+            parentId: checkout_billing_information
+            siblingId: payment_methods_wrapper
+            prepend: false
+            options:
+                visible: true
+                attr:
+                    id: 'stripe-payment-tmp-container'
+                    class: 'stripe-payment-tmp-container'

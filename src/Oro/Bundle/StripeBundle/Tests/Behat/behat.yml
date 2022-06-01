@@ -1,0 +1,50 @@
+oro_behat_extension:
+    elements:
+        Stripe Form:
+            selector: 'form[name="oro_integration_channel_form"]'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    Name: 'oro_integration_channel_form[name]'
+                    Label: 'oro_integration_channel_form[transport][labels][values][default]'
+                    Short Label: 'oro_integration_channel_form[transport][shortLabels][values][default]'
+                    API Public Key: 'oro_integration_channel_form[transport][apiPublicKey]'
+                    API Secret Key: 'oro_integration_channel_form[transport][apiSecretKey]'
+                    Payment Action: 'oro_integration_channel_form[transport][paymentAction]'
+                    User Monitoring: 'oro_integration_channel_form[transport][userMonitoring]'
+        Stripe Card Form:
+            selector: '#stripe-card-element'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    Stripe Card Number: 'cardnumber'
+                    Stripe Exp Date: 'exp-date'
+                    Stripe CVC: 'cvc'
+                    Stripe ZIP: 'postal'
+        Stripe Card Form Single Page:
+            selector: '#stripe-payment-tmp-container'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    Stripe Card Number: 'cardnumber'
+                    Stripe Exp Date: 'exp-date'
+                    Stripe CVC: 'cvc'
+                    Stripe ZIP: 'postal'
+    suites:
+        OroStripeBundle:
+            contexts:
+                - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+                - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
+                - Oro\Bundle\FormBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+                - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
+                - Oro\Bundle\CheckoutBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
+                - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+                - Oro\Bundle\WorkflowBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\PaymentBundle\Tests\Behat\Context\FeatureContext
+            paths:
+                - '@OroStripeBundle/Tests/Behat/Features'

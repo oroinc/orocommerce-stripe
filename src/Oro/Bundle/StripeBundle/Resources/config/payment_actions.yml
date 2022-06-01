@@ -1,0 +1,31 @@
+services:
+    oro_stripe.payment_action.registry:
+        class: Oro\Bundle\StripeBundle\Method\PaymentAction\PaymentActionRegistry
+        arguments:
+            - !tagged_iterator oro_stripe.payment_actions
+
+    oro_stripe.payment_action.payment_action_abstract:
+        class: Oro\Bundle\StripeBundle\Method\PaymentAction\PaymentActionAbstract
+        abstract: true
+        arguments:
+            - '@oro_stripe.client.factory'
+
+    oro_stripe.payment_action.purchase_action:
+        class: Oro\Bundle\StripeBundle\Method\PaymentAction\PurchasePaymentAction
+        parent: oro_stripe.payment_action.payment_action_abstract
+        tags:
+            - { name: oro_stripe.payment_actions }
+
+    oro_stripe.payment_action.confirm_action:
+        class: Oro\Bundle\StripeBundle\Method\PaymentAction\ConfirmPaymentAction
+        parent: oro_stripe.payment_action.payment_action_abstract
+        tags:
+            - { name: oro_stripe.payment_actions }
+
+    oro_stripe.payment_action.capture_action:
+        class: Oro\Bundle\StripeBundle\Method\PaymentAction\CapturePaymentAction
+        parent: oro_stripe.payment_action.payment_action_abstract
+        arguments:
+            - '@oro_payment.provider.payment_transaction'
+        tags:
+            - { name: oro_stripe.payment_actions }

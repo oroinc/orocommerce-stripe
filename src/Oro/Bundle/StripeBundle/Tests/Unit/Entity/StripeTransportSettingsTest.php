@@ -1,0 +1,74 @@
+<?php
+
+namespace Oro\Bundle\StripeBundle\Tests\Unit\Entity;
+
+use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\StripeBundle\Entity\StripeTransportSettings;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\ParameterBag;
+
+class StripeTransportSettingsTest extends TestCase
+{
+    use EntityTestCaseTrait;
+    use EntityTrait;
+
+    public function testAccessors(): void
+    {
+        $this->assertPropertyAccessors(
+            new StripeTransportSettings(),
+            [
+                ['apiPublicKey', 'some string'],
+                ['apiSecretKey', 'some string'],
+                ['paymentAction', 'some string'],
+                ['userMonitoring', true]
+            ]
+        );
+
+        $this->assertPropertyCollections(
+            new StripeTransportSettings(),
+            [
+                ['labels', new LocalizedFallbackValue()],
+                ['shortLabels', new LocalizedFallbackValue()]
+            ]
+        );
+    }
+
+    public function testGetSettingsBag(): void
+    {
+        $labels = new ArrayCollection([(new LocalizedFallbackValue())->setString('Stripe Payment')]);
+        $shortLabels = new ArrayCollection([(new LocalizedFallbackValue())->setString('Stripe')]);
+
+        /** @var StripeTransportSettings $entity */
+        $entity = $this->getEntity(
+            StripeTransportSettings::class,
+            [
+                'apiPublicKey' => 'some public key',
+                'apiSecretKey' => 'some secret key',
+                'paymentAction' => 'some payment action',
+                'userMonitoring' => true,
+                'labels' => $labels,
+                'shortLabels' => $shortLabels
+            ]
+        );
+
+        /** @var ParameterBag $result */
+        $result = $entity->getSettingsBag();
+
+        $this->assertEquals('some public key', $result->get('public_key'));
+        $this->assertEquals('some secret key', $result->get('secret_key'));
+        $this->assertEquals('some payment action', $result->get('payment_action'));
+        $this->assertTrue($result->get('user_monitoring'));
+        $this->assertEquals($labels, $result->get('labels'));
+        $this->assertEquals($shortLabels, $result->get('short_labels'));
+
+        $this->assertEquals('some public key', $entity->getApiPublicKey());
+        $this->assertEquals('some secret key', $entity->getApiSecretKey());
+        $this->assertEquals('some payment action', $entity->getPaymentAction());
+        $this->assertTrue($entity->getUserMonitoring());
+        $this->assertEquals($labels, $entity->getLabels());
+        $this->assertEquals($shortLabels, $entity->getShortLabels());
+    }
+}

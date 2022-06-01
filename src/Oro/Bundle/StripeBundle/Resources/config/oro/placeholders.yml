@@ -1,0 +1,10 @@
+placeholders:
+    placeholders:
+        scripts_before:
+            items:
+                stripe_script: ~
+
+    items:
+        stripe_script:
+            template: '@@OroStripe/Js/stripe_script.js.twig'
+            applicable: "@oro_stripe.placeholder.filter->isApplicable()"

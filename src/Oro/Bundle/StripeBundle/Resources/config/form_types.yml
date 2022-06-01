@@ -1,0 +1,7 @@
+services:
+    oro_stripe.form.type.settings:
+        class: Oro\Bundle\StripeBundle\Form\Type\StripeSettingsType
+        arguments:
+            - '@translator'
+        tags:
+            - { name: form.type }

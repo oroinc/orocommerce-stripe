@@ -1,0 +1,10 @@
+services:
+    _defaults:
+        public: true
+
+    Oro\Bundle\StripeBundle\Controller\Frontend\StripeCallbackController:
+        calls:
+            - [setContainer, ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: monolog.logger.oro_stripe, key: Psr\Log\LoggerInterface }
