@@ -1,0 +1,9 @@
+{% block _order_review_payment_methods_stripe_payment_widget -%}
+    {% if options.payment_method is defined %}
+        {% set componentOptions = view.options.componentOptions|default({})|merge({paymentMethod: options.payment_method}) %}
+        <div class="hidden"
+             data-page-component-module="orostripe/js/app/components/stripe-payment-component"
+             data-page-component-options="{{ componentOptions|json_encode }}">
+        </div>
+    {% endif %}
+{%- endblock %}

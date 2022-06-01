@@ -1,0 +1,7 @@
+oro:
+    stripe:
+        error_messages:
+            card_data_incorrect: Your card data are invalid. Please check all required fields or use another card.
+            create_payment_method_failed: Unable to handle your card. Please check all required fields or use another card.
+            handle_payment_action_failed: Error occurred during payment confirmation.
+            error_handle_payment_card: Error occurred handling payment card. Please check card data.

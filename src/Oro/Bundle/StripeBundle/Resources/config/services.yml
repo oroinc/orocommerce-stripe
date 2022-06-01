@@ -1,0 +1,122 @@
+services:
+    # Integration
+    oro_stripe.integration.stripe_channel:
+        class: Oro\Bundle\StripeBundle\Integration\StripeChannelType
+        tags:
+            - { name: oro_integration.channel, type: stripe }
+
+    oro_stripe.integration.stripe_integration_transport:
+        class: Oro\Bundle\StripeBundle\Integration\StripeIntegrationTransport
+        tags:
+            - { name: oro_integration.transport, type: stripe, channel_type: stripe }
+
+    # Event Listener
+    oro_stripe.event_listener.stripe_payment_callback_listener:
+        class: Oro\Bundle\StripeBundle\EventListener\StripePaymentCallBackListener
+        arguments:
+            - '@oro_stripe.payment_method.provider'
+            - '@session'
+            - '@oro_payment.provider.result_messages'
+        calls:
+            - [setLogger, ['@logger']]
+        lazy: true
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.callback.return, method: onReturn }
+            - { name: monolog.logger, channel: oro_stripe }
+
+    oro_stripe.event_listener.order_payment_transaction_grid:
+        class: Oro\Bundle\StripeBundle\EventListener\OrderPaymentTransactionsGridListener
+        arguments:
+            - '@doctrine'
+            - '@oro_stripe.method.config_provider'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-payment-transactions-grid, method: onBuildBefore }
+
+    # Stripe Placeholder Filter
+    oro_stripe.placeholder.filter:
+        class: Oro\Bundle\StripeBundle\Placeholder\StripeFilter
+        public: true
+        arguments:
+            - '@request_stack'
+            - '@oro_stripe.provider.stripe_enabled_monitoring_cached'
+
+    # Cache
+    oro_stripe.integration.cache:
+        parent: oro.data.cache
+        tags:
+            - { name: 'cache.pool', namespace: 'stripe_integration_cache' }
+
+    # Provider
+    oro_stripe.provider.stripe_enabled_monitoring_cached:
+        class: Oro\Bundle\StripeBundle\Provider\StripeEnabledMonitoringCachedProvider
+        arguments:
+            - '@oro_frontend.request.frontend_helper'
+            - '@oro_stripe.integration.cache'
+            - '@doctrine'
+
+    # Listener
+    oro_stripe.entity_listener.stripe_integration:
+        class: Oro\Bundle\StripeBundle\EventListener\StripeIntegrationListener
+        arguments:
+            - '@oro_stripe.integration.cache'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\IntegrationBundle\Entity\Channel, event: prePersist, method: prePersistChannel }
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\IntegrationBundle\Entity\Channel, event: preUpdate, method: preUpdateChannel }
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\StripeBundle\Entity\StripeTransportSettings, event: preUpdate, method: preUpdateSettings }
+
+    # Stripe Client
+    oro_stripe.client.factory:
+        class: Oro\Bundle\StripeBundle\Client\StripeClientFactory
+
+    # Twig
+    oro_stripe.twig.stripe_url_extension:
+        class: Oro\Bundle\StripeBundle\Twig\StripeUrlExtension
+        tags:
+            - { name: twig.extension }
+
+    # Stripe Event Factory
+    oro_stripe.event.factory.stripe_sdk:
+        class: Oro\Bundle\StripeBundle\Event\StripeSDKEventFactory
+        arguments:
+            - '@oro_stripe.method.config_provider'
+
+    # Stripe Events Handler
+    oro_stripe.event_handler.stripe_webhook_handler:
+        class: Oro\Bundle\StripeBundle\EventHandler\StripeWebhookEventHandler
+        arguments:
+            - '@oro_stripe.event.factory.stripe_sdk'
+            - '@oro_stripe.event_handler.stripe_event_handler_registry'
+
+    oro_stripe.event_handler.stripe_payment_handler_abstract:
+        class: Oro\Bundle\StripeBundle\EventHandler\AbstractStripeEventHandler
+        abstract: true
+        arguments:
+            - '@doctrine'
+            - '@oro_payment.provider.payment_transaction'
+
+    oro_stripe.event_handler.stripe_payment_success_handler:
+        class: Oro\Bundle\StripeBundle\EventHandler\PaymentSuccessEventHandler
+        parent: oro_stripe.event_handler.stripe_payment_handler_abstract
+        tags:
+            - { name: oro_stripe.event_handler }
+
+    oro_stripe.event_handler.stripe_payment_canceled_handler:
+        class: Oro\Bundle\StripeBundle\EventHandler\PaymentCanceledEventHandler
+        parent: oro_stripe.event_handler.stripe_payment_handler_abstract
+        tags:
+            - { name: oro_stripe.event_handler }
+
+    oro_stripe.event_handler.stripe_payment_refunded_handler:
+        class: Oro\Bundle\StripeBundle\EventHandler\PaymentRefundedEventHandler
+        parent: oro_stripe.event_handler.stripe_payment_handler_abstract
+        tags:
+            - { name: oro_stripe.event_handler }
+
+    oro_stripe.event_handler.stripe_event_handler_registry:
+        class: Oro\Bundle\StripeBundle\EventHandler\StripeEventHandlerRegistry
+        arguments:
+            - !tagged_iterator oro_stripe.event_handler
+
+    Oro\Bundle\StripeBundle\EventHandler\StripeWebhookEventHandler:
+        alias: oro_stripe.event_handler.stripe_webhook_handler
+        public: true

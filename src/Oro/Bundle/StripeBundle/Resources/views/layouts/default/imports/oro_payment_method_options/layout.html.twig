@@ -1,0 +1,41 @@
+{% block _payment_methods_stripe_payment_widget %}
+
+    {% set component = view.options.paymentMethodComponent|default('orostripe/js/app/components/stripe-payment-card-component') %}
+    {% set componentOptions = view.options.componentOptions|default({})|merge({
+        paymentMethod: name
+    }) %}
+
+    {% if componentOptions.styles is not defined %}
+        {# see full styles options in https://stripe.com/docs/js/appendix/style #}
+        {% set styles = {
+            base: {
+                iconColor: '#c4f0ff',
+                fontWeight: '500',
+                lineHeight: '1.5',
+                fontSize: '14px',
+                color: '#495057'
+            },
+            complete: {},
+            empty: {},
+            invalid: {
+                iconColor: '#7a0026',
+                color: '#7a0026',
+            }
+        } %}
+        {% set componentOptions = componentOptions|merge({'cardElementStyle': styles}) %}
+    {% endif %}
+
+    {% if block.vars.currentPaymentMethod is defined %}
+    {% set componentOptions = componentOptions|merge({'selectedPaymentMethod': block.vars.currentPaymentMethod}) %}
+    {% endif %}
+
+    <div class="checkout-form__payment-methods" data-page-component-module="{{ component }}"
+         data-page-component-options="{{ componentOptions|json_encode }}">
+        <div class="checkout-form__payment-methods-form">
+            <div class="form-row  checkout">
+                <div id="stripe-card-element" class="stripe-card-element">{# Stripe.js injects the Card Element #}</div>
+                <div id="stripe-card-validation-container">{# Stripe.js injects validation messages #}</div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,6 @@
+oro_stripe_callback_frontend:
+    resource: "@OroStripeBundle/Controller/Frontend/StripeCallbackController.php"
+    type: annotation
+    prefix: /stripe
+    options:
+        frontend: true

@@ -1,0 +1,32 @@
+{
+  "name": "oro/commerce-stripe",
+  "description": "OroCommerce Stripe integration",
+  "license": "OSL-3.0",
+  "authors": [
+    {
+      "name": "Oro, Inc",
+      "homepage": "https://www.orocommerce.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {"Oro\\Bundle\\StripeBundle\\": "src/Oro/Bundle/StripeBundle"},
+    "exclude-from-classmap": ["/Tests/"]
+  },
+  "require": {
+    "oro/commerce": "5.1.*",
+    "stripe/stripe-php": "^7.108"
+  },
+  "repositories": {
+    "oro": {
+      "type": "composer",
+      "url": "https://packagist.orocrm.com"
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "extra": {
+    "branch-alias": {
+      "dev-master": "5.1-dev"
+    }
+  }
+}
