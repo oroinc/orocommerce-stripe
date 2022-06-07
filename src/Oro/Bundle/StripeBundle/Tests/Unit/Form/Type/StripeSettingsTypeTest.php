@@ -31,76 +31,57 @@ class StripeSettingsTypeTest extends FormIntegrationTestCase
 
     public const LOCALIZATION_ID = 998;
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject  */
-    private ManagerRegistry $registry;
-
     /** @var Translator|\PHPUnit\Framework\MockObject\MockObject */
-    private Translator $translator;
+    private $translator;
 
     protected function setUp(): void
     {
-        $this->formType = new StripeSettingsType($this->getTranslator());
+        $this->translator = $this->createMock(Translator::class);
         parent::setUp();
     }
 
     /**
-     * @return array
+     * {@inheritDoc}
      */
     protected function getExtensions(): array
     {
         $repositoryLocalization = $this->createMock(ObjectRepository::class);
         $repositoryLocalization->expects($this->any())
             ->method('find')
-            ->willReturnCallback(
-                function ($id) {
-                    return $this->getEntity(Localization::class, ['id' => $id]);
-                }
-            );
+            ->willReturnCallback(function ($id) {
+                return $this->getEntity(Localization::class, ['id' => $id]);
+            });
 
         $repositoryLocalizedFallbackValue = $this->createMock(ObjectRepository::class);
         $repositoryLocalizedFallbackValue->expects($this->any())
             ->method('find')
-            ->willReturnCallback(
-                function ($id) {
-                    return $this->getEntity(LocalizedFallbackValue::class, ['id' => $id]);
-                }
-            );
+            ->willReturnCallback(function ($id) {
+                return $this->getEntity(LocalizedFallbackValue::class, ['id' => $id]);
+            });
 
-        $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->registry->expects($this->any())
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
             ->method('getRepository')
-            ->willReturnMap(
-                [
-                    ['OroLocaleBundle:Localization', null, $repositoryLocalization],
-                    ['OroLocaleBundle:LocalizedFallbackValue', null, $repositoryLocalizedFallbackValue],
-                ]
-            );
-
-        /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject $entityConfigProvider */
-        $entityConfigProvider = $this->createMock(ConfigProvider::class);
-
-        $this->translator = $this->createMock(Translator::class);
-        $stripeType = new StripeSettingsType($this->translator);
+            ->willReturnMap([
+                [Localization::class, null, $repositoryLocalization],
+                [LocalizedFallbackValue::class, null, $repositoryLocalizedFallbackValue],
+            ]);
 
         return [
             new PreloadedExtension(
                 [
-                    $stripeType,
+                    new StripeSettingsType($this->translator),
                     LocalizedPropertyType::class => new LocalizedPropertyType(),
-                    LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionType(
-                        $this->registry
-                    ),
-                    LocalizationCollectionType::class => new LocalizationCollectionTypeStub(
-                        [
-                            $this->getEntity(Localization::class, ['id' => self::LOCALIZATION_ID]),
-                        ]
-                    ),
+                    LocalizedFallbackValueCollectionType::class => new LocalizedFallbackValueCollectionType($doctrine),
+                    LocalizationCollectionType::class => new LocalizationCollectionTypeStub([
+                        $this->getEntity(Localization::class, ['id' => self::LOCALIZATION_ID]),
+                    ]),
                     FallbackValueType::class => new FallbackValueType(),
                     FallbackPropertyType::class => new FallbackPropertyType($this->translator),
                 ],
                 [
                     FormType::class => [
-                        new TooltipFormExtension($entityConfigProvider, $this->translator),
+                        new TooltipFormExtension($this->createMock(ConfigProvider::class), $this->translator),
                     ],
                 ]
             ),
@@ -182,7 +163,7 @@ class StripeSettingsTypeTest extends FormIntegrationTestCase
         $formType->configureOptions($resolver);
     }
 
-    protected function createLocalizedValue(
+    private function createLocalizedValue(
         ?string $string = null,
         ?string $text = null,
         ?Localization $localization = null
