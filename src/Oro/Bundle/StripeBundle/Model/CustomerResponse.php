@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\StripeBundle\Model;
 
+/**
+ * Stores data for customer object responses.
+ */
 class CustomerResponse extends AbstractResponseObject implements ResponseObjectInterface
 {
     public const CUSTOMER_ID_PARAM = 'customerId';

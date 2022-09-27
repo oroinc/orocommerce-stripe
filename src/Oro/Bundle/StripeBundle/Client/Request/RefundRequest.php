@@ -4,7 +4,10 @@ namespace Oro\Bundle\StripeBundle\Client\Request;
 
 use Oro\Bundle\StripeBundle\Model\PaymentIntentResponse;
 
-class RefundRequest extends StripeApiRequestAbstract implements StripeApiRequestInterface
+/**
+ * Prepare data for refund request.
+ */
+class RefundRequest extends StripeApiRequestAbstract
 {
     private const DEFAULT_REFUND_REASON_PARAM = 'requested_by_customer';
     private const REFUND_REASON_PARAM = 'refundReason';

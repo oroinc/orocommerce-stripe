@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\StripeBundle\Model;
 
+/**
+ * Stores data for refund object responses.
+ */
 class RefundResponse extends AbstractResponseObject implements ResponseObjectInterface, PaymentIntentAwareInterface
 {
     private const IDENTIFIER_FIELD = 'id';

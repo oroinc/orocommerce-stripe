@@ -4,7 +4,10 @@ namespace Oro\Bundle\StripeBundle\Client\Request;
 
 use Oro\Bundle\StripeBundle\Model\PaymentIntentResponse;
 
-class CancelRequest extends StripeApiRequestAbstract implements StripeApiRequestInterface
+/**
+ * Prepare data for cancel request.
+ */
+class CancelRequest extends StripeApiRequestAbstract
 {
     private const DEFAULT_CANCELLATION_REASON_PARAM = 'requested_by_customer';
     private const CANCEL_REASON_PARAM = 'cancelReason';

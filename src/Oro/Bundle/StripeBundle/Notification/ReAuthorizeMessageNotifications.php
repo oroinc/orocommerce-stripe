@@ -12,16 +12,20 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ReAuthorizeMessageNotifications
 {
-    const AUTHORIZATION_FAILED_MESSAGE = 'oro.stripe.re-authorize.error.authorization-failed.message';
-    const AUTHORIZATION_FAILED_SUBJECT = 'oro.stripe.re-authorize.error.authorization-failed.subject';
+    private const AUTHORIZATION_FAILED_MESSAGE = 'oro.stripe.re-authorize.error.authorization-failed.message';
+    private const AUTHORIZATION_FAILED_SUBJECT = 'oro.stripe.re-authorize.error.authorization-failed.subject';
 
     private StripeNotificationManager $notificationManager;
     private DateTimeFormatterInterface $dateTimeFormatter;
     private NumberFormatter $numberFormatter;
     private TranslatorInterface $translator;
 
-    public function __construct(StripeNotificationManager $notificationManager, DateTimeFormatterInterface $dateTimeFormatter, NumberFormatter $numberFormatter, TranslatorInterface $translator)
-    {
+    public function __construct(
+        StripeNotificationManager $notificationManager,
+        DateTimeFormatterInterface $dateTimeFormatter,
+        NumberFormatter $numberFormatter,
+        TranslatorInterface $translator
+    ) {
         $this->notificationManager = $notificationManager;
         $this->dateTimeFormatter = $dateTimeFormatter;
         $this->numberFormatter = $numberFormatter;
