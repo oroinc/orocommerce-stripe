@@ -78,7 +78,7 @@ class CapturePaymentActionTest extends TestCase
 
         $this->assertFalse($transaction->isActive());
         $this->assertTrue($transaction->isSuccessful());
-        $this->assertEquals($transaction->getReference(), 'pi_1');
+        $this->assertEquals('pi_1', $transaction->getReference());
 
         $this->assertTrue($response->isSuccessful());
         $this->assertEquals([

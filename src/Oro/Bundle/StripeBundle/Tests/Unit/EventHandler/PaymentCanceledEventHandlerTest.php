@@ -96,7 +96,7 @@ class PaymentCanceledEventHandlerTest extends TestCase
         $transactionResponse = $cancelTransaction->getResponse();
         $this->assertArrayHasKey('data', $transactionResponse);
         $this->assertArrayHasKey('source', $transactionResponse);
-        $this->assertEquals($transactionResponse['source'], ResponseObjectInterface::ACTION_SOURCE_MANUALLY);
+        $this->assertEquals(ResponseObjectInterface::ACTION_SOURCE_MANUALLY, $transactionResponse['source']);
     }
 
     public function testPaymentAlreadyCanceled()
