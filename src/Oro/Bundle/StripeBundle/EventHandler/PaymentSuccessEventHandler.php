@@ -72,8 +72,7 @@ class PaymentSuccessEventHandler extends AbstractStripeEventHandler implements S
     ) {
         $transactions = $this->getPaymentTransactionRepository()->findBy([
             'sourcePaymentTransaction' => $sourceTransaction,
-            'action' => PaymentMethodInterface::CAPTURE,
-            'amount' => PaymentAmountConverter::convertFromStripeFormat($responseObject->getValue('amount'))
+            'action' => PaymentMethodInterface::CAPTURE
         ]);
 
         foreach ($transactions as $transaction) {

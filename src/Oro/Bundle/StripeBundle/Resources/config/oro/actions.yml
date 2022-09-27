@@ -1,0 +1,67 @@
+operations:
+    oro_stripe_order_payment_transaction_cancel:
+        label: Stripe Cancel
+        extends: oro_order_payment_transaction_cancel
+        substitute_operation: oro_order_payment_transaction_cancel
+        attributes:
+            cancelReason:
+                label: oro.stripe.action.attribute.cancel_reason.label
+                type: string
+        form_options:
+            attribute_fields:
+                cancelReason:
+                    form_type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
+                    options:
+                        placeholder: false
+                        choices:
+                            oro.stripe.cancel_reason.request_by_customer: requested_by_customer
+                            oro.stripe.cancel_reason.duplicate: duplicate
+                            oro.stripe.cancel_reason.fraudulent: requested_by_customer
+                            oro.stripe.cancel_reason.abandoned: duplicate
+                        required: true
+                        constraints:
+                            - NotBlank: ~
+            attribute_default_values:
+                cancelReason:
+                    requested_by_customer
+        preactions:
+            - '@assign_value':
+                  conditions:
+                      '@not_empty': $.cancelReason
+                  parameters: [$.transactionOptions, {'cancelReason': $.cancelReason}]
+        preconditions:
+            '@and':
+                - '@instanceof': [$.paymentMethod, 'Oro\Bundle\StripeBundle\Method\StripePaymentMethod']
+
+    oro_stripe_order_payment_transaction_refund:
+        label: Stripe Refund
+        extends: oro_order_payment_transaction_refund
+        substitute_operation: oro_order_payment_transaction_refund
+        attributes:
+            refundReason:
+                label: oro.stripe.action.attribute.refund_reason.label
+                type: string
+        form_options:
+            attribute_fields:
+                refundReason:
+                    form_type: Symfony\Component\Form\Extension\Core\Type\ChoiceType
+                    options:
+                        placeholder: false
+                        choices:
+                            oro.stripe.refund_reason.request_by_customer: requested_by_customer
+                            oro.stripe.refund_reason.duplicate: duplicate
+                            oro.stripe.refund_reason.fraudulent: fraudulent
+                        required: true
+                        constraints:
+                            - NotBlank: ~
+            attribute_default_values:
+                refundReason:
+                    requested_by_customer
+        preactions:
+            - '@assign_value':
+                conditions:
+                    '@not_empty': $.refundReason
+                parameters: [$.transactionOptions, {'refundReason': $.refundReason}]
+        preconditions:
+            '@and':
+                - '@instanceof': [$.paymentMethod, 'Oro\Bundle\StripeBundle\Method\StripePaymentMethod']

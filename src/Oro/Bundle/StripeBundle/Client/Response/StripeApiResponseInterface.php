@@ -9,6 +9,7 @@ interface StripeApiResponseInterface
 {
     public const SUCCESS_STATUS = 'succeeded';
     public const REQUIRES_CAPTURE = 'requires_capture';
+    public const CANCELED = 'canceled';
 
     /**
      * Prepare response data from STRIPE service

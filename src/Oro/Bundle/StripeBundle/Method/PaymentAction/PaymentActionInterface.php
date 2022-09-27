@@ -21,5 +21,5 @@ interface PaymentActionInterface
         PaymentTransaction $paymentTransaction
     ): StripeApiResponseInterface;
 
-    public function isApplicable(string $action): bool;
+    public function isApplicable(string $action, PaymentTransaction $paymentTransaction): bool;
 }

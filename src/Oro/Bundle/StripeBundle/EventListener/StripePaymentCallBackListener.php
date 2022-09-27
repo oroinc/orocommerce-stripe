@@ -9,6 +9,7 @@ use Oro\Bundle\PaymentBundle\Provider\PaymentResultMessageProviderInterface;
 use Oro\Bundle\StripeBundle\Client\Exception\StripeApiException;
 use Oro\Bundle\StripeBundle\Method\PaymentAction\PaymentActionInterface;
 use Oro\Bundle\StripeBundle\Model\PaymentIntentResponse;
+use Oro\Bundle\StripeBundle\Model\SetupIntentResponse;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -81,7 +82,13 @@ class StripePaymentCallBackListener
             $event->markSuccessful();
         } else {
             $event->markFailed();
-            if ($failureUrl = $this->getFailureUrl($paymentTransaction)) {
+            $failureUrl = $this->getFailureUrl($paymentTransaction);
+            $partiallyPaidUrl = $this->getPartiallyPaidUrl($paymentTransaction) ?? $failureUrl;
+            if ($this->isPartiallySuccessfulResponse($response)) {
+                if ($partiallyPaidUrl) {
+                    $event->setResponse(new RedirectResponse($partiallyPaidUrl));
+                }
+            } elseif ($failureUrl) {
                 $event->setResponse(new RedirectResponse($failureUrl));
 
                 $flashBag = $this->session->getFlashBag();
@@ -101,14 +108,32 @@ class StripePaymentCallBackListener
         $transactionOptions = $paymentTransaction->getTransactionOptions();
 
         $additionalOptions = json_decode($transactionOptions['additionalData'], true);
-        $additionalOptions[PaymentIntentResponse::PAYMENT_INTENT_ID_PARAM] = $eventData['paymentIntentId'];
+        if (array_key_exists('paymentIntentId', $eventData)) {
+            $additionalOptions[PaymentIntentResponse::PAYMENT_INTENT_ID_PARAM] = $eventData['paymentIntentId'];
+        }
+        if (array_key_exists('setupIntentId', $eventData)) {
+            $additionalOptions[SetupIntentResponse::SETUP_INTENT_ID_PARAM] = $eventData['setupIntentId'];
+        }
         $transactionOptions['additionalData'] = json_encode($additionalOptions);
         $paymentTransaction->setTransactionOptions($transactionOptions);
+    }
+
+    private function isPartiallySuccessfulResponse(array $responseData): bool
+    {
+        return !empty($responseData['is_multi_transaction']) && !empty($responseData['has_successful']);
     }
 
     private function getFailureUrl(PaymentTransaction $paymentTransaction): ?string
     {
         $transactionOptions = $paymentTransaction->getTransactionOptions();
+
         return $transactionOptions['failureUrl'] ?? null;
+    }
+
+    private function getPartiallyPaidUrl(PaymentTransaction $paymentTransaction): ?string
+    {
+        $transactionOptions = $paymentTransaction->getTransactionOptions();
+
+        return $transactionOptions['partiallyPaidUrl'] ?? null;
     }
 }

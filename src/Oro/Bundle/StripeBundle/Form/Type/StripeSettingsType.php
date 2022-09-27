@@ -76,6 +76,16 @@ class StripeSettingsType extends AbstractType
                 'label' => 'oro.stripe.settings.user_monitoring.label',
                 'tooltip' => 'oro.stripe.settings.user_monitoring.tooltip',
                 'required' => false
+            ])
+            ->add('enableReAuthorize', CheckboxType::class, [
+                'label' => 'oro.stripe.settings.enable_re_authorize.label',
+                'tooltip' => 'oro.stripe.settings.enable_re_authorize.tooltip',
+                'required' => false
+            ])
+            ->add('reAuthorizationErrorEmail', TextType::class, [
+                'label' => 'oro.stripe.settings.re_authorization_error_email.label',
+                'tooltip' => 'oro.stripe.settings.re_authorization_error_email.tooltip',
+                'required' => false
             ]);
     }
 

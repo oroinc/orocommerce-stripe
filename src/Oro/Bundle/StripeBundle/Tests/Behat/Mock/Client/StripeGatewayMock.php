@@ -48,6 +48,27 @@ class StripeGatewayMock implements StripeGatewayInterface
         return new PaymentIntentResponse($paymentIntent->toArray());
     }
 
+    public function createCustomer(StripeApiRequestInterface $request): ResponseObjectInterface
+    {
+        // TODO: Implement createCustomer() method.
+    }
+
+    public function createSetupIntent(StripeApiRequestInterface $request): ResponseObjectInterface
+    {
+        // TODO: Implement createSetupIntent() method.
+    }
+
+    public function findSetupIntentCustomer(string $setupIntentId): ResponseObjectInterface
+    {
+        // TODO: Implement findSetupIntentCustomer() method.
+    }
+
+    public function findSetupIntent(string $setupIntentId): ResponseObjectInterface
+    {
+        // TODO: Implement findSetupIntent() method.
+    }
+
+
     private function createPaymentIntent(): PaymentIntent
     {
         $chargesCollection = new Collection();

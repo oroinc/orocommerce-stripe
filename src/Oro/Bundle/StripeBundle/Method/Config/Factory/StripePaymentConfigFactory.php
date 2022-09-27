@@ -44,7 +44,11 @@ class StripePaymentConfigFactory
             StripePaymentConfig::USER_MONITORING_ENABLED =>
                 (bool) $parameters->get(StripeTransportSettings::USER_MONITORING),
             StripePaymentConfig::LOCALE => $this->getCurrentLocaleCode(),
-            StripePaymentConfig::SIGNING_SECRET => $parameters->get(StripeTransportSettings::SIGNING_SECRET)
+            StripePaymentConfig::SIGNING_SECRET => $parameters->get(StripeTransportSettings::SIGNING_SECRET),
+            StripePaymentConfig::RE_AUTHORIZATION_ERROR_EMAIL => $parameters
+                ->get(StripeTransportSettings::RE_AUTHORIZATION_ERROR_EMAIL),
+            StripePaymentConfig::ALLOW_RE_AUTHORIZE => (bool)$parameters
+                ->get(StripeTransportSettings::ALLOW_RE_AUTHORIZE),
         ]);
     }
 

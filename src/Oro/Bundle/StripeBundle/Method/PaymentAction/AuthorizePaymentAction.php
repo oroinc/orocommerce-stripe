@@ -3,24 +3,28 @@
 namespace Oro\Bundle\StripeBundle\Method\PaymentAction;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use Oro\Bundle\StripeBundle\Client\Request\ConfirmRequest;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\StripeBundle\Client\Request\AuthorizeRequest;
 use Oro\Bundle\StripeBundle\Client\Response\StripeApiResponse;
 use Oro\Bundle\StripeBundle\Client\Response\StripeApiResponseInterface;
 use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
 
 /**
- * Prepare request data for Payment confirmation request.
+ * Handle authorization payment actions.
  */
-class ConfirmPaymentAction extends PurchasePaymentActionAbstract implements PaymentActionInterface
+class AuthorizePaymentAction extends PaymentActionAbstract implements PaymentActionInterface
 {
+    /**
+     * {@inheritdoc}
+     */
     public function execute(
         StripePaymentConfig $config,
         PaymentTransaction $paymentTransaction
     ): StripeApiResponseInterface {
-        $request = new ConfirmRequest($paymentTransaction);
+        $paymentTransaction->setActive(true);
 
-        $responseObject = $this->getClient($config)->confirm($request);
-
+        $request = new AuthorizeRequest($config, $paymentTransaction);
+        $responseObject = $this->getClient($config)->purchase($request);
         $response = new StripeApiResponse($responseObject);
         $this->updateTransactionData($paymentTransaction, $responseObject, $response->isSuccessful());
 
@@ -29,7 +33,6 @@ class ConfirmPaymentAction extends PurchasePaymentActionAbstract implements Paym
 
     public function isApplicable(string $action, PaymentTransaction $paymentTransaction): bool
     {
-        return $action === self::CONFIRM_ACTION
-            && !$this->entitiesTransactionsProvider->hasEntities($paymentTransaction);
+        return $action === PaymentMethodInterface::AUTHORIZE;
     }
 }

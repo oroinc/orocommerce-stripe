@@ -1,4 +1,29 @@
+parameters:
+    oro_stripe.authorization_transaction_expiration_hours: 164
+
 services:
+    # Command
+    oro_stripe.handler.re_authorization_handler:
+        class: Oro\Bundle\StripeBundle\Handler\ReAuthorizationHandler
+        arguments:
+            - '@oro_stripe.provider.entities_transactions'
+            - '@oro_payment.payment_method.composite_provider'
+            - '@oro_payment.provider.payment_transaction'
+            - '@oro_stripe.method.config_provider'
+            - '@oro_stripe.notifications.re-authorize_notifications'
+        calls:
+            - [ setLogger, [ '@logger' ] ]
+        tags:
+            - { name: monolog.logger, channel: oro_stripe }
+
+    oro_stripe.command.re_authorize:
+        class: Oro\Bundle\StripeBundle\Command\ReAuthorizeCronCommand
+        arguments:
+            - '@oro_stripe.provider.entities_transactions'
+            - '@oro_stripe.handler.re_authorization_handler'
+        tags:
+            - { name: console.command }
+
     # Integration
     oro_stripe.integration.stripe_channel:
         class: Oro\Bundle\StripeBundle\Integration\StripeChannelType
@@ -53,6 +78,13 @@ services:
             - '@oro_frontend.request.frontend_helper'
             - '@oro_stripe.integration.cache'
             - '@doctrine'
+
+    oro_stripe.provider.entities_transactions:
+        class: Oro\Bundle\StripeBundle\Provider\EntitiesTransactionsProvider
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_payment.provider.payment_transaction'
+            - '%oro_stripe.authorization_transaction_expiration_hours%'
 
     # Listener
     oro_stripe.entity_listener.stripe_integration:
@@ -120,3 +152,19 @@ services:
     Oro\Bundle\StripeBundle\EventHandler\StripeWebhookEventHandler:
         alias: oro_stripe.event_handler.stripe_webhook_handler
         public: true
+
+    # Notifications
+    oro_stripe.notifications.manager:
+        class: Oro\Bundle\StripeBundle\Notification\StripeNotificationManager
+        arguments:
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_notification.model.notification_settings'
+            - '@logger'
+
+    oro_stripe.notifications.re-authorize_notifications:
+        class: Oro\Bundle\StripeBundle\Notification\ReAuthorizeMessageNotifications
+        arguments:
+            - '@oro_stripe.notifications.manager'
+            - '@oro_locale.formatter.date_time'
+            - '@oro_locale.formatter.number'
+            - '@translator'

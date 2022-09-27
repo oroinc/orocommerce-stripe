@@ -5,16 +5,16 @@ namespace Oro\Bundle\StripeBundle\Method\PaymentAction;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
-use Oro\Bundle\StripeBundle\Client\Request\CaptureRequest;
+use Oro\Bundle\StripeBundle\Client\Request\RefundRequest;
 use Oro\Bundle\StripeBundle\Client\Response\StripeApiResponse;
 use Oro\Bundle\StripeBundle\Client\Response\StripeApiResponseInterface;
 use Oro\Bundle\StripeBundle\Client\StripeGatewayFactoryInterface;
 use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
 
 /**
- * Handle payment capturing.
+ * Provides logic to refund captured transactions.
  */
-class CapturePaymentAction extends PaymentActionAbstract implements PaymentActionInterface
+class RefundPaymentAction extends PaymentActionAbstract implements PaymentActionInterface
 {
     private PaymentTransactionProvider $paymentTransactionProvider;
 
@@ -30,22 +30,22 @@ class CapturePaymentAction extends PaymentActionAbstract implements PaymentActio
         StripePaymentConfig $config,
         PaymentTransaction $paymentTransaction
     ): StripeApiResponseInterface {
-        $authorizeTransaction = $paymentTransaction->getSourcePaymentTransaction();
-        if (!$authorizeTransaction) {
-            throw new \LogicException('Payment could not be captured. Authorize transaction not found');
+        $sourceTransaction = $paymentTransaction->getSourcePaymentTransaction();
+        if (!$sourceTransaction) {
+            throw new \LogicException('Payment could not be refunded. Capture transaction not found');
+        }
+
+        if ($sourceTransaction->getAction() !== PaymentMethodInterface::CAPTURE) {
+            throw new \LogicException('Payment could not be refunded. Transaction should be captured first');
         }
 
         $paymentTransaction->setActive(true);
         $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
 
-        try {
-            $request = new CaptureRequest($authorizeTransaction);
-            $responseObject = $this->getClient($config)->capture($request);
-            $response = new StripeApiResponse($responseObject);
-        } finally {
-            $paymentTransaction->setActive(false);
-        }
+        $request = new RefundRequest($paymentTransaction);
+        $responseObject = $this->getClient($config)->refund($request);
 
+        $response = new StripeApiResponse($responseObject);
         $this->updateTransactionData($paymentTransaction, $responseObject, $response->isSuccessful());
 
         return $response;
@@ -53,6 +53,6 @@ class CapturePaymentAction extends PaymentActionAbstract implements PaymentActio
 
     public function isApplicable(string $action, PaymentTransaction $paymentTransaction): bool
     {
-        return $action === PaymentMethodInterface::CAPTURE;
+        return $action === PaymentMethodInterface::REFUND;
     }
 }

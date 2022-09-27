@@ -23,6 +23,8 @@ class StripeTransportSettings extends Transport
     public const USER_MONITORING = 'user_monitoring';
     public const PAYMENT_ACTION = 'payment_action';
     public const SIGNING_SECRET = 'signing_secret';
+    public const ALLOW_RE_AUTHORIZE = 'allow_re_authorize';
+    public const RE_AUTHORIZATION_ERROR_EMAIL = 're_authorization_error_email';
 
     protected ?ParameterBag $settings = null;
 
@@ -87,6 +89,18 @@ class StripeTransportSettings extends Transport
      */
     protected ?bool $userMonitoring = false;
 
+    protected ?bool $supportPartialCapture = true;
+
+    /**
+     * @ORM\Column(name="stripe_enable_re_authorize", type="boolean", nullable=true, options={"default"=true})
+     */
+    protected ?bool $enableReAuthorize = true;
+
+    /**
+     * @ORM\Column(name="stripe_re_authorization_error_email", type="string", length=255, nullable=true)
+     */
+    protected ?string $reAuthorizationErrorEmail = null;
+
     public function __construct()
     {
         $this->labels = new ArrayCollection();
@@ -104,6 +118,8 @@ class StripeTransportSettings extends Transport
                 self::PAYMENT_ACTION => $this->getPaymentAction(),
                 self::USER_MONITORING => $this->getUserMonitoring(),
                 self::SIGNING_SECRET => $this->getSigningSecret(),
+                self::ALLOW_RE_AUTHORIZE => $this->getEnableReAuthorize(),
+                self::RE_AUTHORIZATION_ERROR_EMAIL => $this->getReAuthorizationErrorEmail()
             ]);
         }
 
@@ -205,9 +221,33 @@ class StripeTransportSettings extends Transport
         return $this->userMonitoring;
     }
 
-    public function setUserMonitoring(?bool $userMonitoring): StripeTransportSettings
+    public function setUserMonitoring(bool $userMonitoring): StripeTransportSettings
     {
         $this->userMonitoring = $userMonitoring;
+        return $this;
+    }
+
+    public function getReAuthorizationErrorEmail(): ?string
+    {
+        return $this->reAuthorizationErrorEmail;
+    }
+
+    public function setReAuthorizationErrorEmail(string $reAuthorizationErrorEmail): self
+    {
+        $this->reAuthorizationErrorEmail = $reAuthorizationErrorEmail;
+
+        return $this;
+    }
+
+    public function getEnableReAuthorize(): ?bool
+    {
+        return $this->enableReAuthorize;
+    }
+
+    public function setEnableReAuthorize(bool $enableReAuthorize): self
+    {
+        $this->enableReAuthorize = $enableReAuthorize;
+
         return $this;
     }
 }
