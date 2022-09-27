@@ -104,7 +104,7 @@ class EntitiesTransactionsProvider
         );
     }
 
-    private function getExpiringAuthorizeTransactionsQB(array $paymentMethods): QueryBuilder
+    private function getExpiringAuthorizeTransactionsQB(array $paymentMethods = []): QueryBuilder
     {
         $repo = $this->doctrineHelper->getEntityRepository(PaymentTransaction::class);
         $qb = $repo->createQueryBuilder('pt');
@@ -114,8 +114,7 @@ class EntitiesTransactionsProvider
                     $qb->expr()->eq('pt.active', ':isActive'),
                     $qb->expr()->eq('pt.successful', ':isSuccessful'),
                     $qb->expr()->eq('pt.action', ':action'),
-                    $qb->expr()->lte('pt.createdAt', ':actionDate'),
-                    $qb->expr()->in('pt.paymentMethod', ':paymentMethods')
+                    $qb->expr()->lte('pt.createdAt', ':actionDate')
                 )
             )
             ->setParameters([
@@ -125,9 +124,13 @@ class EntitiesTransactionsProvider
                 'actionDate' => new \DateTime(
                     sprintf('- %d hours', $this->authorizationTransactionExpirationHours),
                     new \DateTimeZone('UTC')
-                ),
-                'paymentMethods' => $paymentMethods
+                )
             ]);
+
+        if ($paymentMethods) {
+            $qb->andWhere($qb->expr()->in('pt.paymentMethod', ':paymentMethods'))
+                ->setParameter('paymentMethods', $paymentMethods);
+        }
 
         return $qb;
     }

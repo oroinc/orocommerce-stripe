@@ -15,7 +15,7 @@ use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
 
 /**
- * Cancel existing expiring authorization transaction and create new one to extend it's expiration time.
+ * Cancel existing expiring authorization transaction and create new one to extend its expiration time.
  */
 class ReAuthorizationHandler implements LoggerAwareInterface
 {
@@ -50,10 +50,9 @@ class ReAuthorizationHandler implements LoggerAwareInterface
     public function reAuthorize(): void
     {
         /** @var StripePaymentConfig[] $configs */
-        $configs = $this->paymentConfigsProvider->getConfigs();
         $configs = array_filter(
-            $configs,
-            fn(StripePaymentConfig $paymentConfig) => $paymentConfig->isReAuthorizationAllowed()
+            (array)$this->paymentConfigsProvider->getConfigs(),
+            static fn(StripePaymentConfig $paymentConfig) => $paymentConfig->isReAuthorizationAllowed()
         );
 
         if (empty($configs)) {
@@ -63,7 +62,9 @@ class ReAuthorizationHandler implements LoggerAwareInterface
         $stripePaymentMethods = array_keys($configs);
         $paymentMethods = [];
 
-        foreach ($this->transactionsProvider->getExpiringAuthorizationTransactions($stripePaymentMethods) as $authorizeTransaction) {
+        $expiringAuthorizationTransactions = $this->transactionsProvider
+            ->getExpiringAuthorizationTransactions($stripePaymentMethods);
+        foreach ($expiringAuthorizationTransactions as $authorizeTransaction) {
             $this->logger->info('Re-authorizing transaction ' . $authorizeTransaction->getId());
             $paymentMethodId = $authorizeTransaction->getPaymentMethod();
 
@@ -118,7 +119,10 @@ class ReAuthorizationHandler implements LoggerAwareInterface
             $this->paymentTransactionProvider->savePaymentTransaction($authorizeTransaction);
 
             $newAuthorizeTransaction = $this->createNewAuthorizationTransaction($authorizeTransaction);
-            $newAuthorizeResponse = $paymentMethod->execute(PaymentMethodInterface::AUTHORIZE, $newAuthorizeTransaction);
+            $newAuthorizeResponse = $paymentMethod->execute(
+                PaymentMethodInterface::AUTHORIZE,
+                $newAuthorizeTransaction
+            );
             $newAuthorizeTransaction->setActive($newAuthorizeTransaction->isSuccessful());
             if (!$newAuthorizeTransaction->isSuccessful()) {
                 $this->logger->warning(
