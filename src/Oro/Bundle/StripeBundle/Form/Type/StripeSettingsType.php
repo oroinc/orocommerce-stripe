@@ -85,7 +85,7 @@ class StripeSettingsType extends AbstractType
             ->add('reAuthorizationErrorEmail', TextType::class, [
                 'label' => 'oro.stripe.settings.re_authorization_error_email.label',
                 'tooltip' => 'oro.stripe.settings.re_authorization_error_email.tooltip',
-                'required' => false
+                'required' => true
             ]);
     }
 

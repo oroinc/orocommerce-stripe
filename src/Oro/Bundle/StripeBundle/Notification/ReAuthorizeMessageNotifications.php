@@ -41,6 +41,7 @@ class ReAuthorizeMessageNotifications
             ),
             '%order%' => '#' . $transaction->getEntityIdentifier(),
             '%date%' => $this->dateTimeFormatter->formatDate(new \DateTime('now')),
+            '%time%' => $this->dateTimeFormatter->formatTime(new \DateTime('now')),
             '%reason%' => $error
         ];
 

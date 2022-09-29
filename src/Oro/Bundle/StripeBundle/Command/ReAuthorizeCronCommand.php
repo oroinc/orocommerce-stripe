@@ -40,11 +40,26 @@ class ReAuthorizeCronCommand extends Command implements CronCommandInterface
         return '0 */1 * * *';
     }
 
+    /** @noinspection PhpMissingParentCallCommonInspection */
+    protected function configure()
+    {
+        $this->setDescription('Cancels expiring Stripe authorization holds and places new ones instead.')
+            ->setHelp(
+                <<<'HELP'
+The <info>%command.name%</info> command cancels expiring Stripe authorization holds and places new ones instead (payment card authorizations expire in Stripe after 7 days by default).
+
+  <info>php %command.full_name%</info>
+
+HELP
+            )
+        ;
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->writeln('Starting STRIPE re-authorization');
+        $output->writeln('Starting Stripe authorizations processing');
         $this->reAuthorizationHandler->reAuthorize();
-        $output->writeln('STRIPE re-authorization finished');
+        $output->writeln('Stripe re-authorizations processing finished');
 
         return self::SUCCESS;
     }

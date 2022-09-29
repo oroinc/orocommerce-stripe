@@ -48,5 +48,7 @@ oro:
         re-authorize:
             error:
                 authorization-failed:
-                    message: 'We have not been able to initiate automatic re-authorization hold of %amount% for order %order% at %date%. Reason: %reason%'
+                    message: |-
+                        We have not been able to initiate automatic re-authorization hold of %amount% for order %order% at %time% on %date%.
+                        Reason: %reason%
                     subject: 'Automatic payment card re-authorization failed for order %order%'
