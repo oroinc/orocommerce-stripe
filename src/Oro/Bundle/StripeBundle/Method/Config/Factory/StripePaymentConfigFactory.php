@@ -28,6 +28,8 @@ class StripePaymentConfigFactory
     public function createConfig(StripeTransportSettings $settings): StripePaymentConfig
     {
         $parameters = $settings->getSettingsBag();
+        $notificationEmails = explode(',', $parameters->get(StripeTransportSettings::RE_AUTHORIZATION_ERROR_EMAIL));
+        $notificationEmails = array_map('trim', $notificationEmails);
 
         return new StripePaymentConfig([
             AbstractParameterBagPaymentConfig::FIELD_LABEL =>
@@ -45,8 +47,7 @@ class StripePaymentConfigFactory
                 (bool)$parameters->get(StripeTransportSettings::USER_MONITORING),
             StripePaymentConfig::LOCALE => $this->getCurrentLocaleCode(),
             StripePaymentConfig::SIGNING_SECRET => $parameters->get(StripeTransportSettings::SIGNING_SECRET),
-            StripePaymentConfig::RE_AUTHORIZATION_ERROR_EMAIL => $parameters
-                ->get(StripeTransportSettings::RE_AUTHORIZATION_ERROR_EMAIL),
+            StripePaymentConfig::RE_AUTHORIZATION_ERROR_EMAIL => $notificationEmails,
             StripePaymentConfig::ALLOW_RE_AUTHORIZE => (bool)$parameters
                 ->get(StripeTransportSettings::ALLOW_RE_AUTHORIZE),
         ]);

@@ -65,7 +65,7 @@ class StripePaymentConfig extends AbstractParameterBagPaymentConfig
         return $this->get(self::ALLOW_RE_AUTHORIZE);
     }
 
-    public function getReAuthorizationErrorEmail(): ?string
+    public function getReAuthorizationErrorEmail(): array
     {
         return $this->get(self::RE_AUTHORIZATION_ERROR_EMAIL);
     }

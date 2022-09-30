@@ -2,8 +2,11 @@
 
 namespace Oro\Bundle\StripeBundle\Notification;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
+use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -19,38 +22,64 @@ class ReAuthorizeMessageNotifications
     private DateTimeFormatterInterface $dateTimeFormatter;
     private NumberFormatter $numberFormatter;
     private TranslatorInterface $translator;
+    private DoctrineHelper $doctrineHelper;
+    private LocaleSettings $localeSettings;
 
     public function __construct(
         StripeNotificationManager $notificationManager,
         DateTimeFormatterInterface $dateTimeFormatter,
         NumberFormatter $numberFormatter,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        DoctrineHelper $doctrineHelper,
+        LocaleSettings $localeSettings
     ) {
         $this->notificationManager = $notificationManager;
         $this->dateTimeFormatter = $dateTimeFormatter;
         $this->numberFormatter = $numberFormatter;
         $this->translator = $translator;
+        $this->doctrineHelper = $doctrineHelper;
+        $this->localeSettings = $localeSettings;
     }
 
-    public function sendAuthorizationFailed(PaymentTransaction $transaction, string $recipientEmail, string $error = '')
+    public function sendAuthorizationFailed(PaymentTransaction $transaction, array $recipientEmails, string $error = '')
     {
+        $identifier = $this->getIdentifier($transaction);
+        $timeZone = new \DateTimeZone($this->localeSettings->getTimeZone());
+
         $messageParams = [
             '%amount%' => $this->numberFormatter->formatCurrency(
                 (float)$transaction->getAmount(),
                 $transaction->getCurrency()
             ),
-            '%order%' => '#' . $transaction->getEntityIdentifier(),
-            '%date%' => $this->dateTimeFormatter->formatDate(new \DateTime('now')),
-            '%time%' => $this->dateTimeFormatter->formatTime(new \DateTime('now')),
+            '%order%' => '#' . $identifier,
+            '%date%' => $this->dateTimeFormatter->formatDate(new \DateTime('now', $timeZone)),
+            '%time%' => $this->dateTimeFormatter->formatTime(new \DateTime('now', $timeZone)),
             '%reason%' => $error
         ];
 
         $message = $this->translator->trans(self::AUTHORIZATION_FAILED_MESSAGE, $messageParams);
 
         $subject = $this->translator->trans(self::AUTHORIZATION_FAILED_SUBJECT, [
-            '%order%' => '#' . $transaction->getEntityIdentifier()
+            '%order%' => '#' . $identifier
         ]);
 
-        $this->notificationManager->sendNotification($recipientEmail, $subject, $message);
+        foreach ($recipientEmails as $recipientEmail) {
+            $this->notificationManager->sendNotification($recipientEmail, $subject, $message);
+        }
+    }
+
+    /**
+     * @param PaymentTransaction $transaction
+     * @return mixed|string|null
+     */
+    private function getIdentifier(PaymentTransaction $transaction)
+    {
+        $entity = $this->doctrineHelper->getEntity($transaction->getEntityClass(), $transaction->getEntityIdentifier());
+
+        if ($entity instanceof Order) {
+            return $entity->getIdentifier();
+        }
+
+        return $this->doctrineHelper->getSingleEntityIdentifier($entity);
     }
 }

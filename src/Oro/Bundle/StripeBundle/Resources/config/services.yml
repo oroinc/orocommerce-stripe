@@ -168,3 +168,5 @@ services:
             - '@oro_locale.formatter.date_time'
             - '@oro_locale.formatter.number'
             - '@translator'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_locale.settings'

@@ -33,6 +33,7 @@ class StripeNotificationManager
             'toEmail' => $recipientEmail,
             'subject' => $subject,
             'body' => $message,
+            'contentType' => 'text/html'
         ];
 
         try {
