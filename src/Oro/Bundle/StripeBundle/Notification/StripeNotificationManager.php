@@ -28,7 +28,7 @@ class StripeNotificationManager
 
     public function sendNotification(string $recipientEmail, string $subject, string $message)
     {
-        $message = [
+        $notificationMessage = [
             'from' => $this->notificationSettings->getSender()->toString(),
             'toEmail' => $recipientEmail,
             'subject' => $subject,
@@ -37,12 +37,12 @@ class StripeNotificationManager
         ];
 
         try {
-            $this->messageProducer->send(SendEmailNotificationTopic::getName(), $message);
+            $this->messageProducer->send(SendEmailNotificationTopic::getName(), $notificationMessage);
         } catch (\Throwable $exception) {
             $this->logger->critical('Failed to send stripe notification email', [
                 'message' => $exception->getMessage(),
                 'exception' => $exception,
-                'emailParameters' => $message
+                'notificationMessage' => $notificationMessage
             ]);
         }
     }

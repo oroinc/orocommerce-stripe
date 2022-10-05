@@ -69,7 +69,7 @@ class EntitiesTransactionsProvider
     {
         $qb = $this->getExpiringAuthorizeTransactionsQB();
         $qb->resetDQLPart('select')
-            ->select('COUNT(*)');
+            ->select('COUNT(pt.id)');
 
         return $qb->getQuery()->getSingleScalarResult() > 0;
     }
