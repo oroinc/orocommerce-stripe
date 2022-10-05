@@ -31,6 +31,10 @@ class SetupIntentResponseTest extends TestCase
         $this->assertEquals($expected, $responseData['data']);
     }
 
+    /**
+     * @return \Generator
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function responseDataProvider(): \Generator
     {
         yield [

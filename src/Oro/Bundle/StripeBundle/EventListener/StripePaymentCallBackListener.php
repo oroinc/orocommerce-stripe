@@ -41,6 +41,10 @@ class StripePaymentCallBackListener
         $this->logger = $logger;
     }
 
+    /**
+     * @param AbstractCallbackEvent $event
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
     public function onReturn(AbstractCallbackEvent $event)
     {
         $paymentTransaction = $event->getPaymentTransaction();

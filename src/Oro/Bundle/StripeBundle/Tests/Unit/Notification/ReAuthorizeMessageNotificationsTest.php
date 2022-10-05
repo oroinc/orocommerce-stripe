@@ -113,7 +113,11 @@ class ReAuthorizeMessageNotificationsTest extends TestCase
         $this->doctrineHelper->expects($this->never())
             ->method('getSingleEntityIdentifier');
 
-        $this->messageNotifications->sendAuthorizationFailed($paymentTransaction, ['test@test.com']);
+        $this->messageNotifications->sendAuthorizationFailed(
+            $paymentTransaction,
+            ['test@test.com'],
+            'Payment card declined'
+        );
     }
 
     public function testSendAuthorizationFailedWhenEntityIsNotOrder()

@@ -38,6 +38,9 @@ use Stripe\Service\SetupIntentService;
 use Stripe\SetupIntent;
 use Stripe\StripeClient;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class StripeGatewayTest extends TestCase
 {
     use SetReflectionPropertyTrait;

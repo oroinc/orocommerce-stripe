@@ -88,7 +88,9 @@ class LoadPaymentTransactions extends AbstractFixture implements ContainerAwareI
 
     public function load(ObjectManager $manager): void
     {
-        $transactionExpireHours = $this->container->getParameter('oro_stripe.authorization_transaction_expiration_hours');
+        $transactionExpireHours = $this->container
+            ->getParameter('oro_stripe.authorization_transaction_expiration_hours');
+
         $expireDate = (new \DateTime('now', new \DateTimeZone('UTC')))
             ->modify(sprintf('-%d hour', $transactionExpireHours + 1));
 

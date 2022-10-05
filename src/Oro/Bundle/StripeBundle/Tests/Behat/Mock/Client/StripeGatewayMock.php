@@ -110,7 +110,7 @@ class StripeGatewayMock implements StripeGatewayInterface
     private function getStatus(string $card): string
     {
         return match ($card) {
-        self::NO_AUTH_CARD => 'succeeded',
+            self::NO_AUTH_CARD => 'succeeded',
             self::AUTH_CARD => 'requires_action',
             self::ERROR_CARD => 'error',
         };

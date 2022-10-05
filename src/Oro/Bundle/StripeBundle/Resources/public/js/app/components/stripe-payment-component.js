@@ -48,7 +48,7 @@ define(function(require) {
                         // Handle additional user actions (3D secure validation, etc.. )
                         const self = this;
 
-                        const intentErrorHandler = function () {
+                        const intentErrorHandler = function(result) {
                             mediator.execute(
                                 'showFlashMessage',
                                 'error',
@@ -61,7 +61,7 @@ define(function(require) {
                             );
                         };
 
-                        const exceptionHandler = function (error) {
+                        const exceptionHandler = function(error) {
                             console.log(error);
                             mediator.execute(
                                 'showFlashMessage',
@@ -73,27 +73,27 @@ define(function(require) {
                         const stripe = stripeClient.getStripeInstance(this.options);
                         if (_.has(response, 'payment_intent_client_secret')) {
                             stripe.handleCardAction(response.payment_intent_client_secret)
-                                .then(function (result) {
+                                .then(function(result) {
                                     if (result.error) {
-                                        intentErrorHandler();
+                                        intentErrorHandler(result);
                                     } else if (result.hasOwnProperty('paymentIntent')) {
-                                        const paymentIntentId = result.paymentIntent.id;
+                                        const intentId = result.paymentIntent.id;
                                         mediator.execute(
                                             'redirectTo',
-                                            {url: eventData.responseData.returnUrl + '?paymentIntentId=' + paymentIntentId},
+                                            {url: eventData.responseData.returnUrl + '?paymentIntentId=' + intentId},
                                             {redirect: true}
                                         );
                                     }
                                 })
                                 .catch(exceptionHandler)
-                                .always(function () {
+                                .always(function() {
                                     mediator.execute('hideLoading');
                                 });
                         } else if (_.has(response, 'setup_intent_client_secret')) {
                             stripe.confirmCardSetup(response.setup_intent_client_secret)
-                                .then(function (result) {
+                                .then(function(result) {
                                     if (result.error) {
-                                        intentErrorHandler();
+                                        intentErrorHandler(result);
                                     } else if (result.hasOwnProperty('setupIntent')) {
                                         const setupIntentId = result.setupIntent.id;
                                         mediator.execute(
@@ -104,12 +104,16 @@ define(function(require) {
                                     }
                                 })
                                 .catch(exceptionHandler)
-                                .always(function () {
+                                .always(function() {
                                     mediator.execute('hideLoading');
                                 });
                         }
                     } else if (_.has(eventData.responseData, 'partiallyPaidUrl')) {
-                        mediator.execute('redirectTo', {url: eventData.responseData.partiallyPaidUrl}, {redirect: true});
+                        mediator.execute(
+                            'redirectTo',
+                            {url: eventData.responseData.partiallyPaidUrl},
+                            {redirect: true}
+                        );
                     } else {
                         mediator.execute('redirectTo', {url: eventData.responseData.errorUrl}, {redirect: true});
                     }

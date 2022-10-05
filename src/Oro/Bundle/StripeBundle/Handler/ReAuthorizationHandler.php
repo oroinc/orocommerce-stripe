@@ -52,7 +52,7 @@ class ReAuthorizationHandler implements LoggerAwareInterface
         /** @var StripePaymentConfig[] $configs */
         $configs = array_filter(
             (array)$this->paymentConfigsProvider->getConfigs(),
-            static fn(StripePaymentConfig $paymentConfig) => $paymentConfig->isReAuthorizationAllowed()
+            static fn (StripePaymentConfig $paymentConfig) => $paymentConfig->isReAuthorizationAllowed()
         );
 
         if (empty($configs)) {
