@@ -48,7 +48,7 @@ define(function(require) {
                         // Handle additional user actions (3D secure validation, etc.. )
                         const self = this;
 
-                        const intentErrorHandler = function() {
+                        const intentErrorHandler = function () {
                             mediator.execute(
                                 'showFlashMessage',
                                 'error',
@@ -61,7 +61,7 @@ define(function(require) {
                             );
                         };
 
-                        const exceptionHandler = function(error) {
+                        const exceptionHandler = function (error) {
                             console.log(error);
                             mediator.execute(
                                 'showFlashMessage',
@@ -73,7 +73,7 @@ define(function(require) {
                         const stripe = stripeClient.getStripeInstance(this.options);
                         if (_.has(response, 'payment_intent_client_secret')) {
                             stripe.handleCardAction(response.payment_intent_client_secret)
-                                .then(function(result) {
+                                .then(function (result) {
                                     if (result.error) {
                                         intentErrorHandler();
                                     } else if (result.hasOwnProperty('paymentIntent')) {
@@ -86,10 +86,12 @@ define(function(require) {
                                     }
                                 })
                                 .catch(exceptionHandler)
-                                .always(function() {mediator.execute('hideLoading');});
+                                .always(function () {
+                                    mediator.execute('hideLoading');
+                                });
                         } else if (_.has(response, 'setup_intent_client_secret')) {
                             stripe.confirmCardSetup(response.setup_intent_client_secret)
-                                .then(function(result) {
+                                .then(function (result) {
                                     if (result.error) {
                                         intentErrorHandler();
                                     } else if (result.hasOwnProperty('setupIntent')) {
@@ -102,8 +104,12 @@ define(function(require) {
                                     }
                                 })
                                 .catch(exceptionHandler)
-                                .always(function() {mediator.execute('hideLoading');});
+                                .always(function () {
+                                    mediator.execute('hideLoading');
+                                });
                         }
+                    } else if (_.has(eventData.responseData, 'partiallyPaidUrl')) {
+                        mediator.execute('redirectTo', {url: eventData.responseData.partiallyPaidUrl}, {redirect: true});
                     } else {
                         mediator.execute('redirectTo', {url: eventData.responseData.errorUrl}, {redirect: true});
                     }

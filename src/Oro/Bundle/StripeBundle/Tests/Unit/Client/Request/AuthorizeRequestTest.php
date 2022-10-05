@@ -4,25 +4,25 @@ namespace Oro\Bundle\StripeBundle\Tests\Unit\Client\Request;
 
 use LogicException;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use Oro\Bundle\StripeBundle\Client\Request\PurchaseRequest;
+use Oro\Bundle\StripeBundle\Client\Request\AuthorizeRequest;
 use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
 use Oro\Bundle\StripeBundle\Method\StripePaymentActionMapper;
 use Oro\Bundle\StripeBundle\Model\SetupIntentResponse;
 use PHPUnit\Framework\TestCase;
 
-class PurchaseRequestTest extends TestCase
+class AuthorizeRequestTest extends TestCase
 {
-    private PurchaseRequest $request;
+    private AuthorizeRequest $request;
     private PaymentTransaction $paymentTransaction;
 
     protected function setUp(): void
     {
         $this->paymentTransaction = new PaymentTransaction();
         $config = new StripePaymentConfig([
-            StripePaymentConfig::PAYMENT_ACTION => StripePaymentActionMapper::MANUAL
+            StripePaymentConfig::PAYMENT_ACTION => StripePaymentActionMapper::AUTOMATIC
         ]);
 
-        $this->request = new PurchaseRequest($config, $this->paymentTransaction);
+        $this->request = new AuthorizeRequest($config, $this->paymentTransaction);
     }
 
     /**
@@ -80,7 +80,7 @@ class PurchaseRequestTest extends TestCase
     public function testGetRequestDataWithoutPaymentIntentId(): void
     {
         $this->expectException(LogicException::class);
-        $request = new PurchaseRequest(new StripePaymentConfig(), new PaymentTransaction());
+        $request = new AuthorizeRequest(new StripePaymentConfig(), new PaymentTransaction());
         $request->getRequestData();
     }
 

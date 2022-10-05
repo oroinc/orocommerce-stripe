@@ -55,7 +55,6 @@ services:
         parent: oro_stripe.payment_action.purchase_action_abstract
         arguments:
             - '@oro_stripe.client.request.factory.create_customer_request_factory'
-            - '@oro_entity.doctrine_helper'
         tags:
             - { name: oro_stripe.payment_actions }
 

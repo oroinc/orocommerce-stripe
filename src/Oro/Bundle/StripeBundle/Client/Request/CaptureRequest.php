@@ -12,7 +12,7 @@ class CaptureRequest extends StripeApiRequestAbstract
 {
     private ?float $amount;
 
-    public function __construct(PaymentTransaction $transaction, $amount = null)
+    public function __construct(PaymentTransaction $transaction, float $amount = null)
     {
         parent::__construct($transaction);
         $this->amount = $amount;
@@ -20,7 +20,8 @@ class CaptureRequest extends StripeApiRequestAbstract
 
     public function getRequestData(): array
     {
-        $amount = null !== $this->amount ? $this->amount : (float)$this->transaction->getAmount();
+        $amount = $this->amount ?? (float)$this->transaction->getAmount();
+
         return [
             'amount_to_capture' => PaymentAmountConverter::convertToStripeFormat($amount)
         ];

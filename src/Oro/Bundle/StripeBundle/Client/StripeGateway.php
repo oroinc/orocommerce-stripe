@@ -93,17 +93,6 @@ class StripeGateway implements StripeGatewayInterface
         return new PaymentIntentResponse($this->getResponseData($paymentIntent));
     }
 
-    public function create(StripeApiRequestInterface $request): ResponseObjectInterface
-    {
-        try {
-            $paymentIntent = $this->getClient()->paymentIntents->create($request->getRequestData());
-        } catch (ApiErrorException $e) {
-            $this->handleException($e);
-        }
-
-        return new PaymentIntentResponse($this->getResponseData($paymentIntent));
-    }
-
     public function createSetupIntent(StripeApiRequestInterface $request): ResponseObjectInterface
     {
         try {

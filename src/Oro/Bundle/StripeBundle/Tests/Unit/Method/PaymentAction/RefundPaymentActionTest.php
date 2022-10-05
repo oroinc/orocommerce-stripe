@@ -3,25 +3,24 @@
 namespace Oro\Bundle\StripeBundle\Tests\Unit\Method\PaymentAction;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\StripeBundle\Client\StripeGatewayFactoryInterface;
 use Oro\Bundle\StripeBundle\Client\StripeGatewayInterface;
 use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
-use Oro\Bundle\StripeBundle\Method\PaymentAction\ConfirmPaymentAction;
-use Oro\Bundle\StripeBundle\Method\PaymentAction\PaymentActionInterface;
+use Oro\Bundle\StripeBundle\Method\PaymentAction\RefundPaymentAction;
 use Oro\Bundle\StripeBundle\Model\PaymentIntentResponse;
-use Oro\Bundle\StripeBundle\Provider\EntitiesTransactionsProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Stripe\Collection;
 use Stripe\PaymentIntent;
 
-class ConfirmPaymentActionTest extends TestCase
+class RefundPaymentActionTest extends TestCase
 {
     private StripeGatewayInterface|MockObject $client;
-    private EntitiesTransactionsProvider|MockObject $entitiesTransactionsProvider;
-    private PaymentTransactionProvider|MockObject $paymentTransactionProvider;
-    private ConfirmPaymentAction $action;
+    private PaymentTransactionProvider $paymentTransactionProvider;
+
+    private RefundPaymentAction $action;
 
     protected function setUp(): void
     {
@@ -30,12 +29,10 @@ class ConfirmPaymentActionTest extends TestCase
         $factory->expects($this->any())
             ->method('create')
             ->willReturn($this->client);
-        $this->entitiesTransactionsProvider = $this->createMock(EntitiesTransactionsProvider::class);
         $this->paymentTransactionProvider = $this->createMock(PaymentTransactionProvider::class);
 
-        $this->action = new ConfirmPaymentAction(
+        $this->action = new RefundPaymentAction(
             $factory,
-            $this->entitiesTransactionsProvider,
             $this->paymentTransactionProvider
         );
     }
@@ -44,13 +41,40 @@ class ConfirmPaymentActionTest extends TestCase
     {
         $transaction = new PaymentTransaction();
         $this->assertFalse($this->action->isApplicable('test', $transaction));
-        $this->assertTrue($this->action->isApplicable(PaymentActionInterface::CONFIRM_ACTION, $transaction));
+        $this->assertTrue($this->action->isApplicable(PaymentMethodInterface::REFUND, $transaction));
+    }
+
+    public function testExecuteNoSource(): void
+    {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Payment could not be refunded. Capture transaction not found');
+
+        $transaction = new PaymentTransaction();
+        $this->action->execute(new StripePaymentConfig(), $transaction);
+    }
+
+    public function testExecuteNotCapturedSource(): void
+    {
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Payment could not be refunded. Transaction should be captured first');
+
+        $sourceTransaction = new PaymentTransaction();
+        $sourceTransaction->setAction(PaymentMethodInterface::AUTHORIZE);
+
+        $transaction = new PaymentTransaction();
+        $transaction->setAction(PaymentMethodInterface::REFUND);
+        $transaction->setSourcePaymentTransaction($sourceTransaction);
+        $this->action->execute(new StripePaymentConfig(), $transaction);
     }
 
     public function testExecute(): void
     {
+        $sourceTransaction = new PaymentTransaction();
+        $sourceTransaction->setAction(PaymentMethodInterface::CAPTURE);
+
         $transaction = new PaymentTransaction();
-        $transaction->setSourcePaymentTransaction(new PaymentTransaction());
+        $transaction->setAction(PaymentMethodInterface::REFUND);
+        $transaction->setSourcePaymentTransaction($sourceTransaction);
 
         $charges = new Collection();
         $charges->offsetSet('balance_transaction', 'test');
@@ -63,15 +87,18 @@ class ConfirmPaymentActionTest extends TestCase
 
         $response = new PaymentIntentResponse($paymentIntent->toArray());
 
-        $this->client
-            ->expects($this->once())
-            ->method('confirm')
+        $this->paymentTransactionProvider->expects($this->once())
+            ->method('savePaymentTransaction')
+            ->with($transaction);
+
+        $this->client->expects($this->once())
+            ->method('refund')
             ->willReturn($response);
 
         $response = $this->action->execute(new StripePaymentConfig(), $transaction);
 
-        $this->assertTrue($transaction->isSuccessful());
-        $this->assertEquals('pi_1', $transaction->getReference());
+        $this->assertTrue($transaction->isActive());
+        $this->assertFalse($sourceTransaction->isActive());
 
         $this->assertTrue($response->isSuccessful());
         $this->assertEquals([

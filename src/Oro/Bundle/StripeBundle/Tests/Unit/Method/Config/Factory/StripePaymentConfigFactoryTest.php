@@ -49,7 +49,9 @@ class StripePaymentConfigFactoryTest extends TestCase
             'apiSecretKey' => 'secret key',
             'paymentAction' => 'manual',
             'userMonitoring' => true,
-            'signingSecret' => 'secret'
+            'signingSecret' => 'secret',
+            're_authorization_error_email' => 'test@test.com',
+            'enable_re_authorize' => true
         ];
 
         /** @var StripeTransportSettings $settings */
@@ -75,8 +77,9 @@ class StripePaymentConfigFactoryTest extends TestCase
             'payment_action' => 'manual',
             'user_monitoring_enabled' => true,
             'locale' => null,
-            'signing_secret' => 'secret'
-
+            'signing_secret' => 'secret',
+            're_authorization_error_email' => ['test@test.com'],
+            'enable_re_authorize' => true
         ]), $config);
     }
 }

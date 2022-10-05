@@ -70,7 +70,11 @@ class PaymentCanceledEventHandlerTest extends TestCase
             ->willReturn($sourceTransaction);
 
         $this->repositoryMock->expects($this->once())
-            ->method('findSuccessfulRelatedTransactionsByAction')
+            ->method('findBy')
+            ->with([
+                'sourcePaymentTransaction' => $sourceTransaction,
+                'action' => PaymentMethodInterface::CANCEL
+            ])
             ->willReturn([]);
 
         $cancelTransaction = new PaymentTransaction();
@@ -114,10 +118,12 @@ class PaymentCanceledEventHandlerTest extends TestCase
             ->willReturn($sourceTransaction);
 
         $this->repositoryMock->expects($this->once())
-            ->method('findSuccessfulRelatedTransactionsByAction')
-            ->willReturn([
-                new PaymentTransaction()
-            ]);
+            ->method('findBy')
+            ->with([
+                'sourcePaymentTransaction' => $sourceTransaction,
+                'action' => PaymentMethodInterface::CANCEL
+            ])
+            ->willReturn([(new PaymentTransaction())->setSuccessful(true)]);
 
         $this->paymentTransactionProvider->expects($this->never())
             ->method('createPaymentTransactionByParentTransaction');

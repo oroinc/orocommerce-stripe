@@ -7,6 +7,9 @@ use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
 
 class StripePaymentConfigTest extends AbstractPaymentConfigTestCase
 {
+    /**
+     * @var StripePaymentConfig
+     */
     protected $config;
 
     protected function getPaymentConfig(): StripePaymentConfig
@@ -19,7 +22,9 @@ class StripePaymentConfigTest extends AbstractPaymentConfigTestCase
             StripePaymentConfig::PUBLIC_KEY => 'public key',
             StripePaymentConfig::SECRET_KEY => 'secret key',
             StripePaymentConfig::USER_MONITORING_ENABLED => true,
-            StripePaymentConfig::PAYMENT_ACTION => 'manual'
+            StripePaymentConfig::PAYMENT_ACTION => 'manual',
+            StripePaymentConfig::ALLOW_RE_AUTHORIZE => true,
+            StripePaymentConfig::RE_AUTHORIZATION_ERROR_EMAIL => ['test@test.com']
         ];
 
         return new StripePaymentConfig($params);
@@ -48,5 +53,15 @@ class StripePaymentConfigTest extends AbstractPaymentConfigTestCase
     public function testGetPaymentAction(): void
     {
         $this->assertEquals('manual', $this->config->getPaymentAction());
+    }
+
+    public function testIsReAuthorizationAllowed(): void
+    {
+        $this->assertTrue($this->config->isReAuthorizationAllowed());
+    }
+
+    public function testGetReAuthorizationErrorEmail(): void
+    {
+        $this->assertEquals(['test@test.com'], $this->config->getReAuthorizationErrorEmail());
     }
 }

@@ -5,10 +5,16 @@ namespace Oro\Bundle\StripeBundle\Tests\Behat\Mock\Client;
 use Oro\Bundle\StripeBundle\Client\Request\StripeApiRequestInterface;
 use Oro\Bundle\StripeBundle\Client\StripeGatewayInterface;
 use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
+use Oro\Bundle\StripeBundle\Model\CustomerResponse;
 use Oro\Bundle\StripeBundle\Model\PaymentIntentResponse;
+use Oro\Bundle\StripeBundle\Model\RefundResponse;
 use Oro\Bundle\StripeBundle\Model\ResponseObjectInterface;
+use Oro\Bundle\StripeBundle\Model\SetupIntentResponse;
 use Stripe\Collection;
+use Stripe\Customer;
 use Stripe\PaymentIntent;
+use Stripe\Refund;
+use Stripe\SetupIntent;
 
 class StripeGatewayMock implements StripeGatewayInterface
 {
@@ -50,24 +56,27 @@ class StripeGatewayMock implements StripeGatewayInterface
 
     public function createCustomer(StripeApiRequestInterface $request): ResponseObjectInterface
     {
-        // TODO: Implement createCustomer() method.
+        $customer = $this->createCustomerObject();
+        return new CustomerResponse($customer->toArray());
     }
 
     public function createSetupIntent(StripeApiRequestInterface $request): ResponseObjectInterface
     {
-        // TODO: Implement createSetupIntent() method.
+        $setupIntent = $this->createSetupIntentObject();
+        return new SetupIntentResponse($setupIntent->toArray());
     }
 
     public function findSetupIntentCustomer(string $setupIntentId): ResponseObjectInterface
     {
-        // TODO: Implement findSetupIntentCustomer() method.
+        $customer = $this->createCustomerObject();
+        return new CustomerResponse($customer->toArray());
     }
 
     public function findSetupIntent(string $setupIntentId): ResponseObjectInterface
     {
-        // TODO: Implement findSetupIntent() method.
+        $setupIntent = $this->createSetupIntentObject();
+        return new SetupIntentResponse($setupIntent->toArray());
     }
-
 
     private function createPaymentIntent(): PaymentIntent
     {
@@ -82,12 +91,49 @@ class StripeGatewayMock implements StripeGatewayInterface
         return $paymentIntent;
     }
 
+    private function createCustomerObject()
+    {
+        return $paymentIntent = Customer::constructFrom([
+            'id' => 'cus_1',
+        ]);
+    }
+
+    private function createSetupIntentObject()
+    {
+        return SetupIntent::constructFrom([
+            'id' => 'seti_1',
+            'payment_method' => 'pm_1',
+            'status' => 'succeeded'
+        ]);
+    }
+
     private function getStatus(string $card): string
     {
         return match ($card) {
-            self::NO_AUTH_CARD => 'succeeded',
+        self::NO_AUTH_CARD => 'succeeded',
             self::AUTH_CARD => 'requires_action',
             self::ERROR_CARD => 'error',
         };
+    }
+
+    public function cancel(StripeApiRequestInterface $request): ResponseObjectInterface
+    {
+        $paymentIntent = PaymentIntent::constructFrom([
+            'id' => 'pi_1',
+            'status' => 'canceled'
+        ]);
+
+        return new PaymentIntentResponse($paymentIntent->toArray());
+    }
+
+    public function refund(StripeApiRequestInterface $request): ResponseObjectInterface
+    {
+        $refund = Refund::create([
+            'id' => 'ref_1',
+            'payment_intent' => 'pi_1',
+            'status' => 'succeeded'
+        ]);
+
+        return new RefundResponse($refund->toArray());
     }
 }

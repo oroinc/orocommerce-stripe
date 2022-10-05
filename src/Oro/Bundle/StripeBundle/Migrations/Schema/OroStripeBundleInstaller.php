@@ -40,7 +40,7 @@ class OroStripeBundleInstaller implements Installation
         $table->addColumn('stripe_payment_action', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('stripe_user_monitoring', 'boolean', ['notnull' => false, 'default' => true]);
         $table->addColumn('stripe_enable_re_authorize', 'boolean', ['notnull' => false, 'default' => true]);
-        $table->addColumn('stripe_re_authorization_error_email', 'string', ['notnull' => false, 'default' => true]);
+        $table->addColumn('stripe_re_authorization_error_email', 'string', ['notnull' => false]);
     }
 
     private function createOroStripeTransportLabelTable(Schema $schema): void

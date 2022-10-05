@@ -23,7 +23,9 @@ class StripeTransportSettingsTest extends TestCase
                 ['apiPublicKey', 'some string'],
                 ['apiSecretKey', 'some string'],
                 ['paymentAction', 'some string'],
-                ['userMonitoring', true]
+                ['userMonitoring', true],
+                ['enableReAuthorize', true],
+                ['reAuthorizationErrorEmail', 'test@test.com']
             ]
         );
 
@@ -49,6 +51,8 @@ class StripeTransportSettingsTest extends TestCase
                 'apiSecretKey' => 'some secret key',
                 'paymentAction' => 'some payment action',
                 'userMonitoring' => true,
+                'enableReAuthorize' => true,
+                'reAuthorizationErrorEmail' => 'test@test.com',
                 'labels' => $labels,
                 'shortLabels' => $shortLabels
             ]
@@ -63,6 +67,8 @@ class StripeTransportSettingsTest extends TestCase
         $this->assertTrue($result->get('user_monitoring'));
         $this->assertEquals($labels, $result->get('labels'));
         $this->assertEquals($shortLabels, $result->get('short_labels'));
+        $this->assertTrue($result->get('allow_re_authorize'));
+        $this->assertEquals('test@test.com', $result->get('re_authorization_error_email'));
 
         $this->assertEquals('some public key', $entity->getApiPublicKey());
         $this->assertEquals('some secret key', $entity->getApiSecretKey());
@@ -70,5 +76,7 @@ class StripeTransportSettingsTest extends TestCase
         $this->assertTrue($entity->getUserMonitoring());
         $this->assertEquals($labels, $entity->getLabels());
         $this->assertEquals($shortLabels, $entity->getShortLabels());
+        $this->assertTrue($entity->getEnableReAuthorize());
+        $this->assertEquals('test@test.com', $entity->getReAuthorizationErrorEmail());
     }
 }

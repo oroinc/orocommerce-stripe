@@ -63,13 +63,6 @@ abstract class StripeApiRequestAbstract implements StripeApiRequestInterface
         return $additionalData ? json_decode($additionalData, true) : [];
     }
 
-    protected function getTransactionResponseValue(PaymentTransaction $transaction, string $key)
-    {
-        $responseData = $transaction->getResponse();
-
-        return $responseData['data'][$key] ?? null;
-    }
-
     /**
      * @param PaymentTransaction $paymentTransaction
      * @param string $optionName

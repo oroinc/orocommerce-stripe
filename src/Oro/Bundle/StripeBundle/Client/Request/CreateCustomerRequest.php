@@ -3,6 +3,7 @@
 namespace Oro\Bundle\StripeBundle\Client\Request;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
+use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
@@ -54,11 +55,14 @@ class CreateCustomerRequest extends StripeApiRequestAbstract
     private function fillAddress(array &$requestData): void
     {
         $sourceEntity = $this->getSourceEntity($this->getTransaction());
-        if (!method_exists($sourceEntity, 'getBillingAddress')) {
-            return;
+
+        $address = null;
+        if (method_exists($sourceEntity, 'getBillingAddress')) {
+            $address = $sourceEntity->getBillingAddress();
+        } elseif (method_exists($sourceEntity, 'getAddressByTypeName')) {
+            $address = $sourceEntity->getAddressByTypeName(AddressType::TYPE_BILLING);
         }
 
-        $address = $sourceEntity->getBillingAddress();
         if (!$address instanceof AbstractAddress) {
             return;
         }

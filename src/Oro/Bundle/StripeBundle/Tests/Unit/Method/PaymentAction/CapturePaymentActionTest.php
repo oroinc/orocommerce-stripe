@@ -6,41 +6,38 @@ use LogicException;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
-use Oro\Bundle\StripeBundle\Client\StripeClientFactory;
-use Oro\Bundle\StripeBundle\Client\StripeGateway;
+use Oro\Bundle\StripeBundle\Client\StripeGatewayFactoryInterface;
 use Oro\Bundle\StripeBundle\Client\StripeGatewayInterface;
 use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
 use Oro\Bundle\StripeBundle\Method\PaymentAction\CapturePaymentAction;
 use Oro\Bundle\StripeBundle\Model\PaymentIntentResponse;
-use Oro\Bundle\StripeBundle\Tests\Unit\Utils\SetReflectionPropertyTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Stripe\Collection;
 use Stripe\PaymentIntent;
 
 class CapturePaymentActionTest extends TestCase
 {
-    use SetReflectionPropertyTrait;
-
+    private StripeGatewayInterface|MockObject $client;
+    private PaymentTransactionProvider|MockObject $transactionProvider;
     private CapturePaymentAction $action;
-
-    /** @var StripeGateway|StripeGatewayInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private StripeGatewayInterface $client;
-    /** @var PaymentTransactionProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $transactionProvider;
 
     protected function setUp(): void
     {
+        $factory = $this->createMock(StripeGatewayFactoryInterface::class);
+        $this->client = $this->createMock(StripeGatewayInterface::class);
+        $factory->expects($this->any())
+            ->method('create')
+            ->willReturn($this->client);
         $this->transactionProvider = $this->createMock(PaymentTransactionProvider::class);
-        $this->action = new CapturePaymentAction(new StripeClientFactory(), $this->transactionProvider);
-
-        $this->client = $this->createMock(StripeGateway::class);
-        $this->setProperty(CapturePaymentAction::class, $this->action, 'client', $this->client);
+        $this->action = new CapturePaymentAction($factory, $this->transactionProvider);
     }
 
     public function testIsApplicable(): void
     {
-        $this->assertFalse($this->action->isApplicable('test'));
-        $this->assertTrue($this->action->isApplicable(PaymentMethodInterface::CAPTURE));
+        $transaction = new PaymentTransaction();
+        $this->assertFalse($this->action->isApplicable('test', $transaction));
+        $this->assertTrue($this->action->isApplicable(PaymentMethodInterface::CAPTURE, $transaction));
     }
 
     public function testExecuteException(): void

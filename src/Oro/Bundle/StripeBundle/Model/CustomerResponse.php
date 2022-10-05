@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\StripeBundle\Model;
 
+use Oro\Bundle\StripeBundle\Client\Response\StripeApiResponseInterface;
+
 /**
  * Stores data for customer object responses.
  */
@@ -11,7 +13,7 @@ class CustomerResponse extends AbstractResponseObject implements ResponseObjectI
 
     public function getStatus(): string
     {
-        return $this->getValue('status');
+        return $this->getValue('created') ? StripeApiResponseInterface::SUCCESS_STATUS : 'failed';
     }
 
     public function getIdentifier(): string

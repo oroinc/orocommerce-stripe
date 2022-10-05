@@ -4,38 +4,48 @@ namespace Oro\Bundle\StripeBundle\Tests\Unit\Method\PaymentAction;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\StripeBundle\Client\StripeClientFactory;
-use Oro\Bundle\StripeBundle\Client\StripeGateway;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Bundle\StripeBundle\Client\StripeGatewayFactoryInterface;
 use Oro\Bundle\StripeBundle\Client\StripeGatewayInterface;
 use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
 use Oro\Bundle\StripeBundle\Method\PaymentAction\PurchasePaymentAction;
 use Oro\Bundle\StripeBundle\Model\PaymentIntentResponse;
-use Oro\Bundle\StripeBundle\Tests\Unit\Utils\SetReflectionPropertyTrait;
+use Oro\Bundle\StripeBundle\Provider\EntitiesTransactionsProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Stripe\Collection;
 use Stripe\PaymentIntent;
 
 class PurchasePaymentActionTest extends TestCase
 {
-    use SetReflectionPropertyTrait;
+    private StripeGatewayInterface|MockObject $client;
+    private EntitiesTransactionsProvider|MockObject $entitiesTransactionsProvider;
+    private PaymentTransactionProvider|MockObject $paymentTransactionProvider;
 
     private PurchasePaymentAction $action;
 
-    /** @var StripeGateway|StripeGatewayInterface|\PHPUnit\Framework\MockObject\MockObject  */
-    private StripeGatewayInterface $client;
-
     protected function setUp(): void
     {
-        $this->action = new PurchasePaymentAction(new StripeClientFactory());
+        $factory = $this->createMock(StripeGatewayFactoryInterface::class);
+        $this->client = $this->createMock(StripeGatewayInterface::class);
+        $factory->expects($this->any())
+            ->method('create')
+            ->willReturn($this->client);
+        $this->entitiesTransactionsProvider = $this->createMock(EntitiesTransactionsProvider::class);
+        $this->paymentTransactionProvider = $this->createMock(PaymentTransactionProvider::class);
 
-        $this->client = $this->createMock(StripeGateway::class);
-        $this->setProperty(PurchasePaymentAction::class, $this->action, 'client', $this->client);
+        $this->action = new PurchasePaymentAction(
+            $factory,
+            $this->entitiesTransactionsProvider,
+            $this->paymentTransactionProvider
+        );
     }
 
     public function testIsApplicable(): void
     {
-        $this->assertFalse($this->action->isApplicable('test'));
-        $this->assertTrue($this->action->isApplicable(PaymentMethodInterface::PURCHASE));
+        $transaction = new PaymentTransaction();
+        $this->assertFalse($this->action->isApplicable('test', $transaction));
+        $this->assertTrue($this->action->isApplicable(PaymentMethodInterface::PURCHASE, $transaction));
     }
 
     public function testExecute(): void
@@ -65,6 +75,10 @@ class PurchasePaymentActionTest extends TestCase
         $this->assertTrue($transaction->isSuccessful());
         $this->assertTrue($transaction->isActive());
 
+        $this->assertEquals(
+            ['additionalData' => json_encode(['paymentIntentId' => 'pi_1'])],
+            $transaction->getTransactionOptions()
+        );
         $this->assertEquals('pi_1', $transaction->getReference());
         $this->assertEquals(PaymentMethodInterface::AUTHORIZE, $transaction->getAction());
         $this->assertTrue($response->isSuccessful());

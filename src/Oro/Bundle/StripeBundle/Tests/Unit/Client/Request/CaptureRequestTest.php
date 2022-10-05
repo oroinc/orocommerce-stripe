@@ -24,6 +24,15 @@ class CaptureRequestTest extends TestCase
         $this->assertEquals(['amount_to_capture' => $expected], $request->getRequestData());
     }
 
+    public function testPartialCapture()
+    {
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setAmount(100);
+
+        $request = new CaptureRequest($paymentTransaction, 50);
+        $this->assertEquals(['amount_to_capture' => 5000], $request->getRequestData());
+    }
+
     public function testGetPaymentIdWithoutPaymentIntentId(): void
     {
         $this->expectException(InvalidArgumentException::class);

@@ -14,9 +14,10 @@ class CancelRequest extends StripeApiRequestAbstract
 
     public function getPaymentId(): ?string
     {
-        $paymentResponse = $this->transaction->getSourcePaymentTransaction()->getResponse();
+        $paymentId = $this->transaction->getSourcePaymentTransaction()
+            ?->getResponse()[PaymentIntentResponse::PAYMENT_INTENT_ID_PARAM] ?? null;
 
-        if (!$paymentResponse || !$paymentResponse[PaymentIntentResponse::PAYMENT_INTENT_ID_PARAM]) {
+        if (null === $paymentId) {
             throw new \InvalidArgumentException(
                 sprintf(
                     'Request could not be executed: parameter "%s" is not defined',
@@ -25,7 +26,7 @@ class CancelRequest extends StripeApiRequestAbstract
             );
         }
 
-        return $paymentResponse[PaymentIntentResponse::PAYMENT_INTENT_ID_PARAM];
+        return $paymentId;
     }
 
     /**

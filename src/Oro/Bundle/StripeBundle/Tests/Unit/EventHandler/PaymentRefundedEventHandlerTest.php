@@ -84,7 +84,11 @@ class PaymentRefundedEventHandlerTest extends TestCase
             ->willReturn($sourceTransaction);
 
         $this->repositoryMock->expects($this->once())
-            ->method('findSuccessfulRelatedTransactionsByAction')
+            ->method('findBy')
+            ->with([
+                'sourcePaymentTransaction' => $sourceTransaction,
+                'action' => PaymentMethodInterface::REFUND
+            ])
             ->willReturn([]);
 
         $refundTransaction = new PaymentTransaction();
@@ -148,7 +152,11 @@ class PaymentRefundedEventHandlerTest extends TestCase
             ]);
 
         $this->repositoryMock->expects($this->once())
-            ->method('findSuccessfulRelatedTransactionsByAction')
+            ->method('findBy')
+            ->with([
+                'sourcePaymentTransaction' => $sourceTransaction,
+                'action' => PaymentMethodInterface::REFUND
+            ])
             ->willReturn([$refundTransaction1]);
 
         $refundTransaction = new PaymentTransaction();
@@ -191,9 +199,11 @@ class PaymentRefundedEventHandlerTest extends TestCase
             ->method('findOneBy')
             ->willReturn($sourceTransaction);
 
-        $cancelTransaction = new PaymentTransaction();
-        $cancelTransaction->setReference('ch_1')
-            ->setAction(PaymentMethodInterface::CANCEL)
+        $refundTransaction = new PaymentTransaction();
+        $refundTransaction->setReference('ch_1')
+            ->setSuccessful(true)
+            ->setAction(PaymentMethodInterface::REFUND)
+            ->setAmount(100)
             ->setResponse([
                 'data' => [
                     'id' => 'ch_1',
@@ -217,8 +227,12 @@ class PaymentRefundedEventHandlerTest extends TestCase
             ]);
 
         $this->repositoryMock->expects($this->once())
-            ->method('findSuccessfulRelatedTransactionsByAction')
-            ->willReturn([$cancelTransaction]);
+            ->method('findBy')
+            ->with([
+                'sourcePaymentTransaction' => $sourceTransaction,
+                'action' => PaymentMethodInterface::REFUND
+            ])
+            ->willReturn([$refundTransaction]);
 
         $this->paymentTransactionProvider->expects($this->never())
             ->method('createPaymentTransactionByParentTransaction');
@@ -242,7 +256,7 @@ class PaymentRefundedEventHandlerTest extends TestCase
             ->willReturn(null);
 
         $this->repositoryMock->expects($this->never())
-            ->method('findSuccessfulRelatedTransactionsByAction');
+            ->method('findBy');
 
         $this->paymentTransactionProvider->expects($this->never())
             ->method('createPaymentTransactionByParentTransaction');

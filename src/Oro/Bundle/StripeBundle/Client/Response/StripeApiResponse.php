@@ -35,6 +35,6 @@ class StripeApiResponse implements StripeApiResponseInterface
             self::SUCCESS_STATUS,
             self::REQUIRES_CAPTURE,
             self::CANCELED
-        ]);
+        ], true);
     }
 }

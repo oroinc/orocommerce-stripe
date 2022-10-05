@@ -11,7 +11,7 @@ class RefundResponse extends AbstractResponseObject implements ResponseObjectInt
     private const PAYMENT_INTENT_FIELD = 'payment_intent';
     private const STATUS_FIELD = 'status';
 
-    public function getPaymentIntentId(): string
+    public function getPaymentIntentId(): ?string
     {
         return $this->getValue(self::PAYMENT_INTENT_FIELD);
     }

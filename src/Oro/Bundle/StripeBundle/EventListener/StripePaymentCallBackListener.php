@@ -44,21 +44,19 @@ class StripePaymentCallBackListener
     public function onReturn(AbstractCallbackEvent $event)
     {
         $paymentTransaction = $event->getPaymentTransaction();
-
         if (!$paymentTransaction) {
             return;
         }
 
         $paymentMethodId = $paymentTransaction->getPaymentMethod();
-
         if (false === $this->paymentMethodProvider->hasPaymentMethod($paymentMethodId)) {
             return;
         }
 
         $eventData = $event->getData();
-
         $this->updateTransactionOptions($paymentTransaction, $eventData);
 
+        $response = [];
         try {
             $successful = false;
             $paymentMethod = $this->paymentMethodProvider->getPaymentMethod($paymentMethodId);

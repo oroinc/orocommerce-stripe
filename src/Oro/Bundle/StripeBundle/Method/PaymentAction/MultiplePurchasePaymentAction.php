@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\StripeBundle\Method\PaymentAction;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
@@ -13,8 +12,8 @@ use Oro\Bundle\StripeBundle\Client\Response\StripeApiResponseInterface;
 use Oro\Bundle\StripeBundle\Client\StripeGatewayFactoryInterface;
 use Oro\Bundle\StripeBundle\Client\StripeGatewayInterface;
 use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
-use Oro\Bundle\StripeBundle\Provider\EntitiesTransactionsProvider;
 use Oro\Bundle\StripeBundle\Model\CustomerResponse;
+use Oro\Bundle\StripeBundle\Provider\EntitiesTransactionsProvider;
 
 /**
  * Implements logic to save payment details and use them for further purchase actions.
@@ -22,18 +21,15 @@ use Oro\Bundle\StripeBundle\Model\CustomerResponse;
 class MultiplePurchasePaymentAction extends PurchasePaymentActionAbstract implements PaymentActionInterface
 {
     private CreateCustomerRequestFactory $createCustomerRequestFactory;
-    private DoctrineHelper $doctrineHelper;
 
     public function __construct(
         StripeGatewayFactoryInterface $clientFactory,
         EntitiesTransactionsProvider $entitiesTransactionsProvider,
         PaymentTransactionProvider $paymentTransactionProvider,
-        CreateCustomerRequestFactory $createCustomerRequestFactory,
-        DoctrineHelper $doctrineHelper
+        CreateCustomerRequestFactory $createCustomerRequestFactory
     ) {
         parent::__construct($clientFactory, $entitiesTransactionsProvider, $paymentTransactionProvider);
         $this->createCustomerRequestFactory = $createCustomerRequestFactory;
-        $this->doctrineHelper = $doctrineHelper;
     }
 
     /**

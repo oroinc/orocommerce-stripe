@@ -32,6 +32,7 @@ abstract class PaymentActionAbstract
         if (null === $this->client) {
             $this->client = $this->clientFactory->create($config);
         }
+
         return $this->client;
     }
 
@@ -63,6 +64,7 @@ abstract class PaymentActionAbstract
     protected function getTransactionAdditionalData(PaymentTransaction $paymentTransaction): array
     {
         $transactionOptions = $paymentTransaction->getTransactionOptions();
+
         return isset($transactionOptions['additionalData'])
             ? json_decode($transactionOptions['additionalData'], true)
             : [];
@@ -96,7 +98,7 @@ abstract class PaymentActionAbstract
     protected function updateTransactionOptions(PaymentTransaction $paymentTransaction, array $data): void
     {
         $transactionOptions = $paymentTransaction->getTransactionOptions();
-        $additionalOptions = (array)json_decode($transactionOptions['additionalData'], true);
+        $additionalOptions = (array)json_decode($transactionOptions['additionalData'] ?? null, true);
         $additionalOptions = array_merge($additionalOptions, $data);
         $transactionOptions['additionalData'] = json_encode($additionalOptions);
         $paymentTransaction->setTransactionOptions($transactionOptions);

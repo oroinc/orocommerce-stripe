@@ -132,7 +132,9 @@ class StripeSettingsTypeTest extends FormIntegrationTestCase
                 $this->getEntity(Localization::class, ['id' => self::LOCALIZATION_ID])
             ))
             ->addShortLabel($this->createLocalizedValue('Label 2'))
-            ->setSigningSecret('secret');
+            ->setSigningSecret('secret')
+            ->setEnableReAuthorize(true)
+            ->setReAuthorizationErrorEmail('test@test.com');
 
         $submitData = [
             'apiPublicKey' => 'public key',
@@ -159,7 +161,9 @@ class StripeSettingsTypeTest extends FormIntegrationTestCase
                     ],
                 ],
             ],
-            'signingSecret' => 'secret'
+            'signingSecret' => 'secret',
+            'enableReAuthorize' => true,
+            'reAuthorizationErrorEmail' => 'test@test.com'
         ];
 
 
