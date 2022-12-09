@@ -8,5 +8,5 @@ namespace Oro\Bundle\StripeBundle\Model;
  */
 interface PaymentIntentAwareInterface
 {
-    public function getPaymentIntentId(): string;
+    public function getPaymentIntentId(): ?string;
 }

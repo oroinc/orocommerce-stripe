@@ -15,7 +15,7 @@ class PaymentIntentResponseTest extends TestCase
         $this->assertEquals('succeeded', $paymentIntentResponse->getStatus());
         $this->assertEquals('pi_1', $paymentIntentResponse->getIdentifier());
         $this->assertNull($paymentIntentResponse->getNextActionType());
-        $this->assertEquals($paymentIntentResponse->getClientSecret(), 'secret');
+        $this->assertEquals('secret', $paymentIntentResponse->getClientSecret());
 
         $responseData = $paymentIntentResponse->getData();
 

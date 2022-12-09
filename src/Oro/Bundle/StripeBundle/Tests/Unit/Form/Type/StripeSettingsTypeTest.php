@@ -22,6 +22,7 @@ use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
 
@@ -113,7 +114,9 @@ class StripeSettingsTypeTest extends FormIntegrationTestCase
                 $this->getEntity(Localization::class, ['id' => self::LOCALIZATION_ID])
             ))
             ->addShortLabel($this->createLocalizedValue('Label 2'))
-            ->setSigningSecret('secret');
+            ->setSigningSecret('secret')
+            ->setEnableReAuthorize(true)
+            ->setReAuthorizationErrorEmail('test@test.com');
 
         $submitData = [
             'apiPublicKey' => 'public key',
@@ -140,7 +143,9 @@ class StripeSettingsTypeTest extends FormIntegrationTestCase
                     ],
                 ],
             ],
-            'signingSecret' => 'secret'
+            'signingSecret' => 'secret',
+            'enableReAuthorize' => true,
+            'reAuthorizationErrorEmail' => 'test@test.com'
         ];
 
 
@@ -157,8 +162,11 @@ class StripeSettingsTypeTest extends FormIntegrationTestCase
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
             ->method('setDefaults')
-            ->with(['data_class' => StripeTransportSettings::class,]);
-
+            ->with([
+                'data_class' => StripeTransportSettings::class,
+                'validation_groups' => function (FormInterface $form) {
+                },
+            ]);
         $formType = new StripeSettingsType($this->translator);
         $formType->configureOptions($resolver);
     }

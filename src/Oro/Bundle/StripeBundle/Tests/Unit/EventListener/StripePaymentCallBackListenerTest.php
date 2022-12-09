@@ -11,6 +11,7 @@ use Oro\Bundle\PaymentBundle\Provider\PaymentResultMessageProviderInterface;
 use Oro\Bundle\StripeBundle\Client\Exception\StripeApiException;
 use Oro\Bundle\StripeBundle\EventListener\StripePaymentCallBackListener;
 use Oro\Bundle\StripeBundle\Method\PaymentAction\PaymentActionInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
@@ -18,17 +19,18 @@ use Symfony\Component\HttpFoundation\Session\Session;
 
 class StripePaymentCallBackListenerTest extends TestCase
 {
-    /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject  */
+    /** @var PaymentMethodProviderInterface|MockObject */
     private PaymentMethodProviderInterface $paymentMethodProvider;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|Session  */
+    /** @var Session|MockObject */
     private Session $session;
 
-    /** @var PaymentResultMessageProviderInterface|\PHPUnit\Framework\MockObject\MockObject  */
+    /** @var PaymentResultMessageProviderInterface|MockObject */
     private PaymentResultMessageProviderInterface $paymentResult;
 
-    /** @var Logger|\PHPUnit\Framework\MockObject\MockObject  */
+    /** @var Logger|MockObject */
     private Logger $logger;
+
     private StripePaymentCallBackListener $listener;
 
     protected function setUp(): void
@@ -93,6 +95,11 @@ class StripePaymentCallBackListenerTest extends TestCase
         $this->listener->onReturn($event);
 
         $this->assertEquals(Response::HTTP_OK, $event->getResponse()->getStatusCode());
+        $additionalData = json_decode(
+            $paymentTransaction->getTransactionOptions()['additionalData'],
+            JSON_OBJECT_AS_ARRAY
+        );
+        $this->assertEquals(['paymentIntentId' => 'testIntentId'], $additionalData);
     }
 
     public function testOnReturnPaymentFailed(): void
@@ -101,7 +108,7 @@ class StripePaymentCallBackListenerTest extends TestCase
         $paymentTransaction->setPaymentMethod('stripe');
         $paymentTransaction->setTransactionOptions(['additionalData' => '']);
 
-        $event = new CallbackReturnEvent(['paymentIntentId' => 'testIntentId']);
+        $event = new CallbackReturnEvent(['setupIntentId' => 'testIntentId']);
         $event->setPaymentTransaction($paymentTransaction);
 
         $paymentMethod = $this->createMock(PaymentMethodInterface::class);
@@ -123,6 +130,11 @@ class StripePaymentCallBackListenerTest extends TestCase
         $this->listener->onReturn($event);
 
         $this->assertEquals(Response::HTTP_FORBIDDEN, $event->getResponse()->getStatusCode());
+        $additionalData = json_decode(
+            $paymentTransaction->getTransactionOptions()['additionalData'],
+            JSON_OBJECT_AS_ARRAY
+        );
+        $this->assertEquals(['setupIntentId' => 'testIntentId'], $additionalData);
     }
 
     public function testOnReturnFailedWithRedirect(): void
@@ -243,5 +255,46 @@ class StripePaymentCallBackListenerTest extends TestCase
             ]);
 
         $this->listener->onReturn($event);
+    }
+
+    public function testOnReturnWithPartialSuccess(): void
+    {
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setPaymentMethod('stripe');
+        $paymentTransaction->setTransactionOptions([
+            'additionalData' => '',
+            'partiallyPaidUrl' => '/test'
+        ]);
+
+        $event = new CallbackReturnEvent(['setupIntentId' => 'testIntentId']);
+        $event->setPaymentTransaction($paymentTransaction);
+
+        $paymentMethod = $this->createMock(PaymentMethodInterface::class);
+        $paymentMethod->expects($this->once())
+            ->method('execute')
+            ->with(PaymentActionInterface::CONFIRM_ACTION, $paymentTransaction)
+            ->willReturn([
+                'successful' => false,
+                'is_multi_transaction' => true,
+                'has_successful' => true
+            ]);
+
+        $this->paymentMethodProvider->expects($this->once())
+            ->method('hasPaymentMethod')
+            ->with('stripe')
+            ->willReturn(true);
+
+        $this->paymentMethodProvider->expects($this->once())
+            ->method('getPaymentMethod')
+            ->with('stripe')
+            ->willReturn($paymentMethod);
+
+        $this->listener->onReturn($event);
+        $this->assertEquals(Response::HTTP_FOUND, $event->getResponse()->getStatusCode());
+        $additionalData = json_decode(
+            $paymentTransaction->getTransactionOptions()['additionalData'],
+            JSON_OBJECT_AS_ARRAY
+        );
+        $this->assertEquals(['setupIntentId' => 'testIntentId'], $additionalData);
     }
 }

@@ -15,4 +15,16 @@ interface StripeGatewayInterface
     public function confirm(StripeApiRequestInterface $request): ResponseObjectInterface;
 
     public function capture(StripeApiRequestInterface $request): ResponseObjectInterface;
+
+    public function createCustomer(StripeApiRequestInterface $request): ResponseObjectInterface;
+
+    public function createSetupIntent(StripeApiRequestInterface $request): ResponseObjectInterface;
+
+    public function cancel(StripeApiRequestInterface $request): ResponseObjectInterface;
+
+    public function refund(StripeApiRequestInterface $request): ResponseObjectInterface;
+
+    public function findSetupIntentCustomer(string $setupIntentId): ResponseObjectInterface;
+
+    public function findSetupIntent(string $setupIntentId): ResponseObjectInterface;
 }

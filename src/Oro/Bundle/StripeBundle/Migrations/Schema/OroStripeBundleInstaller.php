@@ -13,7 +13,7 @@ class OroStripeBundleInstaller implements Installation
 {
     public function getMigrationVersion(): string
     {
-        return 'v1_0';
+        return 'v1_1';
     }
 
     public function up(Schema $schema, QueryBag $queries): void
@@ -36,9 +36,15 @@ class OroStripeBundleInstaller implements Installation
             'length' => 255,
             'comment' => '(DC2Type:crypted_string)'
         ]);
-        $table->addColumn('stripe_signing_secret', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('stripe_signing_secret', 'string', [
+            'notnull' => false,
+            'length' => 255,
+            'comment' => '(DC2Type:crypted_string)'
+        ]);
         $table->addColumn('stripe_payment_action', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('stripe_user_monitoring', 'boolean', ['notnull' => false, 'default' => '1']);
+        $table->addColumn('stripe_user_monitoring', 'boolean', ['notnull' => false, 'default' => false]);
+        $table->addColumn('stripe_enable_re_authorize', 'boolean', ['notnull' => false, 'default' => false]);
+        $table->addColumn('stripe_re_authorization_error_email', 'string', ['notnull' => false]);
     }
 
     private function createOroStripeTransportLabelTable(Schema $schema): void

@@ -94,11 +94,12 @@ class PaymentSuccessEventHandlerTest extends TestCase
 
         $this->assertTrue($captureTransaction->isSuccessful());
         $this->assertEquals('pi_1', $captureTransaction->getReference());
+        $this->assertFalse($sourceTransaction->isActive());
 
         $transactionResponse = $captureTransaction->getResponse();
         $this->assertArrayHasKey('data', $transactionResponse);
         $this->assertArrayHasKey('source', $transactionResponse);
-        $this->assertEquals($transactionResponse['source'], ResponseObjectInterface::ACTION_SOURCE_MANUALLY);
+        $this->assertEquals(ResponseObjectInterface::ACTION_SOURCE_MANUALLY, $transactionResponse['source']);
     }
 
     /**

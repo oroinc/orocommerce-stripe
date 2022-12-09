@@ -3,39 +3,44 @@
 namespace Oro\Bundle\StripeBundle\Tests\Unit\Method\PaymentAction;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use Oro\Bundle\StripeBundle\Client\StripeClientFactory;
-use Oro\Bundle\StripeBundle\Client\StripeGateway;
+use Oro\Bundle\StripeBundle\Client\StripeGatewayFactoryInterface;
 use Oro\Bundle\StripeBundle\Client\StripeGatewayInterface;
 use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
 use Oro\Bundle\StripeBundle\Method\PaymentAction\ConfirmPaymentAction;
 use Oro\Bundle\StripeBundle\Method\PaymentAction\PaymentActionInterface;
 use Oro\Bundle\StripeBundle\Model\PaymentIntentResponse;
-use Oro\Bundle\StripeBundle\Tests\Unit\Utils\SetReflectionPropertyTrait;
+use Oro\Bundle\StripeBundle\Provider\EntitiesTransactionsProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Stripe\Collection;
 use Stripe\PaymentIntent;
 
 class ConfirmPaymentActionTest extends TestCase
 {
-    use SetReflectionPropertyTrait;
-
+    private StripeGatewayInterface|MockObject $client;
+    private EntitiesTransactionsProvider|MockObject $entitiesTransactionsProvider;
     private ConfirmPaymentAction $action;
-
-    /** @var StripeGateway|StripeGatewayInterface|\PHPUnit\Framework\MockObject\MockObject  */
-    private StripeGatewayInterface $client;
 
     protected function setUp(): void
     {
-        $this->action = new ConfirmPaymentAction(new StripeClientFactory());
+        $factory = $this->createMock(StripeGatewayFactoryInterface::class);
+        $this->client = $this->createMock(StripeGatewayInterface::class);
+        $factory->expects($this->any())
+            ->method('create')
+            ->willReturn($this->client);
+        $this->entitiesTransactionsProvider = $this->createMock(EntitiesTransactionsProvider::class);
 
-        $this->client = $this->createMock(StripeGateway::class);
-        $this->setProperty(ConfirmPaymentAction::class, $this->action, 'client', $this->client);
+        $this->action = new ConfirmPaymentAction(
+            $factory,
+            $this->entitiesTransactionsProvider,
+        );
     }
 
     public function testIsApplicable(): void
     {
-        $this->assertFalse($this->action->isApplicable('test'));
-        $this->assertTrue($this->action->isApplicable(PaymentActionInterface::CONFIRM_ACTION));
+        $transaction = new PaymentTransaction();
+        $this->assertFalse($this->action->isApplicable('test', $transaction));
+        $this->assertTrue($this->action->isApplicable(PaymentActionInterface::CONFIRM_ACTION, $transaction));
     }
 
     public function testExecute(): void

@@ -39,7 +39,7 @@ class PaymentSuccessEventHandler extends AbstractStripeEventHandler implements S
 
         // Check if capture transaction does not exist. There are no ability to check if this event has been triggered
         // by API call from application or by manual capturing from Stripe Dashboard.
-        if (!$this->captureTransactionAlreadyExists($authorizationTransaction, $responseObject)) {
+        if (!$this->captureTransactionAlreadyExists($authorizationTransaction)) {
             $capturePaymentTransaction = $this->paymentTransactionProvider->createPaymentTransactionByParentTransaction(
                 PaymentMethodInterface::CAPTURE,
                 $authorizationTransaction
@@ -47,6 +47,7 @@ class PaymentSuccessEventHandler extends AbstractStripeEventHandler implements S
 
             $capturePaymentTransaction->setAmount($this->getReceivedAmount($responseObject));
             $capturePaymentTransaction->setActive(false);
+            $authorizationTransaction->setActive(false);
 
             $this->updateAndSaveTransaction(
                 $responseObject,
@@ -66,14 +67,11 @@ class PaymentSuccessEventHandler extends AbstractStripeEventHandler implements S
         return null;
     }
 
-    private function captureTransactionAlreadyExists(
-        PaymentTransaction $sourceTransaction,
-        ResponseObjectInterface $responseObject
-    ) {
+    private function captureTransactionAlreadyExists(PaymentTransaction $sourceTransaction): bool
+    {
         $transactions = $this->getPaymentTransactionRepository()->findBy([
             'sourcePaymentTransaction' => $sourceTransaction,
-            'action' => PaymentMethodInterface::CAPTURE,
-            'amount' => PaymentAmountConverter::convertFromStripeFormat($responseObject->getValue('amount'))
+            'action' => PaymentMethodInterface::CAPTURE
         ]);
 
         foreach ($transactions as $transaction) {
@@ -83,7 +81,7 @@ class PaymentSuccessEventHandler extends AbstractStripeEventHandler implements S
             }
 
             // Capture request sent from API but response still not proceeded or transaction not updated at this moment.
-            if ($transaction->isActive() && !$transaction->isSuccessful() && !$transaction->getReference()) {
+            if ($transaction->isActive() && !$transaction->getReference()) {
                 return true;
             }
         }
