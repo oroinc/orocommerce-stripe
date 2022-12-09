@@ -4,8 +4,8 @@
 @fixture-OroPaymentBundle:ProductsAndShoppingListsForPayments.yml
 
 Feature: Stripe integration
-    In order admin to able manage integration
-    As a Admin
+    In order for the admin to be able to manage integration
+    As an Admin
     I want to have the ability to create order and manage integration
 
     Scenario: Feature Background
@@ -84,9 +84,27 @@ Feature: Stripe integration
         Then I should see "The payment of $13.00 has been captured successfully" flash message
 
     Scenario: Edit Stripe Integration
-        And I go to System/Integrations/Manage Integrations
+        Given I go to System/Integrations/Manage Integrations
         And I click Edit "Stripe" in grid
-        And I fill "Stripe Form" with:
+        When I fill "Stripe Form" with:
+            | Automatically Re-Authorize Every 6 Days 20 Hours | true |
+        And I save form
+        Then I should see validation errors:
+            | Re-authorization Errors Notification Email | This value should not be blank. |
+        When I fill "Stripe Form" with:
+            | Re-authorization Errors Notification Email | notification@email.com |
+        And I save form
+        Then I should see "Integration saved" flash message
+        When I fill "Stripe Form" with:
+            | Payment Action | automatic |
+        Then I should not see "Automatically Re-Authorize Every 6 Days 20 Hours"
+        And I should not see "Re-Authorization Errors Notification Email"
+        When I fill "Stripe Form" with:
+            | Payment Action | manual |
+        Then "Stripe Form" must contains values:
+            | Automatically Re-Authorize Every 6 Days 20 Hours | false |
+            | Re-authorization Errors Notification Email       |       |
+        When I fill "Stripe Form" with:
             | Payment Action  | automatic |
             | User Monitoring | false     |
         And I save and close form

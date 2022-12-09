@@ -16,14 +16,14 @@ use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
  */
 class CapturePaymentAction extends PaymentActionAbstract implements PaymentActionInterface
 {
-    private PaymentTransactionProvider $transactionProvider;
+    private PaymentTransactionProvider $paymentTransactionProvider;
 
     public function __construct(
         StripeGatewayFactoryInterface $clientFactory,
-        PaymentTransactionProvider $transactionProvider
+        PaymentTransactionProvider $paymentTransactionProvider
     ) {
         parent::__construct($clientFactory);
-        $this->transactionProvider = $transactionProvider;
+        $this->paymentTransactionProvider = $paymentTransactionProvider;
     }
 
     public function execute(
@@ -36,7 +36,7 @@ class CapturePaymentAction extends PaymentActionAbstract implements PaymentActio
         }
 
         $paymentTransaction->setActive(true);
-        $this->transactionProvider->savePaymentTransaction($paymentTransaction);
+        $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
 
         try {
             $request = new CaptureRequest($authorizeTransaction);
@@ -47,11 +47,12 @@ class CapturePaymentAction extends PaymentActionAbstract implements PaymentActio
         }
 
         $this->updateTransactionData($paymentTransaction, $responseObject, $response->isSuccessful());
+        $authorizeTransaction->setActive(!$paymentTransaction->isSuccessful());
 
         return $response;
     }
 
-    public function isApplicable(string $action): bool
+    public function isApplicable(string $action, PaymentTransaction $paymentTransaction): bool
     {
         return $action === PaymentMethodInterface::CAPTURE;
     }

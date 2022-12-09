@@ -4,8 +4,8 @@
 @fixture-OroPaymentBundle:ProductsAndShoppingListsForPayments.yml
 
 Feature: Stripe integration single page checkout
-    In order admin to able manage integration
-    As a Admin
+    In order for the admin to be able to manage integration
+    As an Admin
     I want to have the ability to create order and manage integration
 
     Scenario: Feature Background

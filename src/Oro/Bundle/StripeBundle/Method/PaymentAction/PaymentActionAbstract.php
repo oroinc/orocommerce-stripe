@@ -3,9 +3,15 @@
 namespace Oro\Bundle\StripeBundle\Method\PaymentAction;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\StripeBundle\Client\Request\PurchaseRequest;
+use Oro\Bundle\StripeBundle\Client\Response\PurchaseResponse;
+use Oro\Bundle\StripeBundle\Client\Response\StripeApiResponseInterface;
 use Oro\Bundle\StripeBundle\Client\StripeGatewayFactoryInterface;
 use Oro\Bundle\StripeBundle\Client\StripeGatewayInterface;
 use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
+use Oro\Bundle\StripeBundle\Method\StripePaymentActionMapper;
+use Oro\Bundle\StripeBundle\Model\PaymentIntentResponse;
 use Oro\Bundle\StripeBundle\Model\ResponseObjectInterface;
 
 /**
@@ -26,6 +32,7 @@ abstract class PaymentActionAbstract
         if (null === $this->client) {
             $this->client = $this->clientFactory->create($config);
         }
+
         return $this->client;
     }
 
@@ -39,7 +46,7 @@ abstract class PaymentActionAbstract
     protected function updateTransactionData(
         PaymentTransaction $paymentTransaction,
         ResponseObjectInterface $responseObject,
-        bool $successful
+        ?bool $successful = null
     ): void {
         $paymentTransaction->setReference($responseObject->getIdentifier());
 
@@ -48,6 +55,57 @@ abstract class PaymentActionAbstract
             $responseObject->getData()
         );
         $paymentTransaction->setResponse($responseData);
-        $paymentTransaction->setSuccessful($successful);
+
+        if (null !== $successful) {
+            $paymentTransaction->setSuccessful($successful);
+        }
+    }
+
+    protected function getTransactionAdditionalData(PaymentTransaction $paymentTransaction): array
+    {
+        $transactionOptions = $paymentTransaction->getTransactionOptions();
+
+        return isset($transactionOptions['additionalData'])
+            ? json_decode($transactionOptions['additionalData'], true)
+            : [];
+    }
+
+    protected function executePurchase(
+        StripePaymentConfig $config,
+        PaymentTransaction $paymentTransaction
+    ): StripeApiResponseInterface {
+        $client = $this->getClient($config);
+
+        $request = new PurchaseRequest($config, $paymentTransaction);
+        $responseObject = $client->purchase($request);
+
+        $action = $this->getAction($config->getPaymentAction());
+        $paymentTransaction->setAction($action);
+
+        $response = new PurchaseResponse($responseObject);
+        $paymentTransaction->setActive($response->isSuccessful() && $action === PaymentMethodInterface::AUTHORIZE);
+        $this->updateTransactionOptions(
+            $paymentTransaction,
+            [
+                PaymentIntentResponse::PAYMENT_INTENT_ID_PARAM => $responseObject->getIdentifier()
+            ]
+        );
+        $this->updateTransactionData($paymentTransaction, $responseObject, $response->isSuccessful());
+
+        return $response;
+    }
+
+    protected function updateTransactionOptions(PaymentTransaction $paymentTransaction, array $data): void
+    {
+        $transactionOptions = $paymentTransaction->getTransactionOptions();
+        $additionalOptions = (array)json_decode($transactionOptions['additionalData'] ?? null, true);
+        $additionalOptions = array_merge($additionalOptions, $data);
+        $transactionOptions['additionalData'] = json_encode($additionalOptions);
+        $paymentTransaction->setTransactionOptions($transactionOptions);
+    }
+
+    protected function getAction(string $action): string
+    {
+        return StripePaymentActionMapper::getPaymentAction($action);
     }
 }

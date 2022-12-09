@@ -28,23 +28,28 @@ class StripePaymentConfigFactory
     public function createConfig(StripeTransportSettings $settings): StripePaymentConfig
     {
         $parameters = $settings->getSettingsBag();
+        $notificationEmails = explode(',', $parameters->get(StripeTransportSettings::RE_AUTHORIZATION_ERROR_EMAIL));
+        $notificationEmails = array_map('trim', $notificationEmails);
 
         return new StripePaymentConfig([
             AbstractParameterBagPaymentConfig::FIELD_LABEL =>
-                (string) $this->localizationHelper->getLocalizedValue($settings->getLabels()),
+                (string)$this->localizationHelper->getLocalizedValue($settings->getLabels()),
             AbstractParameterBagPaymentConfig::FIELD_SHORT_LABEL =>
-                (string) $this->localizationHelper->getLocalizedValue($settings->getShortLabels()),
+                (string)$this->localizationHelper->getLocalizedValue($settings->getShortLabels()),
             AbstractParameterBagPaymentConfig::FIELD_ADMIN_LABEL =>
-                (string) $this->localizationHelper->getLocalizedValue($settings->getLabels()),
+                (string)$this->localizationHelper->getLocalizedValue($settings->getLabels()),
             AbstractParameterBagPaymentConfig::FIELD_PAYMENT_METHOD_IDENTIFIER =>
                 $this->getPaymentMethodIdentifier($settings->getChannel()),
             StripePaymentConfig::PUBLIC_KEY => $parameters->get(StripeTransportSettings::API_PUBLIC_KEY),
             StripePaymentConfig::SECRET_KEY => $parameters->get(StripeTransportSettings::API_SECRET_KEY),
             StripePaymentConfig::PAYMENT_ACTION => $parameters->get(StripeTransportSettings::PAYMENT_ACTION),
             StripePaymentConfig::USER_MONITORING_ENABLED =>
-                (bool) $parameters->get(StripeTransportSettings::USER_MONITORING),
+                (bool)$parameters->get(StripeTransportSettings::USER_MONITORING),
             StripePaymentConfig::LOCALE => $this->getCurrentLocaleCode(),
-            StripePaymentConfig::SIGNING_SECRET => $parameters->get(StripeTransportSettings::SIGNING_SECRET)
+            StripePaymentConfig::SIGNING_SECRET => $parameters->get(StripeTransportSettings::SIGNING_SECRET),
+            StripePaymentConfig::RE_AUTHORIZATION_ERROR_EMAIL => $notificationEmails,
+            StripePaymentConfig::ALLOW_RE_AUTHORIZE => (bool)$parameters
+                ->get(StripeTransportSettings::ALLOW_RE_AUTHORIZE),
         ]);
     }
 
@@ -55,7 +60,13 @@ class StripePaymentConfigFactory
 
     private function getCurrentLocaleCode(): ?string
     {
-        $code = explode('_', $this->localizationHelper->getCurrentLocalization()?->getLanguageCode());
-        return $code ? reset($code) : $code;
+        $languageCode = $this->localizationHelper->getCurrentLocalization()?->getLanguageCode();
+        if (!$languageCode) {
+            return null;
+        }
+
+        $code = explode('_', $languageCode);
+
+        return $code ? reset($code) : null;
     }
 }

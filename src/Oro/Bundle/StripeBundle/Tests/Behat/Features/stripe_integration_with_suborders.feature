@@ -1,0 +1,179 @@
+@ticket-STRIPE-49
+@regression
+@fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
+@fixture-OroCheckoutBundle:Shipping.yml
+@fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
+@fixture-OroCheckoutBundle:Payment.yml
+@fixture-OroCheckoutBundle:CheckoutCustomerFixture.yml
+@fixture-OroCheckoutBundle:ProductsAndCategoriesForMultiShippingFixture.yml
+@fixture-OroCheckoutBundle:ShoppingListForMultiShippingFixture.yml
+
+Feature: Stripe integration with suborders
+    In order for the admin to be able to use Stripe payment
+    As an Admin
+    I want to have the ability to use Stripe payment for sub orders
+
+    Scenario: Feature Background
+        Given sessions active:
+            | Admin | first_session  |
+            | Buyer | second_session |
+
+    Scenario: Create new Stripe Integration
+        Given I proceed as the Admin
+        And I login as administrator
+        And I go to System/Integrations/Manage Integrations
+        And I click "Create Integration"
+        And I select "Stripe" from "Type"
+        # Public Key and Secret Key were taken for testing from https://stripe.com/docs/
+        And I fill "Stripe Form" with:
+            | Name                   | Stripe   |
+            | Label                  | Stripe   |
+            | Short Label            | Stripe   |
+            | API Public Key         | pk_test  |
+            | API Secret Key         | sk_test  |
+            | Webhook Signing Secret | w_secret |
+        And I save and close form
+        Then I should see "Integration saved" flash message
+        And I should see Stripe in grid
+
+    Scenario: Create Stripe payment rule
+        And I create payment rule with "Stripe" payment method
+        And I go to System/Payment Rules
+        And I should see StripePaymentRule in grid
+
+    Scenario: Create Multi Shipping integration
+        Given I proceed as the Admin
+        And I login as administrator
+        And go to System/Integrations/Manage Integrations
+        And I click "Create Integration"
+        And I fill form with:
+            | Type | Multi Shipping Cost |
+            | Name | Multi Shipping      |
+        When I save and close form
+        Then I should see "Integration saved" flash message
+
+    Scenario: Enable shipping method selection per line item and grouping and suborders
+        Given I go to System/Configuration
+        And I follow "Commerce/Sales/Multi Shipping Options" on configuration sidebar
+        And uncheck "Use default" for "Enable shipping method selection per line item" field
+        And I fill form with:
+            | Enable shipping method selection per line item | true |
+        And uncheck "Use default" for "Enable grouping of line items during checkout" field
+        And I fill form with:
+            | Enable grouping of line items during checkout | true |
+        And uncheck "Use default" for "Group line items by" field
+        And I fill form with:
+            | Group line items by | Owner |
+        And uncheck "Use default" for "Create Sub-Orders for each group" field
+        And I fill form with:
+            | Create Sub-Orders for each group | true |
+        And I save form
+        Then I should see "Configuration saved" flash message
+
+    Scenario: Checkout with stripe payment
+        Given I proceed as the Buyer
+        And I signed in as AmandaRCole@example.org on the store frontend
+        When I open page with shopping list List 1
+        And I wait line items are initialized
+        And I click "Create Order"
+        And I click "Ship to This Address"
+        And I click "Continue"
+        And I click "Continue"
+        And I click on "Checkout Payment Method" with title "Stripe"
+        # Test card number was taken from https://stripe.com/docs/
+        And I fill "Stripe Card Form" with:
+            | Stripe Card Number | 4242 4242 4242 4242 |
+            | Stripe Exp Date    | 12 / 35             |
+            | Stripe CVC         | 111                 |
+            | Stripe ZIP         | 12345               |
+        And I click "Continue"
+        And I click "Submit Order"
+        Then I see the "Thank You" page with "Thank You For Your Purchase!" title
+
+    Scenario: Capture Sub Order in admin
+        Given I proceed as the Admin
+        And I go to Sales/Orders
+        Then number of records should be 3
+        Then I should see following grid:
+            | Order Number | Payment Status     | Payment Method |
+            | 1            | Payment authorized | Stripe         |
+            | 1-1          | Payment authorized | Stripe         |
+            | 1-2          | Payment authorized | Stripe         |
+        And I click on 1 in grid
+        When I click "Payment History"
+        Then I should see following "Order Payment Transaction Grid" grid:
+            | Payment Method | Type     | Amount | Successful |
+            | Stripe         | Purchase | $59.00 | Yes        |
+        When I click "Sub-Orders Payment History"
+        Then I should see following "First Sub Order Payment Transaction Grid" grid:
+            | Payment Method | Type      | Amount | Successful |
+            | Stripe         | Authorize | $13.00 | Yes        |
+        When I click "Sub-Order #1-2"
+        Then I should see following "Second Sub Order Payment Transaction Grid" grid:
+            | Payment Method | Type      | Amount | Successful |
+            | Stripe         | Authorize | $46.00 | Yes        |
+        When I click "Sub-Order #1-1"
+        When I click "Capture" on row "Authorize" in grid "First Sub Order Payment Transaction Grid"
+        Then I should see "Charge The Customer" in the "UiWindow Title" element
+        When I click "Yes, Charge" in modal window
+        Then I should see "The payment of $13.00 has been captured successfully" flash message
+        When I click "Sub-Orders Payment History"
+        Then I should see following "First Sub Order Payment Transaction Grid" grid:
+            | Payment Method | Type      | Amount | Successful |
+            | Stripe         | Capture   | $13.00 | Yes        |
+            | Stripe         | Authorize | $13.00 | Yes        |
+
+    Scenario: Refund Sub Order in admin
+        When I click "Refund" on row "Capture" in grid "First Sub Order Payment Transaction Grid"
+        Then I should see "Refund Payment" in the "UiDialog Title" element
+        And I should see "The $13.00 payment will be refunded. Are you sure you want to continue?"
+        And I fill form with:
+            | Amount | 5.00                |
+            | Notes  | Refund Payment Note |
+        And I click "Yes, Refund Payment" in modal window
+        Then I should see "The payment of $5.00 has been refunded successfully." flash message
+        When I click "Refund" on row "Capture" in grid "First Sub Order Payment Transaction Grid"
+        Then I should see "Refund Payment" in the "UiDialog Title" element
+        And I should see "The $8.00 payment will be refunded. Are you sure you want to continue?"
+        And I fill form with:
+            | Amount | 8.00                        |
+            | Notes  | Another Refund Payment Note |
+        And I click "Yes, Refund Payment" in modal window
+        Then I should see "The payment of $8.00 has been refunded successfully." flash message
+        When I click "Sub-Orders"
+        And I click on 1-1 in grid "SubOrders Grid"
+        And I click "Activity"
+        Then I should see "Payment refund was initiated. Notes: Refund Payment Note"
+        And I should see "Payment refund was initiated. Notes: Another refund Payment Note"
+        When I click "Payment History"
+        Then I should see following "Order Payment Transaction Grid" grid:
+            | Payment Method | Type      | Amount | Successful |
+            | Stripe         | Refund    | $8.00  | Yes        |
+            | Stripe         | Refund    | $5.00  | Yes        |
+            | Stripe         | Capture   | $13.00 | Yes        |
+            | Stripe         | Authorize | $13.00 | Yes        |
+
+    Scenario: Cancel Authorization for Sub Order in admin
+        Given I go to Sales/Orders
+        And I click on 1 in grid
+        And I click "Sub-Orders Payment History"
+        And I click "Sub-Order #1-2"
+        When I click "Cancel Authorization" on row "Authorize" in grid "Second Sub Order Payment Transaction Grid"
+        Then I should see "Cancel Authorization" in the "UiDialog Title" element
+        And I should see "The $46.00 payment will be cancelled. Are you sure you want to continue?"
+        And I fill form with:
+            | Notes | Cancel Authorization Note |
+        And I click "Yes, Cancel Authorization" in modal window
+        Then I should see "The payment of $46.00 has been canceled successfully." flash message
+        And I should see following "SubOrders Grid" grid:
+            | Order Number | Total  | Payment Status   | Payment Method | Shipping Method |
+            | 1-1          | $13.00 | Refunded         | Stripe         | Multi Shipping  |
+            | 1-2          | $46.00 | Payment canceled | Stripe         | Multi Shipping  |
+        When I click on Payment canceled in grid "SubOrders Grid"
+        And I click "Activity"
+        Then I should see "Payment authorization hold was cancelled. Notes: Cancel Authorization Note"
+        When I click "Payment History"
+        Then I should see following "Order Payment Transaction Grid" grid:
+            | Payment Method | Type      | Amount | Successful |
+            | Stripe         | Cancel    | $46.00 | Yes        |
+            | Stripe         | Authorize | $46.00 | Yes        |

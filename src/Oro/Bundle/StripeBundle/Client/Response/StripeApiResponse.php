@@ -33,7 +33,8 @@ class StripeApiResponse implements StripeApiResponseInterface
     {
         return in_array($this->responseObject->getStatus(), [
             self::SUCCESS_STATUS,
-            self::REQUIRES_CAPTURE
-        ]);
+            self::REQUIRES_CAPTURE,
+            self::CANCELED
+        ], true);
     }
 }

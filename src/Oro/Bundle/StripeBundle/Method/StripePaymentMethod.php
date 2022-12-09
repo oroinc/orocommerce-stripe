@@ -17,6 +17,8 @@ use Psr\Log\NullLogger;
  */
 class StripePaymentMethod implements PaymentMethodInterface
 {
+    private const MINIMAL_AMOUNT_TO_ORDER = 0.5;
+
     private StripePaymentConfig $config;
     private PaymentActionRegistry $paymentActionRegistry;
     private LoggerInterface $logger;
@@ -36,7 +38,7 @@ class StripePaymentMethod implements PaymentMethodInterface
     public function execute($action, PaymentTransaction $paymentTransaction): array
     {
         try {
-            $response = $this->paymentActionRegistry->getPaymentAction($action)
+            $response = $this->paymentActionRegistry->getPaymentAction($action, $paymentTransaction)
                 ->execute($this->config, $paymentTransaction);
             return $response->prepareResponse();
         } catch (StripeApiException $stripeException) {
@@ -48,7 +50,11 @@ class StripePaymentMethod implements PaymentMethodInterface
             ]);
 
             return [
-                'successful' => false
+                'successful' => false,
+                'error' => $stripeException->getMessage(),
+                'message' => $stripeException->getMessage(),
+                'stripe_error_code' => $stripeException->getStripeErrorCode(),
+                'decline_code' => $stripeException->getDeclineCode()
             ];
         }
     }
@@ -59,14 +65,15 @@ class StripePaymentMethod implements PaymentMethodInterface
     }
 
     /**
-     * According to https://stripe.com/docs/api/payment_intents/object#payment_intent_object-amount.
+     * According to the documentation minimal amount to order should be greater than 0.5
+     * @see https://stripe.com/docs/api/payment_intents/object#payment_intent_object-amount.
      *
      * @param PaymentContextInterface $context
      * @return bool
      */
     public function isApplicable(PaymentContextInterface $context): bool
     {
-        return $context->getTotal() >= 0.5;
+        return $context->getTotal() >= self::MINIMAL_AMOUNT_TO_ORDER;
     }
 
     public function supports($actionName): bool
@@ -74,7 +81,9 @@ class StripePaymentMethod implements PaymentMethodInterface
         return in_array($actionName, [
             PaymentMethodInterface::PURCHASE,
             PaymentActionInterface::CONFIRM_ACTION,
-            PaymentMethodInterface::CAPTURE
+            PaymentMethodInterface::CAPTURE,
+            PaymentMethodInterface::CANCEL,
+            PaymentMethodInterface::REFUND
         ]);
     }
 }

@@ -1,0 +1,2 @@
+bundles:
+    - '@OroStripe/Form/fields.html.twig'

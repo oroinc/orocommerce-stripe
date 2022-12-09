@@ -4,8 +4,11 @@ namespace Oro\Bundle\StripeBundle\Client;
 
 use Oro\Bundle\StripeBundle\Client\Exception\StripeApiException;
 use Oro\Bundle\StripeBundle\Client\Request\StripeApiRequestInterface;
+use Oro\Bundle\StripeBundle\Model\CustomerResponse;
 use Oro\Bundle\StripeBundle\Model\PaymentIntentResponse;
+use Oro\Bundle\StripeBundle\Model\RefundResponse;
 use Oro\Bundle\StripeBundle\Model\ResponseObjectInterface;
+use Oro\Bundle\StripeBundle\Model\SetupIntentResponse;
 use Stripe\Exception\ApiErrorException;
 use Stripe\Exception\CardException;
 use Stripe\StripeClient;
@@ -74,6 +77,86 @@ class StripeGateway implements StripeGatewayInterface
         }
 
         return new PaymentIntentResponse($this->getResponseData($paymentIntent));
+    }
+
+    public function cancel(StripeApiRequestInterface $request): ResponseObjectInterface
+    {
+        try {
+            $paymentIntent = $this->getClient()->paymentIntents->cancel(
+                $request->getPaymentId(),
+                $request->getRequestData()
+            );
+        } catch (ApiErrorException $exception) {
+            $this->handleException($exception);
+        }
+
+        return new PaymentIntentResponse($this->getResponseData($paymentIntent));
+    }
+
+    public function createSetupIntent(StripeApiRequestInterface $request): ResponseObjectInterface
+    {
+        try {
+            $setupIntent = $this->getClient()->setupIntents->create($request->getRequestData());
+        } catch (ApiErrorException $e) {
+            $this->handleException($e);
+        }
+
+        return new SetupIntentResponse($this->getResponseData($setupIntent));
+    }
+
+    public function createCustomer(StripeApiRequestInterface $request): ResponseObjectInterface
+    {
+        try {
+            $email = $request->getRequestData()['email'] ?? null;
+            $customer = null;
+            if ($email) {
+                $searchResult = $this->getClient()->customers->search(
+                    ['query' => sprintf("email:'%s'", addslashes($email))]
+                );
+                $customer = $searchResult->getIterator()->current();
+            }
+            if (!$customer) {
+                $customer = $this->getClient()->customers->create($request->getRequestData());
+            }
+        } catch (ApiErrorException $e) {
+            $this->handleException($e);
+        }
+
+        return new CustomerResponse($this->getResponseData($customer));
+    }
+
+    public function findSetupIntentCustomer(string $setupIntentId): ResponseObjectInterface
+    {
+        try {
+            $setupIntent = $this->getClient()->setupIntents->retrieve($setupIntentId);
+            $customer = $this->getClient()->customers->retrieve($setupIntent->customer);
+        } catch (ApiErrorException $e) {
+            $this->handleException($e);
+        }
+
+        return new CustomerResponse($this->getResponseData($customer));
+    }
+
+    public function findSetupIntent(string $setupIntentId): ResponseObjectInterface
+    {
+        try {
+            $setupIntent = $this->getClient()->setupIntents->retrieve($setupIntentId);
+        } catch (ApiErrorException $e) {
+            $this->handleException($e);
+        }
+
+        return new SetupIntentResponse($this->getResponseData($setupIntent));
+    }
+
+    public function refund(StripeApiRequestInterface $request): ResponseObjectInterface
+    {
+        try {
+            $refund = $this->getClient()->refunds->create($request->getRequestData());
+        } catch (ApiErrorException $e) {
+            $this->handleException($e);
+        }
+
+        return new RefundResponse($this->getResponseData($refund));
     }
 
     /**

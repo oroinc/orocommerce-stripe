@@ -10,20 +10,75 @@ services:
         arguments:
             - '@oro_stripe.client.factory'
 
+    oro_stripe.client.request.factory.create_customer_request_factory:
+        class: Oro\Bundle\StripeBundle\Client\Request\Factory\CreateCustomerRequestFactory
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_entity.entity_name_resolver'
+
+    oro_stripe.payment_action.purchase_action_abstract:
+        class: Oro\Bundle\StripeBundle\Method\PaymentAction\PurchasePaymentActionAbstract
+        parent: oro_stripe.payment_action.payment_action_abstract
+        abstract: true
+        arguments:
+            - '@oro_stripe.provider.entities_transactions'
+            - '@oro_payment.provider.payment_transaction'
+            - '@oro_stripe.client.request.factory.create_customer_request_factory'
+
     oro_stripe.payment_action.purchase_action:
         class: Oro\Bundle\StripeBundle\Method\PaymentAction\PurchasePaymentAction
-        parent: oro_stripe.payment_action.payment_action_abstract
+        parent: oro_stripe.payment_action.purchase_action_abstract
         tags:
             - { name: oro_stripe.payment_actions }
 
     oro_stripe.payment_action.confirm_action:
         class: Oro\Bundle\StripeBundle\Method\PaymentAction\ConfirmPaymentAction
         parent: oro_stripe.payment_action.payment_action_abstract
+        arguments:
+            - '@oro_stripe.provider.entities_transactions'
         tags:
             - { name: oro_stripe.payment_actions }
 
     oro_stripe.payment_action.capture_action:
         class: Oro\Bundle\StripeBundle\Method\PaymentAction\CapturePaymentAction
+        parent: oro_stripe.payment_action.payment_action_abstract
+        arguments:
+            - '@oro_payment.provider.payment_transaction'
+        tags:
+            - { name: oro_stripe.payment_actions }
+
+    oro_stripe.payment_action.multiple_confirm_action:
+        class: Oro\Bundle\StripeBundle\Method\PaymentAction\MultipleConfirmPaymentAction
+        parent: oro_stripe.payment_action.purchase_action_abstract
+        tags:
+            - { name: oro_stripe.payment_actions }
+
+    oro_stripe.payment_action.multiple_purchase_action:
+        class: Oro\Bundle\StripeBundle\Method\PaymentAction\MultiplePurchasePaymentAction
+        parent: oro_stripe.payment_action.purchase_action_abstract
+        arguments:
+
+        tags:
+            - { name: oro_stripe.payment_actions }
+
+    oro_stripe.payment_action.cancel_action:
+        class: Oro\Bundle\StripeBundle\Method\PaymentAction\CancelPaymentAction
+        parent: oro_stripe.payment_action.payment_action_abstract
+        arguments:
+            - '@oro_payment.provider.payment_transaction'
+        tags:
+            - { name: oro_stripe.payment_actions }
+
+    oro_stripe.payment_action.refund_action:
+        class: Oro\Bundle\StripeBundle\Method\PaymentAction\RefundPaymentAction
+        parent: oro_stripe.payment_action.payment_action_abstract
+        arguments:
+            - '@oro_payment.provider.payment_transaction'
+        tags:
+            - { name: oro_stripe.payment_actions }
+
+    oro_stripe.payment_action.authorize_action:
+        class: Oro\Bundle\StripeBundle\Method\PaymentAction\AuthorizePaymentAction
         parent: oro_stripe.payment_action.payment_action_abstract
         arguments:
             - '@oro_payment.provider.payment_transaction'

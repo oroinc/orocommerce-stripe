@@ -47,42 +47,88 @@ define(function(require) {
                     if (response.requires_action) {
                         // Handle additional user actions (3D secure validation, etc.. )
                         const self = this;
+
+                        const intentErrorHandler = function(result) {
+                            mediator.execute(
+                                'showFlashMessage',
+                                'error',
+                                result.error.message
+                            );
+                            mediator.execute(
+                                'redirectTo',
+                                {url: eventData.responseData.errorUrl},
+                                {redirect: true}
+                            );
+                        };
+
+                        const exceptionHandler = function(error) {
+                            console.log(error);
+                            mediator.execute(
+                                'showFlashMessage',
+                                'error',
+                                __(self.messages.handle_payment_action_failed)
+                            );
+                        };
+
                         const stripe = stripeClient.getStripeInstance(this.options);
-                        stripe.handleCardAction(response.payment_intent_client_secret)
-                            .then(function(result) {
-                                if (result.error) {
-                                    mediator.execute(
-                                        'showFlashMessage',
-                                        'error',
-                                        result.error.message
-                                    );
-                                    mediator.execute(
-                                        'redirectTo',
-                                        {url: eventData.responseData.errorUrl},
-                                        {redirect: true}
-                                    );
+                        if (_.has(response, 'payment_intent_client_secret')) {
+                            stripe.handleCardAction(response.payment_intent_client_secret)
+                                .then(function(result) {
+                                    if (result.error) {
+                                        intentErrorHandler(result);
+                                    } else if (result.hasOwnProperty('paymentIntent')) {
+                                        const intentId = result.paymentIntent.id;
+                                        mediator.execute(
+                                            'redirectTo',
+                                            {url: eventData.responseData.returnUrl + '?paymentIntentId=' + intentId},
+                                            {redirect: true}
+                                        );
+                                    }
+                                })
+                                .catch(exceptionHandler)
+                                .finally(function() {
                                     mediator.execute('hideLoading');
-                                } else if (result.hasOwnProperty('paymentIntent')) {
-                                    const paymentIntentId = result.paymentIntent.id;
-                                    mediator.execute(
-                                        'redirectTo',
-                                        {url: eventData.responseData.returnUrl + '?paymentIntentId=' + paymentIntentId},
-                                        {redirect: true}
-                                    );
-                                }
-                            }).catch(function(error) {
-                                console.log(error);
-                                mediator.execute(
-                                    'showFlashMessage',
-                                    'error',
-                                    __(self.messages.handle_payment_action_failed)
-                                );
-                            });
+                                });
+                        } else if (_.has(response, 'setup_intent_client_secret')) {
+                            stripe.confirmCardSetup(response.setup_intent_client_secret)
+                                .then(function(result) {
+                                    if (result.error) {
+                                        intentErrorHandler(result);
+                                    } else if (result.hasOwnProperty('setupIntent')) {
+                                        const setupIntentId = result.setupIntent.id;
+                                        mediator.execute(
+                                            'redirectTo',
+                                            {url: eventData.responseData.returnUrl + '?setupIntentId=' + setupIntentId},
+                                            {redirect: true}
+                                        );
+                                    }
+                                })
+                                .catch(exceptionHandler)
+                                .finally(function() {
+                                    mediator.execute('hideLoading');
+                                });
+                        }
+                    } else if (this.isPaidPartially(response)) {
+                        mediator.execute(
+                            'redirectTo',
+                            {url: response.partiallyPaidUrl},
+                            {redirect: true}
+                        );
                     } else {
                         mediator.execute('redirectTo', {url: eventData.responseData.errorUrl}, {redirect: true});
                     }
                 }
             }
+        },
+
+        /**
+         * Check if payment is partially successful and has specific url to redirect.
+         *
+         * @param {Object} response
+         */
+        isPaidPartially: function(response) {
+            return _.has(response, 'purchasePartial') && response.purchasePartial === true &&
+                _.has(response, 'partiallyPaidUrl');
         },
 
         /**

@@ -16,6 +16,9 @@ class StripePaymentConfig extends AbstractParameterBagPaymentConfig
     public const PAYMENT_ACTION = 'payment_action';
     public const LOCALE = 'locale';
     public const SIGNING_SECRET = 'signing_secret';
+    public const SUPPORT_PARTIAL_CAPTURE = 'support_partial_capture';
+    public const ALLOW_RE_AUTHORIZE = 'enable_re_authorize';
+    public const RE_AUTHORIZATION_ERROR_EMAIL = 're_authorization_error_email';
 
     public function getAdminLabel(): ?string
     {
@@ -50,5 +53,20 @@ class StripePaymentConfig extends AbstractParameterBagPaymentConfig
     public function getSigningSecret(): string
     {
         return $this->get(self::SIGNING_SECRET);
+    }
+
+    public function isPartialCaptureSupports()
+    {
+        return $this->get(self::SUPPORT_PARTIAL_CAPTURE);
+    }
+
+    public function isReAuthorizationAllowed(): bool
+    {
+        return $this->get(self::ALLOW_RE_AUTHORIZE);
+    }
+
+    public function getReAuthorizationErrorEmail(): array
+    {
+        return $this->get(self::RE_AUTHORIZATION_ERROR_EMAIL);
     }
 }

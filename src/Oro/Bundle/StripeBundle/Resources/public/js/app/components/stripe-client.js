@@ -2,7 +2,7 @@ define(function(require) {
     'use strict';
 
     /**
-     * We should use the same Stripe instance for different types of manipulation (card element initialization,
+     * We should use the same Stripe instance for different types of manipulation (card element initialization),
      * createPaymentMethod (send card data to Stripe Service), etc..
      * This component is used to store initialized instances of Stripe object and Stripe Payment Element object.
      */
