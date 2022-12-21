@@ -47,8 +47,8 @@ Feature: Stripe integration with suborders
         And go to System/Integrations/Manage Integrations
         And I click "Create Integration"
         And I fill form with:
-            | Type | Multi Shipping Cost |
-            | Name | Multi Shipping      |
+            | Type | Multi Shipping |
+            | Name | Multi Shipping |
         When I save and close form
         Then I should see "Integration saved" flash message
 
