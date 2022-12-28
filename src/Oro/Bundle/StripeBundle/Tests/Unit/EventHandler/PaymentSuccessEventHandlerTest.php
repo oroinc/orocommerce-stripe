@@ -5,28 +5,26 @@ namespace Oro\Bundle\StripeBundle\Tests\Unit\EventHandler;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
+use Oro\Bundle\PaymentBundle\Method\Config\ParameterBag\AbstractParameterBagPaymentConfig;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\StripeBundle\Event\StripeEvent;
 use Oro\Bundle\StripeBundle\Event\StripeEventInterface;
 use Oro\Bundle\StripeBundle\EventHandler\PaymentSuccessEventHandler;
+use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
 use Oro\Bundle\StripeBundle\Model\PaymentIntentResponse;
 use Oro\Bundle\StripeBundle\Model\ResponseObjectInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class PaymentSuccessEventHandlerTest extends TestCase
 {
     use EntityTrait;
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject  */
-    private $managerRegistry;
-
-    /** @var PaymentTransactionProvider|\PHPUnit\Framework\MockObject\MockObject  */
-    private $paymentTransactionProvider;
-
-    /** @var PaymentTransactionRepository|\PHPUnit\Framework\MockObject\MockObject  */
-    private $repositoryMock;
+    private ManagerRegistry|MockObject $managerRegistry;
+    private PaymentTransactionProvider|MockObject $paymentTransactionProvider;
+    private PaymentTransactionRepository|MockObject $repositoryMock;
 
     private PaymentSuccessEventHandler $handler;
 
@@ -47,13 +45,13 @@ class PaymentSuccessEventHandlerTest extends TestCase
 
     public function testIsSupportedSuccess()
     {
-        $event = new StripeEvent('payment_intent.succeeded', 'stripe_1', new PaymentIntentResponse());
+        $event = new StripeEvent('payment_intent.succeeded', new StripePaymentConfig(), new PaymentIntentResponse());
         $this->assertTrue($this->handler->isSupported($event));
     }
 
     public function testEventNotSupported()
     {
-        $event = new StripeEvent('charge.refunded', 'stripe_1', new PaymentIntentResponse());
+        $event = new StripeEvent('charge.refunded', new StripePaymentConfig(), new PaymentIntentResponse());
         $this->assertFalse($this->handler->isSupported($event));
     }
 
@@ -204,7 +202,9 @@ class PaymentSuccessEventHandlerTest extends TestCase
         $responseObject = new PaymentIntentResponse($responseData);
         return new StripeEvent(
             'payment_intent.succeeded',
-            'stripe_1',
+            new StripePaymentConfig([
+                AbstractParameterBagPaymentConfig::FIELD_PAYMENT_METHOD_IDENTIFIER => 'stripe_1'
+            ]),
             $responseObject
         );
     }

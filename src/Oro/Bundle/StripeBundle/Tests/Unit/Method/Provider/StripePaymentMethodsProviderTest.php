@@ -8,6 +8,7 @@ use Oro\Bundle\StripeBundle\Method\Factory\StripePaymentMethodFactory;
 use Oro\Bundle\StripeBundle\Method\PaymentAction\PaymentActionRegistry;
 use Oro\Bundle\StripeBundle\Method\Provider\StripePaymentMethodsProvider;
 use Oro\Bundle\StripeBundle\Method\StripePaymentMethod;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class StripePaymentMethodsProviderTest extends TestCase
@@ -16,11 +17,8 @@ class StripePaymentMethodsProviderTest extends TestCase
     private const IDENTIFIER2 = 'test2';
     private const WRONG_IDENTIFIER = 'wrong';
 
-    /** @var StripePaymentConfigsProvider|\PHPUnit\Framework\MockObject\MockObject  */
-    private StripePaymentConfigsProvider $configProvider;
-
-    /** @var StripePaymentMethodFactory|\PHPUnit\Framework\MockObject\MockObject  */
-    private StripePaymentMethodFactory $factory;
+    private StripePaymentConfigsProvider|MockObject $configProvider;
+    private StripePaymentMethodFactory|MockObject $factory;
     private StripePaymentMethodsProvider $methodProvider;
     private string $paymentConfigClass;
 

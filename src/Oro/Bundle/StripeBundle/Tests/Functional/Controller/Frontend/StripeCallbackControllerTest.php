@@ -9,7 +9,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class StripeCallbackControllerTest extends WebTestCase
 {
-    /** @var StripeWebhookEventHandler|\PHPUnit\Framework\MockObject\MockObject  */
+    /** @var StripeWebhookEventHandler|\PHPUnit\Framework\MockObject\MockObject|null  */
     private $webhookEventHandler = null;
 
     protected function setUp(): void

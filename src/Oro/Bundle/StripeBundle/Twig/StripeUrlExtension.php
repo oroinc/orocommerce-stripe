@@ -12,9 +12,6 @@ class StripeUrlExtension extends AbstractExtension
 {
     public const STRIPE_LIBRARY_URL = 'https://js.stripe.com/v3/';
 
-    /**
-     * {@inheritdoc}
-     */
     public function getFunctions()
     {
         return [

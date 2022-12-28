@@ -11,18 +11,14 @@ use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
 use Oro\Bundle\StripeBundle\EventListener\OrderPaymentTransactionsGridListener;
 use Oro\Bundle\StripeBundle\Method\Config\Provider\StripePaymentConfigsProvider;
 use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class OrderPaymentTransactionsGridListenerTest extends TestCase
 {
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject  */
-    private $managerRegistryMock;
-
-    /** @var StripePaymentConfigsProvider|\PHPUnit\Framework\MockObject\MockObject  */
-    private $paymentConfigProviderMock;
-
-    /** @var PaymentTransactionRepository|\PHPUnit\Framework\MockObject\MockObject  */
-    private $paymentTransactionRepositoryMock;
+    private ManagerRegistry|MockObject $managerRegistryMock;
+    private StripePaymentConfigsProvider|MockObject $paymentConfigProviderMock;
+    private PaymentTransactionRepository|MockObject $paymentTransactionRepositoryMock;
     private OrderPaymentTransactionsGridListener $listener;
 
     protected function setUp(): void

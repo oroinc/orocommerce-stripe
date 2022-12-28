@@ -24,6 +24,10 @@ services:
             - '@oro_stripe.provider.entities_transactions'
             - '@oro_payment.provider.payment_transaction'
             - '@oro_stripe.client.request.factory.create_customer_request_factory'
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: oro_stripe }
 
     oro_stripe.payment_action.purchase_action:
         class: Oro\Bundle\StripeBundle\Method\PaymentAction\PurchasePaymentAction
@@ -56,8 +60,6 @@ services:
     oro_stripe.payment_action.multiple_purchase_action:
         class: Oro\Bundle\StripeBundle\Method\PaymentAction\MultiplePurchasePaymentAction
         parent: oro_stripe.payment_action.purchase_action_abstract
-        arguments:
-
         tags:
             - { name: oro_stripe.payment_actions }
 

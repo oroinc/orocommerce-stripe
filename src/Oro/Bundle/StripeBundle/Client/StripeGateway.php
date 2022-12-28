@@ -4,9 +4,11 @@ namespace Oro\Bundle\StripeBundle\Client;
 
 use Oro\Bundle\StripeBundle\Client\Exception\StripeApiException;
 use Oro\Bundle\StripeBundle\Client\Request\StripeApiRequestInterface;
+use Oro\Bundle\StripeBundle\Model\CollectionResponseInterface;
 use Oro\Bundle\StripeBundle\Model\CustomerResponse;
 use Oro\Bundle\StripeBundle\Model\PaymentIntentResponse;
 use Oro\Bundle\StripeBundle\Model\RefundResponse;
+use Oro\Bundle\StripeBundle\Model\RefundsCollectionResponse;
 use Oro\Bundle\StripeBundle\Model\ResponseObjectInterface;
 use Oro\Bundle\StripeBundle\Model\SetupIntentResponse;
 use Stripe\Exception\ApiErrorException;
@@ -19,6 +21,8 @@ use Stripe\StripeClient;
  */
 class StripeGateway implements StripeGatewayInterface
 {
+    public const API_VERSION = '2022-11-15';
+
     private ?StripeClient $client = null;
     private string $secretKey;
 
@@ -30,7 +34,10 @@ class StripeGateway implements StripeGatewayInterface
     private function getClient(): StripeClient
     {
         if (null === $this->client) {
-            $this->client = new StripeClient($this->secretKey);
+            $this->client = new StripeClient([
+                'api_key' => $this->secretKey,
+                'stripe_version' => self::API_VERSION
+            ]);
         }
 
         return $this->client;
@@ -157,6 +164,17 @@ class StripeGateway implements StripeGatewayInterface
         }
 
         return new RefundResponse($this->getResponseData($refund));
+    }
+
+    public function getAllRefunds(array $criteria): CollectionResponseInterface
+    {
+        try {
+            $refunds = $this->getClient()->refunds->all($criteria);
+        } catch (ApiErrorException $exception) {
+            $this->handleException($exception);
+        }
+
+        return new RefundsCollectionResponse($this->getResponseData($refunds));
     }
 
     /**

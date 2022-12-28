@@ -16,9 +16,6 @@ class StripeApiResponse implements StripeApiResponseInterface
         $this->responseObject = $responseObject;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function prepareResponse(): array
     {
         return [
@@ -26,9 +23,6 @@ class StripeApiResponse implements StripeApiResponseInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isSuccessful(): bool
     {
         return in_array($this->responseObject->getStatus(), [

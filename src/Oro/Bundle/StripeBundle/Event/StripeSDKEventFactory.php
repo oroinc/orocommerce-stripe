@@ -30,16 +30,13 @@ class StripeSDKEventFactory implements StripeEventFactoryInterface
         $this->paymentConfigsProvider = $paymentConfigsProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function createEventFromRequest(Request $request): StripeEventInterface
     {
         $data = $request->getContent();
         $configuredPaymentConfigs = $this->paymentConfigsProvider->getConfigs();
 
         $event = null;
-        $paymentMethodIdentifier = null;
+        $paymentMethodConfig = null;
 
         // All configured Stripe Payment integrations should be iterated to find proper Stripe payment method.
         /** @var StripePaymentConfig $paymentConfig */
@@ -50,14 +47,14 @@ class StripeSDKEventFactory implements StripeEventFactoryInterface
                     $request->server->get(self::STRIPE_SIGNATURE),
                     $paymentConfig->getSigningSecret()
                 );
-                $paymentMethodIdentifier = $paymentConfig->getPaymentMethodIdentifier();
+                $paymentMethodConfig = $paymentConfig;
                 break;
             } catch (SignatureVerificationException $exception) {
                 // skip handling because this event could be related to another configured Stripe payment integration.
             }
         }
 
-        if (null === $event) {
+        if (null === $event || null === $paymentMethodConfig) {
             throw new \LogicException(
                 'There are no any configured Stripe payment methods available to handle event',
             );
@@ -73,13 +70,9 @@ class StripeSDKEventFactory implements StripeEventFactoryInterface
             ));
         }
 
-        return new StripeEvent($event->type, $paymentMethodIdentifier, $responseObject);
+        return new StripeEvent($event->type, $paymentMethodConfig, $responseObject);
     }
 
-    /**
-     * @param mixed $eventObject
-     * @return ResponseObjectInterface|null
-     */
     protected function createResponseObject($eventObject): ?ResponseObjectInterface
     {
         $type = get_class($eventObject);

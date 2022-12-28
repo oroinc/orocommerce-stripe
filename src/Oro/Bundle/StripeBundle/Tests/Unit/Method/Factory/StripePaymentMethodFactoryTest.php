@@ -7,15 +7,13 @@ use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
 use Oro\Bundle\StripeBundle\Method\Factory\StripePaymentMethodFactory;
 use Oro\Bundle\StripeBundle\Method\PaymentAction\PaymentActionRegistry;
 use Oro\Bundle\StripeBundle\Method\StripePaymentMethod;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class StripePaymentMethodFactoryTest extends TestCase
 {
-    /** @var PaymentActionRegistry|\PHPUnit\Framework\MockObject\MockObject  */
-    private PaymentActionRegistry $registry;
-
-    /** @var Logger|\PHPUnit\Framework\MockObject\MockObject  */
-    private Logger $logger;
+    private PaymentActionRegistry|MockObject $registry;
+    private Logger|MockObject $logger;
     private StripePaymentMethodFactory $factory;
 
     protected function setUp(): void
