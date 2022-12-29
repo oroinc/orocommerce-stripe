@@ -10,6 +10,7 @@ use Oro\Bundle\StripeBundle\Entity\StripeTransportSettings;
 use Oro\Bundle\StripeBundle\Method\Config\Factory\StripePaymentConfigFactory;
 use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class StripePaymentConfigFactoryTest extends TestCase
@@ -18,11 +19,8 @@ class StripePaymentConfigFactoryTest extends TestCase
 
     private StripePaymentConfigFactory $factory;
 
-    /** @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject  */
-    private LocalizationHelper $localizationHelper;
-
-    /** @var IntegrationIdentifierGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject  */
-    private IntegrationIdentifierGeneratorInterface $identifierGenerator;
+    private LocalizationHelper|MockObject $localizationHelper;
+    private IntegrationIdentifierGeneratorInterface|MockObject $identifierGenerator;
 
     protected function setUp(): void
     {

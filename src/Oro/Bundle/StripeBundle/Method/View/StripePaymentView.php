@@ -4,6 +4,7 @@ namespace Oro\Bundle\StripeBundle\Method\View;
 
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
+use Oro\Bundle\StripeBundle\Client\StripeGateway;
 use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
 
 /**
@@ -24,7 +25,8 @@ class StripePaymentView implements PaymentMethodViewInterface
             'componentOptions' => [
                 'publicKey' => $this->config->getPublicKey(),
                 'isUserMonitoringEnabled' => $this->config->isUserMonitoringEnabled(),
-                'locale' => $this->config->getLocale()
+                'locale' => $this->config->getLocale(),
+                'apiVersion' => StripeGateway::API_VERSION
             ]
         ];
     }

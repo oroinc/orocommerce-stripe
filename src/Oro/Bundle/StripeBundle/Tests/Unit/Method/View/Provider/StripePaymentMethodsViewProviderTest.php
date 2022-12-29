@@ -6,6 +6,7 @@ use Oro\Bundle\StripeBundle\Method\Config\Provider\StripePaymentConfigsProvider;
 use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
 use Oro\Bundle\StripeBundle\Method\View\Provider\StripePaymentMethodsViewProvider;
 use Oro\Bundle\StripeBundle\Method\View\StripePaymentView;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class StripePaymentMethodsViewProviderTest extends TestCase
@@ -14,8 +15,7 @@ class StripePaymentMethodsViewProviderTest extends TestCase
     private const IDENTIFIER2 = 'test2';
     private const WRONG_IDENTIFIER = 'wrong';
 
-    /** @var StripePaymentConfigsProvider|\PHPUnit\Framework\MockObject\MockObject */
-    protected StripePaymentConfigsProvider $configProvider;
+    protected StripePaymentConfigsProvider|MockObject $configProvider;
     protected StripePaymentMethodsViewProvider $provider;
     protected string $paymentConfigClass;
 

@@ -95,4 +95,50 @@ class RefundResponseTest extends TestCase
             're_3LpDTCFjQYPlr3hE1Amggqup'
         ];
     }
+
+    public function testGetRefundedAmount()
+    {
+        $response = new RefundResponse([
+            'id' => 're_1',
+            'object' => 'refund',
+            'amount' => 1001,
+            'balance_transaction' => null,
+            'charge' => 'ch_31',
+            'created' => 1664898946,
+            'currency' => 'usd',
+            'metadata' => [],
+            'payment_intent' => null,
+            'reason' => null,
+            'receipt_number' => null,
+            'source_transfer_reversal' => null,
+            'status' => 'succeeded',
+            'transfer_reversal' => null
+        ]);
+
+        $this->assertEquals(10.01, $response->getRefundedAmount());
+    }
+
+    public function testGetRefundedAmountThrowsException()
+    {
+        $response = new RefundResponse([
+            'id' => 're_1',
+            'object' => 'refund',
+            'balance_transaction' => null,
+            'charge' => 'ch_31',
+            'created' => 1664898946,
+            'currency' => 'usd',
+            'metadata' => [],
+            'payment_intent' => null,
+            'reason' => null,
+            'receipt_number' => null,
+            'source_transfer_reversal' => null,
+            'status' => 'succeeded',
+            'transfer_reversal' => null
+        ]);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Refund amount could not be empty');
+
+        $response->getRefundedAmount();
+    }
 }

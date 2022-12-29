@@ -5,28 +5,30 @@ namespace Oro\Bundle\StripeBundle\Tests\Unit\EventHandler;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
+use Oro\Bundle\PaymentBundle\Method\Config\ParameterBag\AbstractParameterBagPaymentConfig;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Bundle\StripeBundle\Client\StripeGatewayFactoryInterface;
+use Oro\Bundle\StripeBundle\Client\StripeGatewayInterface;
 use Oro\Bundle\StripeBundle\Event\StripeEvent;
 use Oro\Bundle\StripeBundle\Event\StripeEventInterface;
 use Oro\Bundle\StripeBundle\EventHandler\Exception\StripeEventHandleException;
 use Oro\Bundle\StripeBundle\EventHandler\PaymentRefundedEventHandler;
+use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
 use Oro\Bundle\StripeBundle\Model\ChargeResponse;
 use Oro\Bundle\StripeBundle\Model\PaymentIntentAwareInterface;
 use Oro\Bundle\StripeBundle\Model\PaymentIntentResponse;
+use Oro\Bundle\StripeBundle\Model\RefundsCollectionResponse;
 use Oro\Bundle\StripeBundle\Model\ResponseObjectInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class PaymentRefundedEventHandlerTest extends TestCase
 {
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject  */
-    private $managerRegistry;
-
-    /** @var PaymentTransactionProvider|\PHPUnit\Framework\MockObject\MockObject  */
-    private $paymentTransactionProvider;
-
-    /** @var PaymentTransactionRepository|\PHPUnit\Framework\MockObject\MockObject  */
-    private $repositoryMock;
+    private ManagerRegistry|MockObject $managerRegistry;
+    private PaymentTransactionProvider|MockObject $paymentTransactionProvider;
+    private PaymentTransactionRepository|MockObject $repositoryMock;
+    private StripeGatewayFactoryInterface|MockObject $stripeClientFactory;
 
     private PaymentRefundedEventHandler $handler;
 
@@ -35,25 +37,28 @@ class PaymentRefundedEventHandlerTest extends TestCase
         $this->managerRegistry = $this->createMock(ManagerRegistry::class);
         $this->paymentTransactionProvider = $this->createMock(PaymentTransactionProvider::class);
         $this->repositoryMock = $this->createMock(PaymentTransactionRepository::class);
+        $this->stripeClientFactory = $this->createMock(StripeGatewayFactoryInterface::class);
+
         $this->managerRegistry->expects($this->any())
             ->method('getRepository')
             ->willReturn($this->repositoryMock);
 
         $this->handler = new PaymentRefundedEventHandler(
             $this->managerRegistry,
-            $this->paymentTransactionProvider
+            $this->paymentTransactionProvider,
+            $this->stripeClientFactory
         );
     }
 
     public function testIsSupportedSuccess()
     {
-        $event = new StripeEvent('charge.refunded', 'stripe_1', new PaymentIntentResponse());
+        $event = new StripeEvent('charge.refunded', new StripePaymentConfig(), new PaymentIntentResponse());
         $this->assertTrue($this->handler->isSupported($event));
     }
 
     public function testEventNotSupported()
     {
-        $event = new StripeEvent('payment_intent.canceled', 'stripe_1', new PaymentIntentResponse());
+        $event = new StripeEvent('payment_intent.canceled', new StripePaymentConfig(), new PaymentIntentResponse());
         $this->assertFalse($this->handler->isSupported($event));
     }
 
@@ -64,7 +69,11 @@ class PaymentRefundedEventHandlerTest extends TestCase
             sprintf('Unexpected response type object. It should be of %s type', PaymentIntentAwareInterface::class)
         );
 
-        $event = new StripeEvent('charge.refunded', 'stripe_1', new PaymentIntentResponse([]));
+        $paymentConfig = new StripePaymentConfig([
+            AbstractParameterBagPaymentConfig::FIELD_PAYMENT_METHOD_IDENTIFIER => 'stripe_1'
+        ]);
+
+        $event = new StripeEvent('charge.refunded', $paymentConfig, new PaymentIntentResponse([]));
 
         $this->handler->handle($event);
     }
@@ -75,9 +84,7 @@ class PaymentRefundedEventHandlerTest extends TestCase
         $sourceTransaction->setActive(true)
             ->setAmount(100.00)
             ->setReference('pi_1')
-            ->setAction(PaymentMethodInterface::CAPTURE)
-            ->setEntityClass(PaymentTransaction::class)
-            ->setEntityIdentifier(1);
+            ->setAction(PaymentMethodInterface::CAPTURE);
 
         $this->repositoryMock->expects($this->once())
             ->method('findOneBy')
@@ -91,12 +98,11 @@ class PaymentRefundedEventHandlerTest extends TestCase
             ])
             ->willReturn([]);
 
+        $this->assertGetAllRefundsApiCall();
+
         $refundTransaction = new PaymentTransaction();
         $refundTransaction->setActive(true)
-            ->setAmount(100.00)
-            ->setAction(PaymentMethodInterface::CANCEL)
-            ->setEntityClass(PaymentTransaction::class)
-            ->setEntityIdentifier(1);
+            ->setAction(PaymentMethodInterface::REFUND);
 
         $this->paymentTransactionProvider->expects($this->once())
             ->method('createPaymentTransactionByParentTransaction')
@@ -109,7 +115,8 @@ class PaymentRefundedEventHandlerTest extends TestCase
         $this->handler->handle($event);
 
         $this->assertTrue($refundTransaction->isSuccessful());
-        $this->assertEquals('ch_1', $refundTransaction->getReference());
+        $this->assertEquals('re_2', $refundTransaction->getReference());
+        $this->assertEquals('100', $refundTransaction->getAmount());
 
         $transactionResponse = $refundTransaction->getResponse();
         $this->assertArrayHasKey('data', $transactionResponse);
@@ -121,35 +128,18 @@ class PaymentRefundedEventHandlerTest extends TestCase
     {
         $sourceTransaction = new PaymentTransaction();
         $sourceTransaction->setActive(true)
-            ->setAmount(100.00)
+            ->setAmount(110.00)
             ->setReference('pi_1')
-            ->setAction(PaymentMethodInterface::CAPTURE)
-            ->setEntityClass(PaymentTransaction::class)
-            ->setEntityIdentifier(1);
+            ->setAction(PaymentMethodInterface::CAPTURE);
 
         $this->repositoryMock->expects($this->once())
             ->method('findOneBy')
             ->willReturn($sourceTransaction);
 
         $refundTransaction1 = new PaymentTransaction();
-        $refundTransaction1->setReference('ch_1')
-            ->setAction(PaymentMethodInterface::CANCEL)
-            ->setResponse([
-                'data' => [
-                    'id' => 'ch_1',
-                    'refunds' => [
-                        'data' => [
-                            [
-                                'id' => 'ref_1',
-                                'amount' => 50,
-                                'status' => 'succeeded'
-                            ]
-                        ],
-                        'total_count' => 1
-                    ],
-                    'status' => 'succeeded'
-                ]
-            ]);
+        $refundTransaction1->setReference('re_1')
+            ->setAction(PaymentMethodInterface::REFUND)
+            ->setAmount(10.00);
 
         $this->repositoryMock->expects($this->once())
             ->method('findBy')
@@ -159,16 +149,15 @@ class PaymentRefundedEventHandlerTest extends TestCase
             ])
             ->willReturn([$refundTransaction1]);
 
-        $refundTransaction = new PaymentTransaction();
-        $refundTransaction->setActive(true)
-            ->setAmount(100.00)
-            ->setAction(PaymentMethodInterface::CANCEL)
-            ->setEntityClass(PaymentTransaction::class)
-            ->setEntityIdentifier(1);
+        $this->assertGetAllRefundsApiCall();
+
+        $newRefundTransaction = new PaymentTransaction();
+        $newRefundTransaction->setActive(true)
+            ->setAction(PaymentMethodInterface::REFUND);
 
         $this->paymentTransactionProvider->expects($this->once())
             ->method('createPaymentTransactionByParentTransaction')
-            ->willReturn($refundTransaction);
+            ->willReturn($newRefundTransaction);
 
         $this->paymentTransactionProvider->expects($this->exactly(2))
             ->method('savePaymentTransaction');
@@ -176,10 +165,11 @@ class PaymentRefundedEventHandlerTest extends TestCase
         $event = $this->createEvent();
         $this->handler->handle($event);
 
-        $this->assertTrue($refundTransaction->isSuccessful());
-        $this->assertEquals('ch_1', $refundTransaction->getReference());
+        $this->assertTrue($newRefundTransaction->isSuccessful());
+        $this->assertEquals('re_2', $newRefundTransaction->getReference());
+        $this->assertEquals('100', $newRefundTransaction->getAmount());
 
-        $transactionResponse = $refundTransaction->getResponse();
+        $transactionResponse = $newRefundTransaction->getResponse();
         $this->assertArrayHasKey('data', $transactionResponse);
         $this->assertArrayHasKey('source', $transactionResponse);
         $this->assertEquals(ResponseObjectInterface::ACTION_SOURCE_MANUALLY, $transactionResponse['source']);
@@ -191,40 +181,55 @@ class PaymentRefundedEventHandlerTest extends TestCase
         $sourceTransaction->setActive(true)
             ->setAmount(100.00)
             ->setReference('pi_1')
-            ->setAction(PaymentMethodInterface::CAPTURE)
-            ->setEntityClass(PaymentTransaction::class)
-            ->setEntityIdentifier(1);
+            ->setAction(PaymentMethodInterface::CAPTURE);
 
         $this->repositoryMock->expects($this->once())
             ->method('findOneBy')
             ->willReturn($sourceTransaction);
 
         $refundTransaction = new PaymentTransaction();
-        $refundTransaction->setReference('ch_1')
+        $refundTransaction->setReference('re_2')
             ->setSuccessful(true)
             ->setAction(PaymentMethodInterface::REFUND)
-            ->setAmount(100)
-            ->setResponse([
-                'data' => [
-                    'id' => 'ch_1',
-                    'refunds' => [
-                        'data' => [
-                            [
-                                'id' => 'ref_1',
-                                'amount' => 50,
-                                'status' => 'succeeded'
-                            ],
-                            [
-                                'id' => 'ref_2',
-                                'amount' => 50,
-                                'status' => 'succeeded'
-                            ]
-                        ],
-                        'total_count' => 2
-                    ],
-                    'status' => 'succeeded'
-                ]
-            ]);
+            ->setAmount(100.00);
+
+        $this->repositoryMock->expects($this->once())
+            ->method('findBy')
+            ->with([
+                'sourcePaymentTransaction' => $sourceTransaction,
+                'action' => PaymentMethodInterface::REFUND
+            ])
+            ->willReturn([$refundTransaction]);
+
+        $this->assertGetAllRefundsApiCall();
+
+        $this->paymentTransactionProvider->expects($this->never())
+            ->method('createPaymentTransactionByParentTransaction');
+
+        $this->paymentTransactionProvider->expects($this->never())
+            ->method('savePaymentTransaction');
+
+        $event = $this->createEvent();
+        $this->handler->handle($event);
+    }
+
+    public function testRefundPaymentTransactionInProcess()
+    {
+        $sourceTransaction = new PaymentTransaction();
+        $sourceTransaction->setActive(true)
+            ->setAmount(100.00)
+            ->setReference('pi_1')
+            ->setAction(PaymentMethodInterface::CAPTURE);
+
+        $this->repositoryMock->expects($this->once())
+            ->method('findOneBy')
+            ->willReturn($sourceTransaction);
+
+        $refundTransaction = new PaymentTransaction();
+        $refundTransaction->setSuccessful(false)
+            ->setActive(true)
+            ->setAction(PaymentMethodInterface::REFUND)
+            ->setAmount(100.00);
 
         $this->repositoryMock->expects($this->once())
             ->method('findBy')
@@ -292,29 +297,41 @@ class PaymentRefundedEventHandlerTest extends TestCase
             'order' => 10,
             'payment_intent' => 'pi_1',
             'payment_method' => 'card_1',
-            'refunds' => [
-                'data' => [
-                    [
-                        'id' => 'ref_1',
-                        'amount' => 50,
-                        'status' => 'succeeded'
-                    ],
-                    [
-                        'id' => 'ref_2',
-                        'amount' => 50,
-                        'status' => 'succeeded'
-                    ]
-                ],
-                'total_count' => 2
-            ],
             'status' => 'succeeded'
         ];
 
         $responseObject = new ChargeResponse($responseData);
         return new StripeEvent(
             'charge.refunded',
-            'stripe_1',
+            new StripePaymentConfig([
+                AbstractParameterBagPaymentConfig::FIELD_PAYMENT_METHOD_IDENTIFIER => 'stripe_1'
+            ]),
             $responseObject
         );
+    }
+
+    private function assertGetAllRefundsApiCall(): void
+    {
+        $responseData = [
+            'data' => [
+                [
+                    'id' => 're_2',
+                    'payment_intent' => 'pi_1',
+                    'amount' => 10000,
+                    'status' => 'succeeded'
+                ]
+            ]
+        ];
+
+        $allRefundsResponse = new RefundsCollectionResponse($responseData);
+
+        $apiClient = $this->createMock(StripeGatewayInterface::class);
+        $apiClient->expects($this->once())
+            ->method('getAllRefunds')
+            ->willReturn($allRefundsResponse);
+
+        $this->stripeClientFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($apiClient);
     }
 }

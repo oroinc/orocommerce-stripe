@@ -3,6 +3,7 @@
 namespace Oro\Bundle\StripeBundle\Client;
 
 use Oro\Bundle\StripeBundle\Client\Request\StripeApiRequestInterface;
+use Oro\Bundle\StripeBundle\Model\CollectionResponseInterface;
 use Oro\Bundle\StripeBundle\Model\ResponseObjectInterface;
 
 /**
@@ -27,4 +28,6 @@ interface StripeGatewayInterface
     public function findSetupIntentCustomer(string $setupIntentId): ResponseObjectInterface;
 
     public function findSetupIntent(string $setupIntentId): ResponseObjectInterface;
+
+    public function getAllRefunds(array $criteria): CollectionResponseInterface;
 }

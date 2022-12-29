@@ -30,7 +30,8 @@ class StripePaymentViewTest extends TestCase
             'componentOptions' => [
                 'publicKey' => 'key',
                 'isUserMonitoringEnabled' => true,
-                'locale' => null
+                'locale' => null,
+                'apiVersion' => '2022-11-15'
             ]
         ];
 

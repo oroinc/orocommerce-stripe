@@ -31,24 +31,13 @@ class PaymentIntentResponseTest extends TestCase
                 'canceled_at' => null,
                 'cancellation_reason' => null,
                 'capture_method' => 'manual',
-                'charges' => [
-                    [
-                        'id' => 'ch_1',
-                        'amount' => 100,
-                        'amount_captured' => 100,
-                        'amount_refunded' => 0,
-                        'balance_transaction' => null,
-                        'currency' => 'usd',
-                        'refunds' => [],
-                        'status' => 'succeeded'
-                    ]
-                ],
                 'confirmation_method' => 'manual',
                 'created' => 1640272165,
                 'currency' => 'usd',
                 'customer' => null,
                 'invoice' => null,
                 'last_payment_error' => null,
+                'latest_charge' => 'ch_1',
                 'livemode' => false,
                 'metadata' => [
                     'order_id' => 1
@@ -83,22 +72,6 @@ class PaymentIntentResponseTest extends TestCase
             'canceled_at' => null,
             'cancellation_reason' => null,
             'capture_method' => 'manual',
-            'charges' => [
-                'data' => [
-                    [
-                        'id' => 'ch_1',
-                        'amount' => 100,
-                        'amount_captured' => 100,
-                        'amount_refunded' => 0,
-                        'balance_transaction' => null,
-                        'calculated_statement_descriptor' => 'Stripe',
-                        'captured' => false,
-                        'currency' => 'usd',
-                        'refunds' => [],
-                        'status' => 'succeeded'
-                    ]
-                ]
-            ],
             'client_secret' => 'secret',
             'confirmation_method' => 'manual',
             'created' => 1640272165,
@@ -108,6 +81,7 @@ class PaymentIntentResponseTest extends TestCase
             'on_behalf_of' => null,
             'invoice' => null,
             'last_payment_error' => null,
+            'latest_charge' => 'ch_1',
             'livemode' => false,
             'metadata' => [
                 'order_id' => 1

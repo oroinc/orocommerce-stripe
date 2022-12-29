@@ -18,6 +18,7 @@ use Oro\Bundle\StripeBundle\Model\SetupIntentResponse;
 use Oro\Bundle\StripeBundle\Provider\EntitiesTransactionsProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Stripe\Collection;
 use Stripe\Customer;
 use Stripe\PaymentIntent;
@@ -29,6 +30,7 @@ class PurchasePaymentActionTest extends TestCase
     private EntitiesTransactionsProvider|MockObject $entitiesTransactionsProvider;
     private PaymentTransactionProvider|MockObject $paymentTransactionProvider;
     private CreateCustomerRequestFactory|MockObject $createCustomerRequestFactory;
+    private LoggerInterface|MockObject $logger;
 
     private PurchasePaymentAction $action;
 
@@ -42,6 +44,7 @@ class PurchasePaymentActionTest extends TestCase
         $this->entitiesTransactionsProvider = $this->createMock(EntitiesTransactionsProvider::class);
         $this->paymentTransactionProvider = $this->createMock(PaymentTransactionProvider::class);
         $this->createCustomerRequestFactory = $this->createMock(CreateCustomerRequestFactory::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->action = new PurchasePaymentAction(
             $factory,
