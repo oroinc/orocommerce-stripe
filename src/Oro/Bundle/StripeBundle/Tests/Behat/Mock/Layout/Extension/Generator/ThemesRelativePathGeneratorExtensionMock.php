@@ -14,9 +14,6 @@ class ThemesRelativePathGeneratorExtensionMock extends ThemesRelativePathGenerat
         '@OroStripe/layouts/mock/imports/oro_payment_method_options/layout.html.twig'
     ];
 
-    /**
-     * {@inheritDoc}
-     */
     protected function prepareThemePath($theme, $file)
     {
         if (array_key_exists($theme, self::$paths)) {

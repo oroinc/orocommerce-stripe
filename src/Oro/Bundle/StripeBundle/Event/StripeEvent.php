@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\StripeBundle\Event;
 
+use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
 use Oro\Bundle\StripeBundle\Model\ResponseObjectInterface;
 
 /**
@@ -11,36 +12,35 @@ class StripeEvent implements StripeEventInterface
 {
     private string $eventName;
     private ResponseObjectInterface $data;
-    private string $paymentMethodIdentifier;
+    private StripePaymentConfig $paymentConfig;
 
-    public function __construct(string $eventName, string $paymentMethodIdentifier, ResponseObjectInterface $data)
-    {
+    public function __construct(
+        string $eventName,
+        StripePaymentConfig $paymentConfig,
+        ResponseObjectInterface $data
+    ) {
         $this->eventName = $eventName;
-        $this->paymentMethodIdentifier = $paymentMethodIdentifier;
+        $this->paymentConfig = $paymentConfig;
         $this->data = $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getEventName(): string
     {
         return $this->eventName;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getData(): ResponseObjectInterface
     {
         return $this->data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getPaymentMethodIdentifier(): string
     {
-        return $this->paymentMethodIdentifier;
+        return $this->paymentConfig->getPaymentMethodIdentifier();
+    }
+
+    public function getPaymentConfig(): StripePaymentConfig
+    {
+        return $this->paymentConfig;
     }
 }

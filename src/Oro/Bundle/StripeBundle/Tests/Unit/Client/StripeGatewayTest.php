@@ -20,12 +20,15 @@ use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
 use Oro\Bundle\StripeBundle\Model\CustomerResponse;
 use Oro\Bundle\StripeBundle\Model\PaymentIntentResponse;
 use Oro\Bundle\StripeBundle\Model\RefundResponse;
+use Oro\Bundle\StripeBundle\Model\RefundsCollectionResponse;
 use Oro\Bundle\StripeBundle\Model\SetupIntentResponse;
 use Oro\Bundle\StripeBundle\Tests\Unit\Utils\SetReflectionPropertyTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Stripe\Collection;
 use Stripe\Customer;
+use Stripe\Exception\ApiConnectionException;
 use Stripe\Exception\CardException;
 use Stripe\Exception\RateLimitException;
 use Stripe\PaymentIntent;
@@ -46,20 +49,11 @@ class StripeGatewayTest extends TestCase
     use SetReflectionPropertyTrait;
     use EntityTrait;
 
-    /** @var PaymentIntentService|MockObject */
-    private PaymentIntentService $paymentService;
-
-    /** @var SetupIntentService|MockObject */
-    private SetupIntentService $setupIntentService;
-
-    /** @var CustomerService|MockObject */
-    private CustomerService $customerService;
-
-    /** @var RefundService|MockObject  */
-    private RefundService $refundService;
-
-    /** @var StripeClient|MockObject */
-    private StripeClient $client;
+    private PaymentIntentService|MockObject $paymentService;
+    private SetupIntentService|MockObject $setupIntentService;
+    private CustomerService|MockObject $customerService;
+    private RefundService|MockObject $refundService;
+    private StripeClient|MockObject $client;
 
     private StripeGateway $gateway;
 
@@ -582,5 +576,34 @@ class StripeGatewayTest extends TestCase
         $this->expectExceptionMessage('insufficient funds');
 
         $this->gateway->refund($request);
+    }
+
+    public function testGetAllRefundsSuccess()
+    {
+        $criteria = ['charge' => 'ch_1'];
+        $stripeResponse = new Collection();
+
+        $this->refundService->expects($this->once())
+            ->method('all')
+            ->with($criteria)
+            ->willReturn($stripeResponse);
+
+        $expected = new RefundsCollectionResponse($stripeResponse->toArray());
+        $this->assertEquals($expected, $this->gateway->getAllRefunds($criteria));
+    }
+
+    public function testGetAllRefundsFailed()
+    {
+        $criteria = ['charge' => 'ch_1'];
+        $exception = new ApiConnectionException('Unable to connect to Stripe service');
+
+        $this->refundService->expects($this->once())
+            ->method('all')
+            ->willThrowException($exception);
+
+        $this->expectException(StripeApiException::class);
+        $this->expectExceptionMessage('Unable to connect to Stripe service');
+
+        $this->gateway->getAllRefunds($criteria);
     }
 }

@@ -34,12 +34,12 @@ class PaymentIntentResponse extends AbstractResponseObject implements ResponseOb
                 'canceled_at' => $this->getValue('canceled_at'),
                 'cancellation_reason' => $this->getValue('cancellation_reason'),
                 'capture_method' => $this->getValue('capture_method'),
-                'charges' => $this->prepareChargesData(),
                 'confirmation_method' => $this->getValue('confirmation_method'),
                 'created' => $this->getValue('created'),
                 'currency' => $this->getValue('currency'),
                 'customer' => $this->getValue('customer'),
                 'invoice' => $this->getValue('invoice'),
+                'latest_charge' => $this->getValue('latest_charge'),
                 'last_payment_error' => $this->getValue('last_payment_error'),
                 'livemode' => $this->getValue('livemode'),
                 'metadata' => $this->getValue('metadata'),
@@ -64,27 +64,5 @@ class PaymentIntentResponse extends AbstractResponseObject implements ResponseOb
     public function getClientSecret(): ?string
     {
         return $this->getValue(self::CLIENT_SECRET_FIELD_NAME);
-    }
-
-    private function prepareChargesData(): array
-    {
-        $charges = $this->getValue('charges');
-        $chargesData = [];
-        if (count($charges) && isset($charges['data'])) {
-            foreach ($charges['data'] as $charge) {
-                array_push($chargesData, [
-                    'id' => $charge['id'],
-                    'amount' => $charge['amount'],
-                    'amount_captured' => $charge['amount_captured'],
-                    'amount_refunded' => $charge['amount_refunded'],
-                    'balance_transaction' => $charge['balance_transaction'],
-                    'currency' => $charge['currency'],
-                    'refunds' => $charge['refunds'],
-                    'status' => $charge['status']
-                ]);
-            }
-        }
-
-        return $chargesData;
     }
 }

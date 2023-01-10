@@ -42,26 +42,11 @@ class ChargeResponse extends AbstractResponseObject implements ResponseObjectInt
                 'failure_code' => $this->getValue('failure_code'),
                 'failure_message' => $this->getValue('failure_message'),
                 'fraud_details' => $this->getValue('fraud_details'),
-                'order' => $this->getValue('order'),
                 'payment_intent' => $this->getValue('payment_intent'),
                 'payment_method' => $this->getValue('payment_method'),
                 'refunds' => $this->getValue('refunds'),
                 'status' => $this->getValue('status')
             ]
         ];
-    }
-
-    public function getLastRefundedAmount(): int
-    {
-        $refunds = $this->getValue('refunds');
-        $lastRefund = $refunds ? reset($refunds['data']) : null;
-
-        return $lastRefund ? $lastRefund['amount'] : 0;
-    }
-
-    public function getRefundsCount(): int
-    {
-        $refunds = $this->getValue('refunds');
-        return $refunds ? $refunds['total_count'] : 0;
     }
 }

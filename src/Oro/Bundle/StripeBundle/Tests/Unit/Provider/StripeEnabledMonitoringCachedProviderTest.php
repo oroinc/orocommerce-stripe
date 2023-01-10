@@ -8,20 +8,16 @@ use Oro\Bundle\StripeBundle\Entity\Repository\StripeTransportSettingsRepository;
 use Oro\Bundle\StripeBundle\Entity\StripeTransportSettings;
 use Oro\Bundle\StripeBundle\Integration\StripeChannelType;
 use Oro\Bundle\StripeBundle\Provider\StripeEnabledMonitoringCachedProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 
 class StripeEnabledMonitoringCachedProviderTest extends TestCase
 {
-    /** @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject  */
-    private FrontendHelper $frontendHelper;
-
-    /** @var CacheItemPoolInterface|\PHPUnit\Framework\MockObject\MockObject  */
-    private CacheItemPoolInterface $cache;
-
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject  */
-    private ManagerRegistry $manager;
+    private FrontendHelper|MockObject $frontendHelper;
+    private CacheItemPoolInterface|MockObject $cache;
+    private ManagerRegistry|MockObject $manager;
     private StripeEnabledMonitoringCachedProvider $provider;
 
     protected function setUp(): void

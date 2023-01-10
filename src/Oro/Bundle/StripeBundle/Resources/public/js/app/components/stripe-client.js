@@ -49,7 +49,8 @@ define(function(require) {
         createStripeInstance: function(options) {
             // eslint-disable-next-line no-undef,new-cap
             return Stripe(options.publicKey, {
-                locale: options.locale
+                locale: options.locale,
+                apiVersion: options.apiVersion
             });
         },
 
