@@ -25,9 +25,6 @@ abstract class AbstractStripeEventHandler
         $this->paymentTransactionProvider = $paymentTransactionProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function handle(StripeEventInterface $event): void
     {
         $responseData = $event->getData();

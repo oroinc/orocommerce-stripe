@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\StripeBundle\Event;
 
+use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
 use Oro\Bundle\StripeBundle\Model\ResponseObjectInterface;
 
 /**
@@ -29,4 +30,11 @@ interface StripeEventInterface
      * @return string
      */
     public function getPaymentMethodIdentifier(): string;
+
+    /**
+     * Get payment configuration settings bag.
+     *
+     * @return StripePaymentConfig
+     */
+    public function getPaymentConfig(): StripePaymentConfig;
 }

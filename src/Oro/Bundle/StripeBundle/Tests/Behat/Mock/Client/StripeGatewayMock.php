@@ -5,9 +5,11 @@ namespace Oro\Bundle\StripeBundle\Tests\Behat\Mock\Client;
 use Oro\Bundle\StripeBundle\Client\Request\StripeApiRequestInterface;
 use Oro\Bundle\StripeBundle\Client\StripeGatewayInterface;
 use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
+use Oro\Bundle\StripeBundle\Model\CollectionResponseInterface;
 use Oro\Bundle\StripeBundle\Model\CustomerResponse;
 use Oro\Bundle\StripeBundle\Model\PaymentIntentResponse;
 use Oro\Bundle\StripeBundle\Model\RefundResponse;
+use Oro\Bundle\StripeBundle\Model\RefundsCollectionResponse;
 use Oro\Bundle\StripeBundle\Model\ResponseObjectInterface;
 use Oro\Bundle\StripeBundle\Model\SetupIntentResponse;
 use Stripe\Collection;
@@ -136,5 +138,29 @@ class StripeGatewayMock implements StripeGatewayInterface
         ]);
 
         return new RefundResponse($refund->toArray());
+    }
+
+    public function getAllRefunds(array $criteria): CollectionResponseInterface
+    {
+        $refund1 = Refund::constructFrom([
+            'id' => 're_1',
+            'payment_intent' => 'pi_1',
+            'status' => 'succeeded'
+        ]);
+
+        $refund2 = Refund::constructFrom([
+            'id' => 're_2',
+            'payment_intent' => 'pi_1',
+            'status' => 'succeeded'
+        ]);
+
+        $refundsCollection = new Collection([
+            'data' => [
+                $refund1,
+                $refund2
+            ]
+        ]);
+
+        return new RefundsCollectionResponse($refundsCollection->toArray());
     }
 }

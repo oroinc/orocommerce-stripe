@@ -7,16 +7,14 @@ use Oro\Bundle\StripeBundle\Event\StripeEventInterface;
 use Oro\Bundle\StripeBundle\EventHandler\StripeEventHandlerInterface;
 use Oro\Bundle\StripeBundle\EventHandler\StripeEventHandlerRegistry;
 use Oro\Bundle\StripeBundle\EventHandler\StripeWebhookEventHandler;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 
 class StripeWebhookEventHandlerTest extends TestCase
 {
-    /** @var StripeEventFactoryInterface|\PHPUnit\Framework\MockObject\MockObject  */
-    private $eventFactoryMock;
-
-    /** @var StripeEventHandlerRegistry|\PHPUnit\Framework\MockObject\MockObject  */
-    private $handlerRegistryMock;
+    private StripeEventFactoryInterface|MockObject $eventFactoryMock;
+    private StripeEventHandlerRegistry|MockObject $handlerRegistryMock;
 
     private StripeWebhookEventHandler $eventHandler;
 

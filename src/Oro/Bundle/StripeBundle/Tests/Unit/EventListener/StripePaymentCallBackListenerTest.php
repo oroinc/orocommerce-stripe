@@ -19,17 +19,10 @@ use Symfony\Component\HttpFoundation\Session\Session;
 
 class StripePaymentCallBackListenerTest extends TestCase
 {
-    /** @var PaymentMethodProviderInterface|MockObject */
-    private PaymentMethodProviderInterface $paymentMethodProvider;
-
-    /** @var Session|MockObject */
-    private Session $session;
-
-    /** @var PaymentResultMessageProviderInterface|MockObject */
-    private PaymentResultMessageProviderInterface $paymentResult;
-
-    /** @var Logger|MockObject */
-    private Logger $logger;
+    private PaymentMethodProviderInterface|MockObject $paymentMethodProvider;
+    private Session|MockObject $session;
+    private PaymentResultMessageProviderInterface|MockObject $paymentResult;
+    private Logger|MockObject $logger;
 
     private StripePaymentCallBackListener $listener;
 

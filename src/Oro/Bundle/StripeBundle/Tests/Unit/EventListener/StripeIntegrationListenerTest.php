@@ -8,15 +8,13 @@ use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\StripeBundle\Entity\StripeTransportSettings;
 use Oro\Bundle\StripeBundle\EventListener\StripeIntegrationListener;
 use Oro\Bundle\StripeBundle\Integration\StripeChannelType;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Cache\CacheItemPoolInterface;
 
 class StripeIntegrationListenerTest extends TestCase
 {
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|CacheItemPoolInterface
-     */
-    private CacheItemPoolInterface $cache;
+    private MockObject|CacheItemPoolInterface $cache;
     private StripeIntegrationListener $listener;
 
     protected function setUp(): void

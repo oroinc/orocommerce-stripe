@@ -4,17 +4,15 @@ namespace Oro\Bundle\StripeBundle\Tests\Unit\Placeholder;
 
 use Oro\Bundle\StripeBundle\Placeholder\StripeFilter;
 use Oro\Bundle\StripeBundle\Provider\StripeEnabledMonitoringCachedProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class StripeFilterTest extends TestCase
 {
-    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject  */
-    private RequestStack $requestStack;
-
-    /** @var StripeEnabledMonitoringCachedProvider|\PHPUnit\Framework\MockObject\MockObject  */
-    private StripeEnabledMonitoringCachedProvider $provider;
+    private RequestStack|MockObject $requestStack;
+    private StripeEnabledMonitoringCachedProvider|MockObject $provider;
     private StripeFilter $filter;
 
     protected function setUp(): void

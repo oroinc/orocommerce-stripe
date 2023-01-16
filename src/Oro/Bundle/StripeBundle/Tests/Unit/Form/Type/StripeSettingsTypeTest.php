@@ -20,6 +20,7 @@ use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormInterface;
@@ -32,8 +33,7 @@ class StripeSettingsTypeTest extends FormIntegrationTestCase
 
     public const LOCALIZATION_ID = 998;
 
-    /** @var Translator|\PHPUnit\Framework\MockObject\MockObject */
-    private $translator;
+    private Translator|MockObject $translator;
 
     protected function setUp(): void
     {
@@ -41,9 +41,6 @@ class StripeSettingsTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected function getExtensions(): array
     {
         $repositoryLocalization = $this->createMock(ObjectRepository::class);

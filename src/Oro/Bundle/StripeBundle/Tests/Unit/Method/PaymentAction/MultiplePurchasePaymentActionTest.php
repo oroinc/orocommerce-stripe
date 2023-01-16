@@ -4,6 +4,7 @@ namespace Oro\Bundle\StripeBundle\Tests\Unit\Method\PaymentAction;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\StripeBundle\Client\Exception\StripeApiException;
 use Oro\Bundle\StripeBundle\Client\Request\CreateCustomerRequest;
 use Oro\Bundle\StripeBundle\Client\Request\CreateSetupIntentRequest;
 use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
@@ -11,8 +12,10 @@ use Oro\Bundle\StripeBundle\Method\PaymentAction\MultiplePurchasePaymentAction;
 use Oro\Bundle\StripeBundle\Method\PaymentAction\PurchasePaymentActionAbstract;
 use Oro\Bundle\StripeBundle\Method\StripePaymentActionMapper;
 use Oro\Bundle\StripeBundle\Model\CustomerResponse;
+use Oro\Bundle\StripeBundle\Model\PaymentIntentResponse;
 use Oro\Bundle\StripeBundle\Model\SetupIntentResponse;
 use Stripe\Customer;
+use Stripe\PaymentIntent;
 use Stripe\SetupIntent;
 
 class MultiplePurchasePaymentActionTest extends MultiPaymentTestCase
@@ -98,5 +101,45 @@ class MultiplePurchasePaymentActionTest extends MultiPaymentTestCase
             ->method('createSetupIntent')
             ->with($createSetupIntentRequest)
             ->willReturn($setupIntentResponse);
+    }
+
+    public function testMultiPurchaseWithErrors()
+    {
+        $config = new StripePaymentConfig();
+        $config->set(StripePaymentConfig::PAYMENT_ACTION, StripePaymentActionMapper::MANUAL);
+        $transaction = new PaymentTransaction();
+
+        $this->assertCustomerCreationCalled();
+        $this->assertSetupIntentCreationCalled($transaction);
+
+        $subTransaction1 = new PaymentTransaction();
+        $subTransaction2 = new PaymentTransaction();
+
+        $this->entitiesTransactionsProvider->expects($this->once())
+            ->method('getTransactionsForMultipleEntities')
+            ->with($transaction)
+            ->willReturn([$subTransaction1, $subTransaction2]);
+
+        $paymentIntent = PaymentIntent::constructFrom([
+            'id' => 'pi_1',
+            'status' => 'succeeded',
+        ]);
+
+        $response = new PaymentIntentResponse($paymentIntent->toArray());
+
+        $this->client->expects($this->exactly(2))
+            ->method('purchase')
+            ->willReturnOnConsecutiveCalls(
+                $this->throwException(new StripeApiException('Insufficient funds')),
+                $response
+            );
+
+        $this->logger->expects($this->once())
+            ->method('error');
+
+        $response = $this->action->execute($config, $transaction);
+
+        $this->assertTrue($transaction->isSuccessful());
+        $this->assertPartiallySuccessfulMultiPurchaseResponse($response);
     }
 }

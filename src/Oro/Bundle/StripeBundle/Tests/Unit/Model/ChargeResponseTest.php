@@ -15,8 +15,6 @@ class ChargeResponseTest extends TestCase
         $this->assertEquals('pi_1', $chargeResponse->getPaymentIntentId());
         $this->assertEquals('succeeded', $chargeResponse->getStatus());
         $this->assertEquals('ch_1', $chargeResponse->getIdentifier());
-        $this->assertEquals(50, $chargeResponse->getLastRefundedAmount());
-        $this->assertEquals(1, $chargeResponse->getRefundsCount());
 
         $responseData = $chargeResponse->getData();
 
@@ -39,7 +37,6 @@ class ChargeResponseTest extends TestCase
             'failure_code' => 'test code',
             'failure_message' => 'failed',
             'fraud_details' => [],
-            'order' => 10,
             'payment_intent' => 'pi_1',
             'payment_method' => 'card_1',
             'refunds' => [
@@ -54,31 +51,6 @@ class ChargeResponseTest extends TestCase
             ],
             'status' => 'succeeded'
         ], $responseData['data']);
-    }
-
-    public function testChargeResponseObjectWitEmptyRefunds()
-    {
-        $data = $this->getResponseTestData();
-        $data['refunds'] = [
-            'data' => [],
-            'total_count' => 0
-        ];
-
-        $chargeResponse = new ChargeResponse($data);
-
-        $this->assertEquals(0, $chargeResponse->getLastRefundedAmount());
-        $this->assertEquals(0, $chargeResponse->getRefundsCount());
-    }
-
-    public function testChargeResponseObjectWithoutRefunds()
-    {
-        $data = $this->getResponseTestData();
-        unset($data['refunds']);
-
-        $chargeResponse = new ChargeResponse($data);
-
-        $this->assertEquals(0, $chargeResponse->getLastRefundedAmount());
-        $this->assertEquals(0, $chargeResponse->getRefundsCount());
     }
 
     private function getResponseTestData()
@@ -103,7 +75,6 @@ class ChargeResponseTest extends TestCase
             'failure_code' => 'test code',
             'failure_message' => 'failed',
             'fraud_details' => [],
-            'order' => 10,
             'payment_intent' => 'pi_1',
             'payment_method' => 'card_1',
             'refunds' => [

@@ -141,8 +141,11 @@ services:
     oro_stripe.event_handler.stripe_payment_refunded_handler:
         class: Oro\Bundle\StripeBundle\EventHandler\PaymentRefundedEventHandler
         parent: oro_stripe.event_handler.stripe_payment_handler_abstract
+        arguments:
+            - '@oro_stripe.client.factory'
         tags:
             - { name: oro_stripe.event_handler }
+            - { name: monolog.logger, channel: oro_stripe }
 
     oro_stripe.event_handler.stripe_event_handler_registry:
         class: Oro\Bundle\StripeBundle\EventHandler\StripeEventHandlerRegistry

@@ -15,12 +15,17 @@ use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
 use Oro\Bundle\StripeBundle\Model\CustomerResponse;
 use Oro\Bundle\StripeBundle\Model\ResponseObjectInterface;
 use Oro\Bundle\StripeBundle\Provider\EntitiesTransactionsProvider;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
 /**
  * Provides common logic for purchase actions.
  */
-abstract class PurchasePaymentActionAbstract extends PaymentActionAbstract
+abstract class PurchasePaymentActionAbstract extends PaymentActionAbstract implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     protected EntitiesTransactionsProvider $entitiesTransactionsProvider;
     protected PaymentTransactionProvider $paymentTransactionProvider;
     protected CreateCustomerRequestFactory $createCustomerRequestFactory;
@@ -35,6 +40,7 @@ abstract class PurchasePaymentActionAbstract extends PaymentActionAbstract
         $this->entitiesTransactionsProvider = $entitiesTransactionsProvider;
         $this->paymentTransactionProvider = $paymentTransactionProvider;
         $this->createCustomerRequestFactory = $createCustomerRequestFactory;
+        $this->logger = new NullLogger();
     }
 
     /**
@@ -62,6 +68,13 @@ abstract class PurchasePaymentActionAbstract extends PaymentActionAbstract
                     $response->setSuccessful(false);
                 }
             } catch (StripeApiException $exception) {
+                $this->logger->error($exception->getMessage(), [
+                    'error' => $exception->getMessage(),
+                    'stripe_error_code' => $exception->getStripeErrorCode(),
+                    'decline_code' => $exception->getDeclineCode(),
+                    'exception' => $exception
+                ]);
+
                 $response->setSuccessful(false);
             }
             $this->paymentTransactionProvider->savePaymentTransaction($transaction);

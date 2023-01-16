@@ -22,8 +22,7 @@ class StripePaymentMethodTest extends TestCase
 {
     private StripePaymentMethod $method;
 
-    /** @var PaymentActionRegistry|MockObject */
-    private PaymentActionRegistry $registry;
+    private PaymentActionRegistry|MockObject $registry;
 
     protected function setUp(): void
     {
