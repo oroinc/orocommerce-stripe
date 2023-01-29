@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\StripeBundle\EventListener;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\StripeBundle\Entity\StripeTransportSettings;
 use Oro\Bundle\StripeBundle\Integration\StripeChannelType;
