@@ -41,17 +41,6 @@ Feature: Stripe integration with suborders
         And I go to System/Payment Rules
         And I should see StripePaymentRule in grid
 
-    Scenario: Create Multi Shipping integration
-        Given I proceed as the Admin
-        And I login as administrator
-        And go to System/Integrations/Manage Integrations
-        And I click "Create Integration"
-        And I fill form with:
-            | Type | Multi Shipping |
-            | Name | Multi Shipping |
-        When I save and close form
-        Then I should see "Integration saved" flash message
-
     Scenario: Enable shipping method selection per line item and grouping and suborders
         Given I go to System/Configuration
         And I follow "Commerce/Sales/Multi Shipping Options" on configuration sidebar
