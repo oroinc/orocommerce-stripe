@@ -52,7 +52,7 @@ Feature: Stripe integration with suborders
             | Enable grouping of line items during checkout | true |
         And uncheck "Use default" for "Group line items by" field
         And I fill form with:
-            | Group line items by | Owner |
+            | Group line items by | Category |
         And uncheck "Use default" for "Create Sub-Orders for each group" field
         And I fill form with:
             | Create Sub-Orders for each group | true |
