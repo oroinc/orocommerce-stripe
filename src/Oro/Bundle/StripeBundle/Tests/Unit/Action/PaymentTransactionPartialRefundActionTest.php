@@ -4,25 +4,56 @@ namespace Oro\Bundle\StripeBundle\Tests\Unit\Action;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Tests\Unit\Action\AbstractActionTest;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\StripeBundle\Action\PaymentTransactionPartialRefundAction;
-use Oro\Component\Testing\Unit\EntityTrait;
-use PHPUnit\Framework\MockObject\MockObject;
+use Oro\Component\ConfigExpression\ContextAccessor;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException;
 use Symfony\Component\PropertyAccess\PropertyPath;
+use Symfony\Component\Routing\RouterInterface;
 
-class PaymentTransactionPartialRefundActionTest extends AbstractActionTest
+class PaymentTransactionPartialRefundActionTest extends \PHPUnit\Framework\TestCase
 {
-    use EntityTrait;
+    /** @var ContextAccessor|\PHPUnit\Framework\MockObject\MockObject */
+    private $contextAccessor;
 
-    protected function getAction()
+    /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $paymentMethodProvider;
+
+    /** @var PaymentTransactionProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $paymentTransactionProvider;
+
+    /** @var RouterInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $router;
+
+    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $dispatcher;
+
+    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $logger;
+
+    /** @var PaymentTransactionPartialRefundAction */
+    private $action;
+
+    protected function setUp(): void
     {
-        return new PaymentTransactionPartialRefundAction(
+        $this->contextAccessor = $this->createMock(ContextAccessor::class);
+        $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
+        $this->paymentTransactionProvider = $this->createMock(PaymentTransactionProvider::class);
+        $this->router = $this->createMock(RouterInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
+
+        $this->action = new PaymentTransactionPartialRefundAction(
             $this->contextAccessor,
             $this->paymentMethodProvider,
             $this->paymentTransactionProvider,
             $this->router
         );
+        $this->action->setLogger($this->logger);
+        $this->action->setDispatcher($this->dispatcher);
     }
 
     /**
@@ -37,13 +68,11 @@ class PaymentTransactionPartialRefundActionTest extends AbstractActionTest
         $options = $data['options'];
         $context = [];
 
-        $this->contextAccessor
-            ->expects($this->any())
+        $this->contextAccessor->expects(self::any())
             ->method('getValue')
-            ->will($this->returnArgument(1));
+            ->willReturnArgument(1);
 
-        $this->paymentTransactionProvider
-            ->expects($this->once())
+        $this->paymentTransactionProvider->expects(self::once())
             ->method('createPaymentTransactionByParentTransaction')
             ->with(PaymentMethodInterface::REFUND, $capturePaymentTransaction)
             ->willReturn($refundPaymentTransaction);
@@ -54,33 +83,30 @@ class PaymentTransactionPartialRefundActionTest extends AbstractActionTest
             $responseValue = $this->returnValue($data['response']);
         }
 
-        /** @var PaymentMethodInterface|MockObject $paymentMethod */
         $paymentMethod = $this->createMock(PaymentMethodInterface::class);
-        $paymentMethod->expects($this->once())
+        $paymentMethod->expects(self::once())
             ->method('execute')
             ->with(PaymentMethodInterface::REFUND, $refundPaymentTransaction)
             ->will($responseValue);
 
-        $this->paymentMethodProvider->expects($this->any())
+        $this->paymentMethodProvider->expects(self::any())
             ->method('hasPaymentMethod')
             ->with($capturePaymentTransaction->getPaymentMethod())
             ->willReturn(true);
 
-        $this->paymentMethodProvider->expects($this->once())
+        $this->paymentMethodProvider->expects(self::once())
             ->method('getPaymentMethod')
             ->with($capturePaymentTransaction->getPaymentMethod())
             ->willReturn($paymentMethod);
 
-        $this->paymentTransactionProvider
-            ->expects($this->exactly(2))
+        $this->paymentTransactionProvider->expects(self::exactly(2))
             ->method('savePaymentTransaction')
             ->withConsecutive(
                 [$refundPaymentTransaction],
                 [$capturePaymentTransaction]
             );
 
-        $this->contextAccessor
-            ->expects($this->once())
+        $this->contextAccessor->expects(self::once())
             ->method('setValue')
             ->with($context, $options['attribute'], $expected);
 
@@ -135,17 +161,6 @@ class PaymentTransactionPartialRefundActionTest extends AbstractActionTest
         ];
     }
 
-    private function getPaymentTransaction(string $action, bool $successful): PaymentTransaction
-    {
-        return $this->getEntity(PaymentTransaction::class, [
-            'action' => $action,
-            'amount' => 100.00,
-            'active' => true,
-            'successful' => $successful,
-            'paymentMethod' => 'testPaymentMethodType'
-        ]);
-    }
-
     /**
      * @dataProvider executeWrongOptionsDataProvider
      */
@@ -181,16 +196,15 @@ class PaymentTransactionPartialRefundActionTest extends AbstractActionTest
             'amount' => 100.00
         ];
 
-        $this->paymentMethodProvider->expects($this->once())
+        $this->paymentMethodProvider->expects(self::once())
             ->method('hasPaymentMethod')
             ->willReturn(false);
 
-        $this->contextAccessor->expects($this->any())
+        $this->contextAccessor->expects(self::any())
             ->method('getValue')
-            ->will($this->returnArgument(1));
+            ->willReturnArgument(1);
 
-        $this->contextAccessor
-            ->expects($this->once())
+        $this->contextAccessor->expects(self::once())
             ->method('setValue')
             ->with(
                 $context,
@@ -205,5 +219,17 @@ class PaymentTransactionPartialRefundActionTest extends AbstractActionTest
 
         $this->action->initialize($options);
         $this->action->execute($context);
+    }
+
+    private function getPaymentTransaction(string $action, bool $successful): PaymentTransaction
+    {
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setPaymentMethod('testPaymentMethodType');
+        $paymentTransaction->setAction($action);
+        $paymentTransaction->setAmount(100.00);
+        $paymentTransaction->setActive(true);
+        $paymentTransaction->setSuccessful($successful);
+
+        return $paymentTransaction;
     }
 }
