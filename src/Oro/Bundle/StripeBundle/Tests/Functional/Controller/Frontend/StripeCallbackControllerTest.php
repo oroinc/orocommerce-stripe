@@ -10,7 +10,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 class StripeCallbackControllerTest extends WebTestCase
 {
     /** @var StripeWebhookEventHandler|\PHPUnit\Framework\MockObject\MockObject|null  */
-    private $webhookEventHandler = null;
+    private $webhookEventHandler;
 
     protected function setUp(): void
     {
@@ -18,10 +18,7 @@ class StripeCallbackControllerTest extends WebTestCase
         $this->initClient();
 
         $this->webhookEventHandler = $this->createMock(StripeWebhookEventHandler::class);
-        $this->getContainer()->set(
-            'Oro\Bundle\StripeBundle\EventHandler\StripeWebhookEventHandler',
-            $this->webhookEventHandler
-        );
+        $this->getContainer()->set(StripeWebhookEventHandler::class, $this->webhookEventHandler);
     }
 
     protected function tearDown(): void
@@ -151,7 +148,7 @@ class StripeCallbackControllerTest extends WebTestCase
 
     private function createContent(): string
     {
-        $eventData = [
+        return json_encode([
             'id' => 'evt_1',
             'object' => 'event',
             'created' => '1650546324',
@@ -166,8 +163,6 @@ class StripeCallbackControllerTest extends WebTestCase
                 ]
             ],
             'type' => 'charge.refunded'
-        ];
-
-        return json_encode($eventData);
+        ], JSON_THROW_ON_ERROR);
     }
 }
