@@ -2,17 +2,19 @@
 
 namespace Oro\Bundle\StripeBundle\Tests\Unit\Method\Config;
 
+use Oro\Bundle\PaymentBundle\Method\Config\PaymentConfigInterface;
 use Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config\AbstractPaymentConfigTestCase;
 use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
 
 class StripePaymentConfigTest extends AbstractPaymentConfigTestCase
 {
-    /**
-     * @var StripePaymentConfig
-     */
+    /** @var StripePaymentConfig */
     protected $config;
 
-    protected function getPaymentConfig(): StripePaymentConfig
+    /**
+     * {@inheritDoc}
+     */
+    protected function getPaymentConfig(): PaymentConfigInterface
     {
         $params = [
             StripePaymentConfig::FIELD_PAYMENT_METHOD_IDENTIFIER => 'test_payment_method_identifier',
