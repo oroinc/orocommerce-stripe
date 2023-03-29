@@ -1,5 +1,6 @@
 @ticket-STRIPE-49
 @regression
+@behat-test-env
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroCheckoutBundle:Shipping.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml

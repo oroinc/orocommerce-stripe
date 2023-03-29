@@ -1,8 +1,8 @@
 @regression
+@behat-test-env
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroCheckoutBundle:Shipping.yml
 @fixture-OroPaymentBundle:ProductsAndShoppingListsForPayments.yml
-
 Feature: Stripe integration
     In order for the admin to be able to manage integration
     As an Admin
