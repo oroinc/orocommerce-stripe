@@ -25,7 +25,8 @@ class PaymentRefundedEventHandler extends AbstractStripeEventHandler implements 
     private const PAYMENT_REFUNDED_EVENT = 'charge.refunded';
     private StripeGatewayFactoryInterface $stripeClientFactory;
     private ?StripeGatewayInterface $client = null;
-    private array $sourceTransactions = [];
+    private array $sourceCaptureTransactions = [];
+    private array $sourceAuthorizeTransactions = [];
 
     public function __construct(
         ManagerRegistry $managerRegistry,
@@ -48,13 +49,18 @@ class PaymentRefundedEventHandler extends AbstractStripeEventHandler implements 
             );
         }
 
+        $paymentIntentId = $chargeResponseObject->getPaymentIntentId();
         // Only captured payments could be refunded.
-        $sourceTransaction = $this->getSourceTransaction(
-            $chargeResponseObject->getPaymentIntentId(),
-            $paymentMethodIdentifier
-        );
+        $sourceTransaction = $this->getSourceTransaction($paymentIntentId, $paymentMethodIdentifier);
 
         if (!$sourceTransaction) {
+            // If the `authorize` transaction exists, return the status - Response::HTTP_OK,
+            // since this is not considered an error.
+            $authorizeTransaction = $this->getAuthorizeSourceTransaction($paymentIntentId, $paymentMethodIdentifier);
+            if ($authorizeTransaction) {
+                return;
+            }
+
             throw new StripeEventHandleException('`Payment could not be refunded. There are no capture transaction`');
         }
 
@@ -123,15 +129,28 @@ class PaymentRefundedEventHandler extends AbstractStripeEventHandler implements 
 
     private function getSourceTransaction(string $reference, string $paymentMethod): ?PaymentTransaction
     {
-        if (!array_key_exists($reference, $this->sourceTransactions)) {
-            $this->sourceTransactions[$reference] = $this->findSourceTransaction(
+        if (!array_key_exists($reference, $this->sourceCaptureTransactions)) {
+            $this->sourceCaptureTransactions[$reference] = $this->findSourceTransaction(
                 $reference,
                 PaymentMethodInterface::CAPTURE,
                 $paymentMethod
             );
         }
 
-        return $this->sourceTransactions[$reference];
+        return $this->sourceCaptureTransactions[$reference];
+    }
+
+    private function getAuthorizeSourceTransaction(string $reference, string $paymentMethod): ?PaymentTransaction
+    {
+        if (!array_key_exists($reference, $this->sourceAuthorizeTransactions)) {
+            $this->sourceAuthorizeTransactions[$reference] = $this->findSourceTransaction(
+                $reference,
+                PaymentMethodInterface::AUTHORIZE,
+                $paymentMethod
+            );
+        }
+
+        return $this->sourceAuthorizeTransactions[$reference];
     }
 
     private function isInProgress(PaymentTransaction $transaction): bool

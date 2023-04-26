@@ -256,9 +256,31 @@ class PaymentRefundedEventHandlerTest extends TestCase
             'Payment could not be refunded. There are no capture transaction'
         );
 
-        $this->repositoryMock->expects($this->once())
-            ->method('findOneBy')
-            ->willReturn(null);
+        $this->assertPaymentTransactionRepository();
+
+        $this->repositoryMock->expects($this->never())
+            ->method('findBy');
+
+        $this->paymentTransactionProvider->expects($this->never())
+            ->method('createPaymentTransactionByParentTransaction');
+
+        $this->paymentTransactionProvider->expects($this->never())
+            ->method('savePaymentTransaction');
+
+        $event = $this->createEvent();
+        $this->handler->handle($event);
+    }
+
+
+    public function testSourceAuthorizeTransactionsExists()
+    {
+        $sourceTransaction = new PaymentTransaction();
+        $sourceTransaction->setActive(true)
+            ->setAmount(100.00)
+            ->setReference('pi_1')
+            ->setAction(PaymentMethodInterface::AUTHORIZE);
+
+        $this->assertPaymentTransactionRepository(null, $sourceTransaction);
 
         $this->repositoryMock->expects($this->never())
             ->method('findBy');
@@ -333,5 +355,35 @@ class PaymentRefundedEventHandlerTest extends TestCase
         $this->stripeClientFactory->expects($this->once())
             ->method('create')
             ->willReturn($apiClient);
+    }
+
+    private function assertPaymentTransactionRepository(
+        ?PaymentTransaction $captureTransaction = null,
+        ?PaymentTransaction $authorizeTransaction = null,
+    ): void {
+        $this->repositoryMock->expects($this->any())
+            ->method('findOneBy')
+            ->willReturnMap([
+                [
+                    [
+                        'reference' => 'pi_1',
+                        'action' => PaymentMethodInterface::CAPTURE,
+                        'paymentMethod' => 'stripe_1',
+                        'successful' => true
+                    ],
+                    null,
+                    $captureTransaction
+                ],
+                [
+                    [
+                        'reference' => 'pi_1',
+                        'action' => PaymentMethodInterface::AUTHORIZE,
+                        'paymentMethod' => 'stripe_1',
+                        'successful' => true
+                    ],
+                    null,
+                    $authorizeTransaction
+                ]
+            ]);
     }
 }
