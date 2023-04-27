@@ -5,11 +5,20 @@ namespace Oro\Bundle\StripeBundle\Event;
 use Oro\Bundle\StripeBundle\Method\Config\Provider\StripePaymentConfigsProvider;
 use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
 use Oro\Bundle\StripeBundle\Model\ChargeResponse;
+use Oro\Bundle\StripeBundle\Model\CustomerResponse;
 use Oro\Bundle\StripeBundle\Model\PaymentIntentResponse;
+use Oro\Bundle\StripeBundle\Model\RefundResponse;
 use Oro\Bundle\StripeBundle\Model\ResponseObjectInterface;
+use Oro\Bundle\StripeBundle\Model\SetupIntentResponse;
+use Oro\Bundle\StripeBundle\Model\UnsupportedResponse;
+use Stripe\Balance;
 use Stripe\Charge;
+use Stripe\Customer;
+use Stripe\Event;
 use Stripe\Exception\SignatureVerificationException;
 use Stripe\PaymentIntent;
+use Stripe\Refund;
+use Stripe\SetupIntent;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -22,7 +31,11 @@ class StripeSDKEventFactory implements StripeEventFactoryInterface
 
     protected array $responseTypeClassMapping = [
         PaymentIntent::class => PaymentIntentResponse::class,
-        Charge::class => ChargeResponse::class
+        Balance::class => PaymentIntentResponse::class,
+        Charge::class => ChargeResponse::class,
+        Customer::class => CustomerResponse::class,
+        Refund::class => RefundResponse::class,
+        SetupIntent::class => SetupIntentResponse::class,
     ];
 
     public function __construct(StripePaymentConfigsProvider $paymentConfigsProvider)
@@ -32,7 +45,6 @@ class StripeSDKEventFactory implements StripeEventFactoryInterface
 
     public function createEventFromRequest(Request $request): StripeEventInterface
     {
-        $data = $request->getContent();
         $configuredPaymentConfigs = $this->paymentConfigsProvider->getConfigs();
 
         $event = null;
@@ -42,11 +54,7 @@ class StripeSDKEventFactory implements StripeEventFactoryInterface
         /** @var StripePaymentConfig $paymentConfig */
         foreach ($configuredPaymentConfigs as $paymentConfig) {
             try {
-                $event = \Stripe\Webhook::constructEvent(
-                    $data,
-                    $request->server->get(self::STRIPE_SIGNATURE),
-                    $paymentConfig->getSigningSecret()
-                );
+                $event = $this->constructEvent($request, $paymentConfig);
                 $paymentMethodConfig = $paymentConfig;
                 break;
             } catch (SignatureVerificationException $exception) {
@@ -63,13 +71,6 @@ class StripeSDKEventFactory implements StripeEventFactoryInterface
         $eventObject = $event->data->object;
         $responseObject = $this->createResponseObject($eventObject);
 
-        if (null === $responseObject) {
-            throw new \LogicException(sprintf(
-                'Received object Type %s is not supported by Stripe Integration.',
-                get_class($eventObject)
-            ));
-        }
-
         return new StripeEvent($event->type, $paymentMethodConfig, $responseObject);
     }
 
@@ -78,10 +79,19 @@ class StripeSDKEventFactory implements StripeEventFactoryInterface
         $type = get_class($eventObject);
         $responseObject = $this->responseTypeClassMapping[$type] ?? null;
 
-        if (null === $responseObject) {
-            throw new \LogicException(sprintf('"%s" response type is not supported', $type));
+        if ($responseObject) {
+            return new $responseObject($eventObject->toArray());
         }
 
-        return new $responseObject($eventObject->toArray());
+        return new UnsupportedResponse();
+    }
+
+    protected function constructEvent(Request $request, StripePaymentConfig $paymentConfig): ?Event
+    {
+        return \Stripe\Webhook::constructEvent(
+            $request->getContent(),
+            $request->server->get(self::STRIPE_SIGNATURE),
+            $paymentConfig->getSigningSecret()
+        );
     }
 }
