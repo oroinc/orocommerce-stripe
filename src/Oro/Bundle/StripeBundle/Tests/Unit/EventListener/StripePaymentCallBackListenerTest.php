@@ -13,6 +13,7 @@ use Oro\Bundle\StripeBundle\EventListener\StripePaymentCallBackListener;
 use Oro\Bundle\StripeBundle\Method\PaymentAction\PaymentActionInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -21,6 +22,7 @@ class StripePaymentCallBackListenerTest extends TestCase
 {
     private PaymentMethodProviderInterface|MockObject $paymentMethodProvider;
     private Session|MockObject $session;
+    private RequestStack|MockObject $requestStack;
     private PaymentResultMessageProviderInterface|MockObject $paymentResult;
     private Logger|MockObject $logger;
 
@@ -32,10 +34,14 @@ class StripePaymentCallBackListenerTest extends TestCase
         $this->session = $this->createMock(Session::class);
         $this->paymentResult = $this->createMock(PaymentResultMessageProviderInterface::class);
         $this->logger = $this->createMock(Logger::class);
+        $this->requestStack = $this->createMock(RequestStack::class);
+        $this->requestStack->expects($this->any())
+            ->method('getSession')
+            ->willReturn($this->session);
 
         $this->listener = new StripePaymentCallBackListener(
             $this->paymentMethodProvider,
-            $this->session,
+            $this->requestStack,
             $this->paymentResult
         );
         $this->listener->setLogger($this->logger);

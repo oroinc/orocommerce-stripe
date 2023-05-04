@@ -13,26 +13,19 @@ use Oro\Bundle\StripeBundle\Model\SetupIntentResponse;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Handle payments after additional user actions (like 3D Secure validation or others).
  */
 class StripePaymentCallBackListener
 {
-    private PaymentMethodProviderInterface $paymentMethodProvider;
-    private Session $session;
     private LoggerInterface $logger;
-    private PaymentResultMessageProviderInterface $messageProvider;
-
     public function __construct(
-        PaymentMethodProviderInterface $paymentMethodProvider,
-        Session $session,
-        PaymentResultMessageProviderInterface $messageProvider
+        private PaymentMethodProviderInterface $paymentMethodProvider,
+        private RequestStack $requestStack,
+        private PaymentResultMessageProviderInterface $messageProvider
     ) {
-        $this->paymentMethodProvider = $paymentMethodProvider;
-        $this->session = $session;
-        $this->messageProvider = $messageProvider;
         $this->logger = new NullLogger();
     }
 
@@ -93,7 +86,7 @@ class StripePaymentCallBackListener
             } elseif ($failureUrl) {
                 $event->setResponse(new RedirectResponse($failureUrl));
 
-                $flashBag = $this->session->getFlashBag();
+                $flashBag = $this->requestStack->getSession()->getFlashBag();
                 if (!$flashBag->has('error')) {
                     $flashBag->add('error', $this->messageProvider->getErrorMessage($paymentTransaction));
                 }

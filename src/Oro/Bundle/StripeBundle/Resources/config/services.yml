@@ -40,7 +40,7 @@ services:
         class: Oro\Bundle\StripeBundle\EventListener\StripePaymentCallBackListener
         arguments:
             - '@oro_stripe.payment_method.provider'
-            - '@session'
+            - '@request_stack'
             - '@oro_payment.provider.result_messages'
         calls:
             - [setLogger, ['@logger']]
