@@ -78,5 +78,5 @@ abstract class AbstractStripeEventHandler
     abstract protected function createPaymentTransaction(
         ResponseObjectInterface $responseObject,
         string $paymentMethodIdentifier
-    ):void;
+    ): void;
 }

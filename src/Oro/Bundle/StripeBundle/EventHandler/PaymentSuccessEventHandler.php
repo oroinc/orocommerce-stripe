@@ -24,7 +24,7 @@ class PaymentSuccessEventHandler extends AbstractStripeEventHandler implements S
     protected function createPaymentTransaction(
         ResponseObjectInterface $responseObject,
         string $paymentMethodIdentifier
-    ):void {
+    ): void {
         $authorizationTransaction = $this->findSourceTransaction(
             $responseObject->getIdentifier(),
             PaymentMethodInterface::AUTHORIZE,
