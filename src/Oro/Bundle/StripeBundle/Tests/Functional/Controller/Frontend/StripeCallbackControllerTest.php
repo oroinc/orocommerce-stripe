@@ -43,8 +43,8 @@ class StripeCallbackControllerTest extends WebTestCase
 
         $response = $this->client->getResponse();
 
-        static::assertEquals('', $response->getContent());
-        static::assertHtmlResponseStatusCodeEquals($response, 200);
+        self::assertEquals('', $response->getContent());
+        self::assertHtmlResponseStatusCodeEquals($response, 200);
     }
 
     public function testWithNotSupportedEvent()
@@ -66,12 +66,8 @@ class StripeCallbackControllerTest extends WebTestCase
 
         $response = $this->client->getResponse();
 
-        static::assertEquals(
-            'Event is not supported',
-            $response->getContent()
-        );
-
-        static::assertHtmlResponseStatusCodeEquals($response, 200);
+        self::assertEquals('Event is not supported', $response->getContent());
+        self::assertHtmlResponseStatusCodeEquals($response, 200);
     }
 
     public function testHandleEventsActionReturnBadRequest()
@@ -93,12 +89,11 @@ class StripeCallbackControllerTest extends WebTestCase
 
         $response = $this->client->getResponse();
 
-        static::assertEquals(
+        self::assertEquals(
             'Payment could not be refunded. There are no capture transaction',
             $response->getContent()
         );
-
-        static::assertHtmlResponseStatusCodeEquals($response, 400);
+        self::assertHtmlResponseStatusCodeEquals($response, 400);
     }
 
     public function testHandleEventsActionReturnInternalError()
@@ -118,12 +113,11 @@ class StripeCallbackControllerTest extends WebTestCase
 
         $response = $this->client->getResponse();
 
-        static::assertEquals(
+        self::assertEquals(
             'Error occurs during Stripe event processing',
             $response->getContent()
         );
-
-        static::assertHtmlResponseStatusCodeEquals($response, 500);
+        self::assertHtmlResponseStatusCodeEquals($response, 500);
     }
 
     public function testHandleEventsActionWithEmptyContent()
@@ -138,12 +132,8 @@ class StripeCallbackControllerTest extends WebTestCase
 
         $response = $this->client->getResponse();
 
-        static::assertEquals(
-            'Request content is empty',
-            $response->getContent()
-        );
-
-        static::assertHtmlResponseStatusCodeEquals($response, 400);
+        self::assertEquals('Request content is empty', $response->getContent());
+        self::assertHtmlResponseStatusCodeEquals($response, 400);
     }
 
     private function createContent(): string
