@@ -16,10 +16,6 @@ class MultiplePurchasePaymentAction extends PurchasePaymentActionAbstract implem
     /**
      * SetupIntent flow is used as payment method storage and could be used in future to generate
      * PaymentIntent for each related transaction.
-     *
-     * @param StripePaymentConfig $config
-     * @param PaymentTransaction $paymentTransaction
-     * @return StripeApiResponseInterface
      */
     public function execute(
         StripePaymentConfig $config,

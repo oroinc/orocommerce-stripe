@@ -35,7 +35,6 @@ class StripePaymentCallBackListener
     }
 
     /**
-     * @param AbstractCallbackEvent $event
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function onReturn(AbstractCallbackEvent $event)

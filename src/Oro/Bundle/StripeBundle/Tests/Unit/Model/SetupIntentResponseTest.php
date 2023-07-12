@@ -32,7 +32,6 @@ class SetupIntentResponseTest extends TestCase
     }
 
     /**
-     * @return \Generator
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function responseDataProvider(): \Generator

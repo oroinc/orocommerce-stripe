@@ -38,10 +38,6 @@ abstract class PaymentActionAbstract
 
     /**
      * Update transaction data with response from API.
-     *
-     * @param PaymentTransaction $paymentTransaction
-     * @param ResponseObjectInterface $responseObject
-     * @param bool $successful
      */
     protected function updateTransactionData(
         PaymentTransaction $paymentTransaction,

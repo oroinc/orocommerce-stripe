@@ -45,8 +45,6 @@ class PaymentTransactionFullyRefundedTest extends TestCase
 
     /**
      * @dataProvider availableRefundAmountDataProvider
-     * @param float $availableRefundAmount
-     * @param bool $expected
      */
     public function testEvaluate(float $availableRefundAmount, bool $expected)
     {

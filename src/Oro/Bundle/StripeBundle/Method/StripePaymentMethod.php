@@ -67,9 +67,6 @@ class StripePaymentMethod implements PaymentMethodInterface
     /**
      * According to the documentation minimal amount to order should be greater than 0.5
      * @see https://stripe.com/docs/api/payment_intents/object#payment_intent_object-amount.
-     *
-     * @param PaymentContextInterface $context
-     * @return bool
      */
     public function isApplicable(PaymentContextInterface $context): bool
     {

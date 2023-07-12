@@ -62,9 +62,6 @@ class PurchasePaymentActionTest extends TestCase
     }
 
     /**
-     * @param array $config
-     * @param string $action
-     * @param bool $isActive
      * @dataProvider getTestExecuteWithoutSetupIntentUsageData
      */
     public function testExecuteWithoutSetupIntentUsage(array $config, string $action, bool $isActive): void

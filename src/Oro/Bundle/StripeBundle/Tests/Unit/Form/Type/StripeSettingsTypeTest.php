@@ -145,7 +145,6 @@ class StripeSettingsTypeTest extends FormIntegrationTestCase
             'reAuthorizationErrorEmail' => 'test@test.com'
         ];
 
-
         $form = $this->factory->create(StripeSettingsType::class);
         $form->submit($submitData);
 
