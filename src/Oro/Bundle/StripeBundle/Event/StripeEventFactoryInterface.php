@@ -11,9 +11,6 @@ interface StripeEventFactoryInterface
 {
     /**
      * Create request object from request data.
-     *
-     * @param Request $request
-     * @return StripeEventInterface
      */
     public function createEventFromRequest(Request $request): StripeEventInterface;
 }

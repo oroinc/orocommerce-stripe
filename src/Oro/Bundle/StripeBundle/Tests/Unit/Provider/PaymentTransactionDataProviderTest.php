@@ -21,8 +21,6 @@ class PaymentTransactionDataProviderTest extends TestCase
     }
 
     /**
-     * @param array $transactions
-     * @param float $expected
      * @dataProvider getDataForTestGetAvailableAmountToRefund
      */
     public function testGetAvailableAmountToRefund(array $transactions, float $expected)

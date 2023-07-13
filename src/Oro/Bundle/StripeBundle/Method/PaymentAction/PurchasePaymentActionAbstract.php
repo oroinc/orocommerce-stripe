@@ -46,9 +46,6 @@ abstract class PurchasePaymentActionAbstract extends PaymentActionAbstract imple
     /**
      * Initiate payments for a set of transactions. Send a request to STRIPE service for each transaction separately.
      *
-     * @param StripePaymentConfig $config
-     * @param PaymentTransaction $paymentTransaction
-     * @return StripeApiResponseInterface
      * @throws \Throwable
      */
     protected function purchaseMultipleTransactions(
@@ -86,10 +83,6 @@ abstract class PurchasePaymentActionAbstract extends PaymentActionAbstract imple
     /**
      * Create paymentIntent as a storage of customer and attached to it payment method. PaymentIntent could be used for
      * generating payments in the future.
-     *
-     * @param PaymentTransaction $paymentTransaction
-     * @param StripePaymentConfig $config
-     * @return ResponseObjectInterface
      */
     protected function createPaymentIntent(
         PaymentTransaction $paymentTransaction,
@@ -112,9 +105,6 @@ abstract class PurchasePaymentActionAbstract extends PaymentActionAbstract imple
 
     /**
      * Create customer on STRIPE.
-     *
-     * @param PaymentTransaction $paymentTransaction
-     * @param StripeGatewayInterface $client
      */
     protected function createCustomer(
         PaymentTransaction $paymentTransaction,

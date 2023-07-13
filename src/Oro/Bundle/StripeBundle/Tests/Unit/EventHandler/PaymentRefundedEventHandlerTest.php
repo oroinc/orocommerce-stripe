@@ -271,7 +271,6 @@ class PaymentRefundedEventHandlerTest extends TestCase
         $this->handler->handle($event);
     }
 
-
     public function testSourceAuthorizeTransactionsExists()
     {
         $sourceTransaction = new PaymentTransaction();

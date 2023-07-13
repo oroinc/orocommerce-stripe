@@ -178,7 +178,6 @@ class StripeGateway implements StripeGatewayInterface
     }
 
     /**
-     * @param ApiErrorException $exception
      * @throws StripeApiException
      */
     private function handleException(ApiErrorException $exception)
