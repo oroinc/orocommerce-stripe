@@ -76,8 +76,7 @@ class PurchasePaymentActionTest extends TestCase
             ->method('purchase')
             ->willReturn($response);
 
-        $this->createCustomerRequestFactory->expects($this->never())
-            ->method('create');
+        $this->assertCustomerCreationCalled();
 
         $config = new StripePaymentConfig($config);
 
@@ -87,7 +86,10 @@ class PurchasePaymentActionTest extends TestCase
         $this->assertEquals($isActive, $transaction->isActive());
 
         $this->assertEquals(
-            ['additionalData' => json_encode(['paymentIntentId' => 'pi_1'])],
+            ['additionalData' => json_encode([
+                'customerId' => 'cus001',
+                'paymentIntentId' => 'pi_1',
+            ])],
             $transaction->getTransactionOptions()
         );
         $this->assertEquals('pi_1', $transaction->getReference());
