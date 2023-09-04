@@ -96,7 +96,6 @@ abstract class PurchasePaymentActionAbstract extends PaymentActionAbstract imple
         StripePaymentConfig $config
     ): ResponseObjectInterface {
         $client = $this->getClient($config);
-        $this->createCustomer($paymentTransaction, $client);
 
         // Create SetupIntent to use for further payments.
         $setupIntentRequest = new CreateSetupIntentRequest($paymentTransaction);

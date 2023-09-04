@@ -25,6 +25,9 @@ class MultiplePurchasePaymentAction extends PurchasePaymentActionAbstract implem
         StripePaymentConfig $config,
         PaymentTransaction $paymentTransaction
     ): StripeApiResponseInterface {
+        $client = $this->getClient($config);
+        $this->createCustomer($paymentTransaction, $client);
+
         $setupIntentResponseObject = $this->createPaymentIntent($paymentTransaction, $config);
         $response = new SetupIntentResponse($setupIntentResponseObject);
 
