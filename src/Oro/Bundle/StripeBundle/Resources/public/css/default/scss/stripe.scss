@@ -41,8 +41,6 @@
             border-color: $input-border-color-focus-state;
             outline: 0;
         }
-
-        box-shadow: $input-box-shadow-focus-state;
     }
 }
 
@@ -52,5 +50,4 @@
     }
 
     border-color: $input-border-color-error-state;
-    box-shadow: $input-box-shadow-error-state;
 }
