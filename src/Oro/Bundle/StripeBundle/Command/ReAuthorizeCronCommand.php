@@ -59,7 +59,7 @@ HELP
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('Starting Stripe authorizations processing');
         $this->reAuthorizationHandler->reAuthorize();
