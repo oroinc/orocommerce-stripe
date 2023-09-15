@@ -22,6 +22,9 @@ class PurchasePaymentAction extends PurchasePaymentActionAbstract implements Pay
          * setupIntent could be used for generating new authorization transaction when current authorization will be
          * expired.
          */
+        $client = $this->getClient($config);
+        $this->createCustomer($paymentTransaction, $client);
+
         if ($config->getPaymentAction() === StripePaymentActionMapper::MANUAL && $config->isReAuthorizationAllowed()) {
             $this->createPaymentIntent($paymentTransaction, $config);
         }
