@@ -20,9 +20,9 @@ use PHPUnit\Framework\TestCase;
 
 class StripePaymentMethodTest extends TestCase
 {
-    private StripePaymentMethod $method;
+    protected StripePaymentMethod $method;
 
-    private PaymentActionRegistry|MockObject $registry;
+    protected PaymentActionRegistry|MockObject $registry;
 
     protected function setUp(): void
     {

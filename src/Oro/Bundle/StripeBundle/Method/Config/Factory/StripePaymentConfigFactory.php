@@ -38,6 +38,8 @@ class StripePaymentConfigFactory
                 (string)$this->localizationHelper->getLocalizedValue($settings->getShortLabels()),
             AbstractParameterBagPaymentConfig::FIELD_ADMIN_LABEL =>
                 (string)$this->localizationHelper->getLocalizedValue($settings->getLabels()),
+            StripePaymentConfig::APPLE_GOOGLE_PAY_LABEL =>
+                (string)$this->localizationHelper->getLocalizedValue($settings->getAppleGooglePayLabels()),
             AbstractParameterBagPaymentConfig::FIELD_PAYMENT_METHOD_IDENTIFIER =>
                 $this->getPaymentMethodIdentifier($settings->getChannel()),
             StripePaymentConfig::PUBLIC_KEY => $parameters->get(StripeTransportSettings::API_PUBLIC_KEY),

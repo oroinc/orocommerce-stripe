@@ -8,3 +8,9 @@ services:
         tags:
             - { name: container.service_subscriber }
             - { name: container.service_subscriber, id: monolog.logger.oro_stripe, key: Psr\Log\LoggerInterface }
+
+    Oro\Bundle\StripeBundle\Controller\Frontend\ApplePayVerificationController:
+        calls:
+            - [setContainer, ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }

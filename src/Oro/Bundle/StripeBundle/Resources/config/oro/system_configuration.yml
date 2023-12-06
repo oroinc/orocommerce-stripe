@@ -1,0 +1,62 @@
+system_configuration:
+    fields:
+        oro_stripe.apple_pay_domain_verification:
+            data_type: string
+            type: Symfony\Component\Form\Extension\Core\Type\TextareaType
+            search_type: text
+            priority: -50
+            options:
+                label: oro.stripe.system_configuration.fields.apple_pay_domain_verification.label
+                tooltip: oro.stripe.system_configuration.fields.apple_pay_domain_verification.tooltip
+
+    tree:
+        system_configuration:
+            commerce:
+                children:
+                    sales:
+                        children:
+                            checkout:
+                                children:
+                                    checkout_options:
+                                        children:
+                                            - oro_stripe.apple_pay_domain_verification
+        organization_configuration:
+            commerce:
+                children:
+                    sales:
+                        children:
+                            checkout:
+                                children:
+                                    checkout_options:
+                                        children:
+                                            - oro_stripe.apple_pay_domain_verification
+                    payment:
+                        priority: 400
+                        children:
+                            payment_general:
+                                priority: 100
+                                children:
+                                    merchant_location:
+                                        priority: 100
+                                        children:
+                                            - oro_payment.merchant_country
+        website_configuration:
+            commerce:
+                children:
+                    sales:
+                        children:
+                            checkout:
+                                children:
+                                    checkout_options:
+                                        children:
+                                            - oro_stripe.apple_pay_domain_verification
+                    payment:
+                        priority: 400
+                        children:
+                            payment_general:
+                                priority: 100
+                                children:
+                                    merchant_location:
+                                        priority: 100
+                                        children:
+                                            - oro_payment.merchant_country
