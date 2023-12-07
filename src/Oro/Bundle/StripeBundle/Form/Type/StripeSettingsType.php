@@ -50,6 +50,11 @@ class StripeSettingsType extends AbstractType
                     'constraints' => [new NotBlank()]
                 ]
             ])
+            ->add('appleGooglePayLabels', LocalizedFallbackValueCollectionType::class, [
+                'label'    => 'oro.stripe.settings.apple_google_pay_labels.label',
+                'tooltip'  => 'oro.stripe.settings.apple_google_pay_labels.tooltip',
+                'required' => false,
+            ])
             ->add('apiPublicKey', TextType::class, [
                 'label' => 'oro.stripe.settings.api_public_key.label',
                 'required' => true,

@@ -4,3 +4,10 @@ oro_stripe_callback_frontend:
     prefix: /stripe
     options:
         frontend: true
+
+oro_stripe_apple_pay_verification_frontend:
+    resource: "@OroStripeBundle/Controller/Frontend/ApplePayVerificationController.php"
+    type: annotation
+    prefix: /
+    options:
+        frontend: true

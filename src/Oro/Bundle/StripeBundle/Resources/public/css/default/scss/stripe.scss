@@ -54,3 +54,39 @@
     border-color: $input-border-color-error-state;
     box-shadow: $input-box-shadow-error-state;
 }
+
+.stripe-apple-google-pay-label {
+    display: flex;
+    white-space: nowrap;
+    align-items: center;
+}
+
+.stripe-apple-google-pay-method-container label.checkbox-label {
+    align-items: center;
+}
+
+.stripe-apple-google-pay-method-container .checkout-form__payment-container {
+    // stylelint-disable-next-line declaration-no-important
+    display: none !important;
+}
+
+.apple-pay-button {
+    display: inline-block;
+    // stylelint-disable-next-line property-no-vendor-prefix
+    -webkit-appearance: -apple-pay-button;
+    -apple-pay-button-type: plain;
+}
+
+.apple-pay-button-black {
+    // stylelint-disable-next-line color-named
+    -apple-pay-button-style: black;
+}
+
+.apple-pay-button-white {
+    // stylelint-disable-next-line color-named
+    -apple-pay-button-style: white;
+}
+
+.apple-pay-button-white-with-line {
+    -apple-pay-button-style: white-outline;
+}

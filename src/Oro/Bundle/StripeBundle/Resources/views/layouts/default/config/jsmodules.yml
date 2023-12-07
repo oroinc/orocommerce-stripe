@@ -2,5 +2,7 @@ dynamic-imports:
     oropayment:
         - orostripe/js/app/components/stripe-client
         - orostripe/js/app/components/stripe-payment-card-component
+        - orostripe/js/app/components/stripe-apple-google-pay-selection-component
+        - orostripe/js/app/components/stripe-apple-google-pay-payment-component
         - orostripe/js/app/components/stripe-payment-component
         - orostripe/js/app/views/stripe-card-single-page-checkout-view

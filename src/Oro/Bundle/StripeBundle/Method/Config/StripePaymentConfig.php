@@ -3,6 +3,7 @@
 namespace Oro\Bundle\StripeBundle\Method\Config;
 
 use Oro\Bundle\PaymentBundle\Method\Config\ParameterBag\AbstractParameterBagPaymentConfig;
+use Oro\Bundle\StripeBundle\Entity\StripeTransportSettings;
 
 /**
  * Stores configuration data used in integration with Stripe payment system.
@@ -10,6 +11,7 @@ use Oro\Bundle\PaymentBundle\Method\Config\ParameterBag\AbstractParameterBagPaym
 class StripePaymentConfig extends AbstractParameterBagPaymentConfig
 {
     public const ADMIN_LABEL = 'admin_label';
+    public const APPLE_GOOGLE_PAY_LABEL = 'apple_google_pay_label';
     public const PUBLIC_KEY = 'public_key';
     public const SECRET_KEY = 'secret_key';
     public const USER_MONITORING_ENABLED = 'user_monitoring_enabled';
@@ -23,6 +25,11 @@ class StripePaymentConfig extends AbstractParameterBagPaymentConfig
     public function getAdminLabel(): ?string
     {
         return $this->get(self::ADMIN_LABEL);
+    }
+
+    public function getAppleGooglePayLabel(): ?string
+    {
+        return $this->get(self::APPLE_GOOGLE_PAY_LABEL) ?: StripeTransportSettings::DEFAULT_APPLE_GOOGLE_PAY_LABEL;
     }
 
     public function getPublicKey(): ?string

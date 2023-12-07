@@ -21,6 +21,7 @@ class StripePaymentConfigTest extends AbstractPaymentConfigTestCase
             StripePaymentConfig::FIELD_LABEL => 'test label',
             StripePaymentConfig::FIELD_SHORT_LABEL => 'test short label',
             StripePaymentConfig::ADMIN_LABEL => 'admin label',
+            StripePaymentConfig::APPLE_GOOGLE_PAY_LABEL => 'apple_google_pay_label',
             StripePaymentConfig::PUBLIC_KEY => 'public key',
             StripePaymentConfig::SECRET_KEY => 'secret key',
             StripePaymentConfig::USER_MONITORING_ENABLED => true,
@@ -35,6 +36,11 @@ class StripePaymentConfigTest extends AbstractPaymentConfigTestCase
     public function testGetAdminLabel(): void
     {
         $this->assertEquals('admin label', $this->config->getAdminLabel());
+    }
+
+    public function testGetGetAppleGooglePayLabel(): void
+    {
+        $this->assertEquals('apple_google_pay_label', $this->config->getAppleGooglePayLabel());
     }
 
     public function testGetPublicKey(): void

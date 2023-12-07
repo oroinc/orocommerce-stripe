@@ -30,6 +30,10 @@ oro_behat_extension:
                     Stripe Exp Date: 'exp-date'
                     Stripe CVC: 'cvc'
                     Stripe ZIP: 'postal'
+        Google Pay Method First And Selected:
+            selector:
+                type: xpath
+                locator: '//*[@data-content="payment_method_form"]//*[contains(@class, "checkout-form__radio")][1]//input[@type="radio" and @checked="checked"]/..//*[text()="Google Pay"]'
     suites:
         OroStripeBundle:
             contexts:

@@ -95,7 +95,16 @@ class StripeSettingsTypeTest extends FormIntegrationTestCase
 
     public function testSubmit(): void
     {
-        $stripeSettings = (new StripeTransportSettings())
+        $stripeSettings = new StripeTransportSettings();
+
+        /** @var LocalizedFallbackValue $label */
+        foreach ($stripeSettings->getAppleGooglePayLabels() as $label) {
+            $this->assertEquals(StripeTransportSettings::DEFAULT_APPLE_GOOGLE_PAY_LABEL, $label->getString());
+
+            $stripeSettings->removeAppleGooglePayLabel($label);
+        }
+
+        $stripeSettings
             ->setApiPublicKey('public key')
             ->setApiSecretKey('secret key')
             ->setPaymentAction('manual')
@@ -111,6 +120,12 @@ class StripeSettingsTypeTest extends FormIntegrationTestCase
                 $this->getEntity(Localization::class, ['id' => self::LOCALIZATION_ID])
             ))
             ->addShortLabel($this->createLocalizedValue('Label 2'))
+            ->addAppleGooglePayLabel($this->createLocalizedValue(
+                'Label 3',
+                null,
+                $this->getEntity(Localization::class, ['id' => self::LOCALIZATION_ID])
+            ))
+            ->addAppleGooglePayLabel($this->createLocalizedValue('Label 3'))
             ->setSigningSecret('secret')
             ->setEnableReAuthorize(true)
             ->setReAuthorizationErrorEmail('test@test.com');
@@ -136,6 +151,16 @@ class StripeSettingsTypeTest extends FormIntegrationTestCase
                     'localizations' => [
                         self::LOCALIZATION_ID => [
                             'value' => 'Label 2',
+                        ],
+                    ],
+                ],
+            ],
+            'appleGooglePayLabels' => [
+                'values' => [
+                    'default' => 'Label 3',
+                    'localizations' => [
+                        self::LOCALIZATION_ID => [
+                            'value' => 'Label 3',
                         ],
                     ],
                 ],
