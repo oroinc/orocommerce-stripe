@@ -21,9 +21,10 @@ class StripePaymentMethodFactory
         $this->paymentActionRegistry = $paymentActionRegistry;
     }
 
-    public function create(StripePaymentConfig $config): StripePaymentMethod
+    public function create(StripePaymentConfig $config, ?string $methodClass = null): StripePaymentMethod
     {
-        $method = new StripePaymentMethod($config, $this->paymentActionRegistry);
+        $methodClass = null === $methodClass ? StripePaymentMethod::class : $methodClass;
+        $method = new $methodClass($config, $this->paymentActionRegistry);
         $method->setLogger($this->logger);
 
         return $method;

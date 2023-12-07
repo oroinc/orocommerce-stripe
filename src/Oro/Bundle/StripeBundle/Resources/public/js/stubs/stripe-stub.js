@@ -169,6 +169,36 @@
                         reject(Error('Unknown payment element type'));
                     }
                 });
+            },
+
+            paymentRequest: function(params) {
+                return {
+                    paymentMethodCallback: null,
+
+                    canMakePayment: function() {
+                        return new Promise(function(resolve, reject) {
+                            resolve({
+                                applePay: false,
+                                googlePay: true
+                            });
+                        });
+                    },
+
+                    on: function(eventName, callback) {
+                        this.paymentMethodCallback = callback;
+                    },
+
+                    show: function(eventName, callback) {
+                        this.paymentMethodCallback({
+                            paymentMethod: {
+                                id: '4242 4242 4242 4242'
+                            },
+
+                            complete: function(status) {
+                            }
+                        });
+                    }
+                };
             }
         };
     };

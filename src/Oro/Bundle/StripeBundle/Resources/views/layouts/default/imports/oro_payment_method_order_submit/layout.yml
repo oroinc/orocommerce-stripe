@@ -3,3 +3,18 @@ layout:
         - '@setBlockTheme':
             themes:
                 - '@OroStripe/layouts/default/imports/oro_payment_method_order_submit/layout.html.twig'
+
+        - '@setOption':
+            id: payment_additional_data
+            optionName: vars
+            optionValue:
+                totals: '=data["oro_checkout_totals"].getData(data["checkout"])'
+                country: '=data["system_config_provider"].getValue("oro_payment.merchant_country")'
+
+        - '@add':
+            id: order_review_additional_data_field
+            parentId: checkout_form_fields
+            blockType: block
+            options:
+                vars:
+                    form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'

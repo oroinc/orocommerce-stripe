@@ -5,3 +5,8 @@ services:
             - '@translator'
         tags:
             - { name: form.type }
+
+    oro_stripe.form.extension.product_collection:
+        class: Oro\Bundle\StripeBundle\Form\Extension\WorkflowTransitionExtension
+        tags:
+            - { name: form.type_extension, extended_type: Oro\Bundle\WorkflowBundle\Form\Type\WorkflowTransitionType }

@@ -18,6 +18,7 @@ class StripeTransportSettings extends Transport
 {
     public const LABELS = 'labels';
     public const SHORT_LABELS = 'short_labels';
+    public const APPLE_GOOGLE_PAY_LABELS = 'apple_google_pay_labels';
     public const API_PUBLIC_KEY = 'public_key';
     public const API_SECRET_KEY = 'secret_key';
     public const USER_MONITORING = 'user_monitoring';
@@ -25,6 +26,8 @@ class StripeTransportSettings extends Transport
     public const SIGNING_SECRET = 'signing_secret';
     public const ALLOW_RE_AUTHORIZE = 'allow_re_authorize';
     public const RE_AUTHORIZATION_ERROR_EMAIL = 're_authorization_error_email';
+
+    public const DEFAULT_APPLE_GOOGLE_PAY_LABEL = 'Apple Pay/Google Pay';
 
     protected ?ParameterBag $settings = null;
 
@@ -63,6 +66,24 @@ class StripeTransportSettings extends Transport
      * )
      */
     protected ?Collection $shortLabels = null;
+
+    /**
+     * @ORM\ManyToMany(
+     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true
+     * )
+     * @ORM\JoinTable(
+     *      name="oro_stripe_transport_apple_google_pay_label",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="transport_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *      }
+     * )
+     */
+    protected ?Collection $appleGooglePayLabels = null;
 
     /**
      * @ORM\Column(name="stripe_api_public_key", type="string", length=255, nullable=true)
@@ -105,6 +126,10 @@ class StripeTransportSettings extends Transport
     {
         $this->labels = new ArrayCollection();
         $this->shortLabels = new ArrayCollection();
+
+        $defaultAppleGooglePayLabel = new LocalizedFallbackValue();
+        $defaultAppleGooglePayLabel->setString(self::DEFAULT_APPLE_GOOGLE_PAY_LABEL);
+        $this->appleGooglePayLabels = new ArrayCollection([$defaultAppleGooglePayLabel]);
     }
 
     public function getSettingsBag(): ParameterBag
@@ -113,6 +138,7 @@ class StripeTransportSettings extends Transport
             $this->settings = new ParameterBag([
                 self::LABELS => $this->getLabels(),
                 self::SHORT_LABELS => $this->getShortLabels(),
+                self::APPLE_GOOGLE_PAY_LABELS => $this->getAppleGooglePayLabels(),
                 self::API_PUBLIC_KEY => $this->getApiPublicKey(),
                 self::API_SECRET_KEY => $this->getApiSecretKey(),
                 self::PAYMENT_ACTION => $this->getPaymentAction(),
@@ -167,6 +193,29 @@ class StripeTransportSettings extends Transport
     {
         if ($this->shortLabels->contains($shortLabel)) {
             $this->shortLabels->removeElement($shortLabel);
+        }
+
+        return $this;
+    }
+
+    public function getAppleGooglePayLabels(): Collection
+    {
+        return $this->appleGooglePayLabels;
+    }
+
+    public function addAppleGooglePayLabel(LocalizedFallbackValue $label): self
+    {
+        if (!$this->appleGooglePayLabels->contains($label)) {
+            $this->appleGooglePayLabels->add($label);
+        }
+
+        return $this;
+    }
+
+    public function removeAppleGooglePayLabel(LocalizedFallbackValue $label): self
+    {
+        if ($this->appleGooglePayLabels->contains($label)) {
+            $this->appleGooglePayLabels->removeElement($label);
         }
 
         return $this;

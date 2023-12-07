@@ -7,3 +7,25 @@
         </div>
     {% endif %}
 {%- endblock %}
+
+{% block _order_review_payment_methods_stripe_apple_google_pay_widget %}
+    {% if options.payment_method is defined %}
+        {% set componentOptions = view.options.componentOptions|default({})|merge({
+            paymentMethod: options.payment_method,
+            totals: totals,
+            country: country
+        }) %}
+        <div class="hidden"
+             data-page-component-module="orostripe/js/app/components/stripe-apple-google-pay-payment-component"
+             data-page-component-options="{{ componentOptions|json_encode }}">
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _order_review_additional_data_field_widget %}
+    {% if form.additional_data is defined %}
+        <div data-page-component-module="orocheckout/js/app/components/payment-additional-data-component">
+            {{ form_row(form.additional_data) }}
+        </div>
+    {% endif %}
+{% endblock %}

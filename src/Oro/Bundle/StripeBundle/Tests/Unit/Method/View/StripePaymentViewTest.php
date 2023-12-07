@@ -9,11 +9,12 @@ use PHPUnit\Framework\TestCase;
 
 class StripePaymentViewTest extends TestCase
 {
-    private StripePaymentView $view;
+    protected StripePaymentConfig $config;
+    protected StripePaymentView $view;
 
     protected function setUp(): void
     {
-        $config = new StripePaymentConfig([
+        $this->config = new StripePaymentConfig([
             StripePaymentConfig::PUBLIC_KEY => 'key',
             StripePaymentConfig::USER_MONITORING_ENABLED => true,
             StripePaymentConfig::ADMIN_LABEL => 'adminlabel',
@@ -21,7 +22,7 @@ class StripePaymentViewTest extends TestCase
             StripePaymentConfig::FIELD_LABEL => 'label',
             StripePaymentConfig::FIELD_PAYMENT_METHOD_IDENTIFIER => 'test'
         ]);
-        $this->view = new StripePaymentView($config);
+        $this->view = new StripePaymentView($this->config);
     }
 
     public function testGetOptions(): void

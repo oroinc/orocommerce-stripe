@@ -19,9 +19,9 @@ class StripePaymentMethod implements PaymentMethodInterface
 {
     private const MINIMAL_AMOUNT_TO_ORDER = 0.5;
 
-    private StripePaymentConfig $config;
-    private PaymentActionRegistry $paymentActionRegistry;
-    private LoggerInterface $logger;
+    protected StripePaymentConfig $config;
+    protected PaymentActionRegistry $paymentActionRegistry;
+    protected LoggerInterface $logger;
 
     public function __construct(StripePaymentConfig $config, PaymentActionRegistry $paymentActionRegistry)
     {

@@ -7,6 +7,7 @@ use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
 use Oro\Bundle\StripeBundle\Method\Factory\StripePaymentMethodFactory;
 use Oro\Bundle\StripeBundle\Method\PaymentAction\PaymentActionRegistry;
 use Oro\Bundle\StripeBundle\Method\Provider\StripePaymentMethodsProvider;
+use Oro\Bundle\StripeBundle\Method\StripeAppleGooglePaymentMethod;
 use Oro\Bundle\StripeBundle\Method\StripePaymentMethod;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -91,16 +92,28 @@ class StripePaymentMethodsProviderTest extends TestCase
             ->willReturn([$config1, $config2]);
 
         $registry = $this->createMock(PaymentActionRegistry::class);
-        $method1 = new StripePaymentMethod($config1, $registry);
-        $method2 = new StripePaymentMethod($config2, $registry);
+        $method11 = new StripePaymentMethod($config1, $registry);
+        $method12 = new StripeAppleGooglePaymentMethod($config1, $registry);
+        $method21 = new StripePaymentMethod($config2, $registry);
+        $method22 = new StripeAppleGooglePaymentMethod($config2, $registry);
 
-        $this->factory->expects($this->exactly(2))
+        $this->factory->expects($this->exactly(4))
             ->method('create')
-            ->withConsecutive([$config1], [$config2])
-            ->willReturnOnConsecutiveCalls($method1, $method2);
+            ->withConsecutive(
+                [$config1],
+                [$config1, StripeAppleGooglePaymentMethod::class],
+                [$config2],
+                [$config2, StripeAppleGooglePaymentMethod::class]
+            )
+            ->willReturnOnConsecutiveCalls($method11, $method12, $method21, $method22);
 
         $this->assertEquals(
-            [self::IDENTIFIER1 => $method1, self::IDENTIFIER2 => $method2],
+            [
+                self::IDENTIFIER1 => $method11,
+                self::IDENTIFIER1 . StripeAppleGooglePaymentMethod::METHOD_SUFFIX => $method12,
+                self::IDENTIFIER2 => $method21,
+                self::IDENTIFIER2 . StripeAppleGooglePaymentMethod::METHOD_SUFFIX => $method22,
+            ],
             $this->methodProvider->getPaymentMethods()
         );
     }

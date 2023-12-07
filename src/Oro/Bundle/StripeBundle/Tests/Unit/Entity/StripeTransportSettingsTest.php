@@ -29,12 +29,24 @@ class StripeTransportSettingsTest extends TestCase
             ]
         );
 
+        $stripeTransportSettings = new StripeTransportSettings();
+
         $this->assertPropertyCollections(
-            new StripeTransportSettings(),
+            $stripeTransportSettings,
             [
                 ['labels', new LocalizedFallbackValue()],
                 ['shortLabels', new LocalizedFallbackValue()]
             ]
+        );
+
+        $defaultAppleGooglePayLabel = new LocalizedFallbackValue();
+        $defaultAppleGooglePayLabel->setString(StripeTransportSettings::DEFAULT_APPLE_GOOGLE_PAY_LABEL);
+
+        $this->assertEquals(
+            new ArrayCollection([
+                $defaultAppleGooglePayLabel,
+            ]),
+            $stripeTransportSettings->getAppleGooglePayLabels()
         );
     }
 
@@ -42,6 +54,9 @@ class StripeTransportSettingsTest extends TestCase
     {
         $labels = new ArrayCollection([(new LocalizedFallbackValue())->setString('Stripe Payment')]);
         $shortLabels = new ArrayCollection([(new LocalizedFallbackValue())->setString('Stripe')]);
+        $appleGooglePayLabels = new ArrayCollection([
+            (new LocalizedFallbackValue())->setString(StripeTransportSettings::DEFAULT_APPLE_GOOGLE_PAY_LABEL)
+        ]);
 
         /** @var StripeTransportSettings $entity */
         $entity = $this->getEntity(
@@ -67,6 +82,7 @@ class StripeTransportSettingsTest extends TestCase
         $this->assertTrue($result->get('user_monitoring'));
         $this->assertEquals($labels, $result->get('labels'));
         $this->assertEquals($shortLabels, $result->get('short_labels'));
+        $this->assertEquals($appleGooglePayLabels, $result->get('apple_google_pay_labels'));
         $this->assertTrue($result->get('allow_re_authorize'));
         $this->assertEquals('test@test.com', $result->get('re_authorization_error_email'));
 
@@ -76,6 +92,7 @@ class StripeTransportSettingsTest extends TestCase
         $this->assertTrue($entity->getUserMonitoring());
         $this->assertEquals($labels, $entity->getLabels());
         $this->assertEquals($shortLabels, $entity->getShortLabels());
+        $this->assertEquals($appleGooglePayLabels, $entity->getAppleGooglePayLabels());
         $this->assertTrue($entity->getEnableReAuthorize());
         $this->assertEquals('test@test.com', $entity->getReAuthorizationErrorEmail());
     }

@@ -10,6 +10,9 @@ oro:
             short_labels:
                 label: Short Labels
                 tooltip: This label is used in order history.
+            apple_google_pay_labels:
+                label: Apple Pay/Google Pay Labels
+                tooltip: This label is used at checkout in the storefront, and in the order history and payment rules in the back-office for the optional Apple Pay/Google Pay payment method.
             api_public_key:
                 label: API Public Key
             api_secret_key:
@@ -30,6 +33,9 @@ oro:
             re_authorization_error_email:
                 label: Re-authorization Errors Notification Email
                 tooltip: This email will be used to send notifications about failed re-authorization attempts.
+            apple_pay_google_pay_note:
+                message: |-
+                    <b>Note: </b>When using Apple Pay please make sure to upload the Apple Pay domain verification file in the configuration of the website(s) where Apple Pay will be used (see Commerce &gt; Sales &gt; Checkout &gt; Checkout Options &gt; Apple Pay Domain Verification in the website configuration).
         action:
             attribute:
                 cancel_reason:
@@ -54,3 +60,8 @@ oro:
                         <p>We have not been able to initiate automatic re-authorization hold of %amount% for order %order% at %time% on %date%.<br>
                         Reason: %reason%</p>
                     subject: 'Automatic payment card re-authorization failed for order %order%'
+        system_configuration:
+            fields:
+                apple_pay_domain_verification:
+                    label: Apple Pay Domain Verification
+                    tooltip: Domain verification is just one of the required prerequisites for Apple Pay to work. Whether Apple Pay will be offered as a payment option during checkout also depends on what payment integrations (see System > Integrations > Manage Integrations) are allowed on a specific website by the payment rules (see System > Payment Rules).

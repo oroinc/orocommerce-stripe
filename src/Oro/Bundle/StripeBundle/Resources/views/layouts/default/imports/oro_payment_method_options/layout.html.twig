@@ -39,3 +39,27 @@
         </div>
     </div>
 {% endblock %}
+
+{% block _payment_methods_stripe_apple_google_pay_widget %}
+    {% set component = view.options.paymentMethodComponent|default('orostripe/js/app/components/stripe-apple-google-pay-selection-component') %}
+    {% set componentOptions = view.options.componentOptions|default({})|merge({
+        paymentMethod: name,
+        totals: totals,
+        country: country
+    }) %}
+
+    {% if block.vars.currentPaymentMethod is defined %}
+        {% set componentOptions = componentOptions|merge({'selectedPaymentMethod': block.vars.currentPaymentMethod}) %}
+    {% endif %}
+
+    <div id="stripe-apple-google-pay-element"
+         class="hidden" data-page-component-module="{{ component }}"
+         data-page-component-options="{{ componentOptions|json_encode }}">
+        <div id="stripe-apple-pay-item">
+            <span class="stripe-apple-google-pay-label apple-pay-button apple-pay-button-black"></span>
+        </div>
+        <div id="stripe-google-pay-item">
+            <span class="stripe-apple-google-pay-label"><img src="/bundles/orostripe/img/google-pay-mark_800.svg"><span>Google Pay</span></span>
+        </div>
+    </div>
+{% endblock %}
