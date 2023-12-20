@@ -2,23 +2,83 @@
 
 namespace Oro\Bundle\StripeBundle\Tests\Unit\Method\Provider;
 
-use Oro\Bundle\PaymentBundle\Tests\Unit\Method\Provider\ApplicablePaymentMethodsProviderTest;
+use Oro\Bundle\CacheBundle\Provider\MemoryCacheProviderInterface;
+use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
+use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
+use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
+use Oro\Bundle\PaymentBundle\Provider\MethodsConfigsRule\Context\MethodsConfigsRulesByContextProviderInterface;
 use Oro\Bundle\StripeBundle\Method\Provider\SortedApplicablePaymentMethodsProvider;
 
-class SortedApplicablePaymentMethodsProviderTest extends ApplicablePaymentMethodsProviderTest
+class SortedApplicablePaymentMethodsProviderTest extends \PHPUnit\Framework\TestCase
 {
+    /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $paymentMethodProvider;
+
+    /** @var MethodsConfigsRulesByContextProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $paymentMethodsConfigsRulesProvider;
+
+    /** @var MemoryCacheProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $memoryCacheProvider;
+
+    /** @var SortedApplicablePaymentMethodsProvider */
+    private $provider;
+
     protected function setUp(): void
     {
-        parent::setUp();
+        $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
+        $this->paymentMethodsConfigsRulesProvider = $this->createMock(
+            MethodsConfigsRulesByContextProviderInterface::class
+        );
+        $this->memoryCacheProvider = $this->createMock(MemoryCacheProviderInterface::class);
 
         $this->provider = new SortedApplicablePaymentMethodsProvider(
             $this->paymentMethodProvider,
-            $this->paymentMethodsConfigsRulesProvider
+            $this->paymentMethodsConfigsRulesProvider,
+            $this->memoryCacheProvider
         );
     }
 
-    public function testGetApplicablePaymentMethods()
+    private function getPaymentMethod(): PaymentMethodInterface
     {
+        $method = $this->createMock(PaymentMethodInterface::class);
+        $method->expects(self::any())
+            ->method('isApplicable')
+            ->willReturn(true);
+
+        return $method;
+    }
+
+    private function getPaymentMethodConfig(string $configuredMethodType): PaymentMethodConfig
+    {
+        $methodConfig = $this->createMock(PaymentMethodConfig::class);
+        $methodConfig->expects(self::any())
+            ->method('getType')
+            ->willReturn($configuredMethodType);
+
+        return $methodConfig;
+    }
+
+    private function getPaymentMethodsConfigsRule(array $configuredMethodTypes): PaymentMethodsConfigsRule
+    {
+        $methodConfigs = [];
+        foreach ($configuredMethodTypes as $configuredMethodType) {
+            $methodConfigs[] = $this->getPaymentMethodConfig($configuredMethodType);
+        }
+
+        $configsRule = $this->createMock(PaymentMethodsConfigsRule::class);
+        $configsRule->expects(self::any())
+            ->method('getMethodConfigs')
+            ->willReturn($methodConfigs);
+
+        return $configsRule;
+    }
+
+    public function testGetApplicablePaymentMethods(): void
+    {
+        $paymentContext = $this->createMock(PaymentContextInterface::class);
+
         $configsRules[] = $this->getPaymentMethodsConfigsRule(['SomeType']);
         $configsRules[] = $this->getPaymentMethodsConfigsRule(['PayPal', 'SomeOtherType']);
         $configsRules[] = $this->getPaymentMethodsConfigsRule(['Stripe', 'Stripe_apple_google_pay']);
@@ -26,20 +86,27 @@ class SortedApplicablePaymentMethodsProviderTest extends ApplicablePaymentMethod
             ['Stripe_apple_google_pay_2', 'Stripe_2_apple_google_pay']
         );
 
-        $this->paymentMethodsConfigsRulesProvider->expects($this->once())
+        $someTypeMethod = $this->getPaymentMethod();
+        $payPalMethod = $this->getPaymentMethod();
+        $someOtherTypeMethod = $this->getPaymentMethod();
+        $stripeMethod = $this->getPaymentMethod();
+        $stripeAppleGooglePayMethod = $this->getPaymentMethod();
+        $stripeAppleGooglePay2Method = $this->getPaymentMethod();
+        $stripe2AppleGooglePayMethod = $this->getPaymentMethod();
+
+        $this->memoryCacheProvider->expects(self::once())
+            ->method('get')
+            ->with(self::identicalTo(['payment_context' => $paymentContext]))
+            ->willReturnCallback(function ($arguments, $callable) {
+                return $callable($arguments);
+            });
+
+        $this->paymentMethodsConfigsRulesProvider->expects(self::once())
             ->method('getPaymentMethodsConfigsRules')
-            ->with($this->paymentContext)
+            ->with($paymentContext)
             ->willReturn($configsRules);
 
-        $someTypeMethod = $this->getPaymentMethod('SomeType');
-        $payPalMethod = $this->getPaymentMethod('PayPal');
-        $someOtherTypeMethod = $this->getPaymentMethod('SomeOtherType');
-        $stripeMethod = $this->getPaymentMethod('Stripe');
-        $stripeAppleGooglePayMethod = $this->getPaymentMethod('Stripe_apple_google_pay');
-        $stripeAppleGooglePay2Method = $this->getPaymentMethod('Stripe_apple_google_pay_2');
-        $stripe2AppleGooglePayMethod = $this->getPaymentMethod('Stripe_2_apple_google_pay');
-
-        $this->paymentMethodProvider->expects($this->any())
+        $this->paymentMethodProvider->expects(self::exactly(7))
             ->method('hasPaymentMethod')
             ->willReturnMap([
                 ['SomeType', true],
@@ -51,7 +118,7 @@ class SortedApplicablePaymentMethodsProviderTest extends ApplicablePaymentMethod
                 ['Stripe_2_apple_google_pay', true],
             ]);
 
-        $this->paymentMethodProvider->expects($this->any())
+        $this->paymentMethodProvider->expects(self::exactly(7))
             ->method('getPaymentMethod')
             ->willReturnMap([
                 ['SomeType', $someTypeMethod],
@@ -73,8 +140,39 @@ class SortedApplicablePaymentMethodsProviderTest extends ApplicablePaymentMethod
             'Stripe_apple_google_pay_2' => $stripeAppleGooglePay2Method,
         ];
 
-        $paymentMethods = $this->provider->getApplicablePaymentMethods($this->paymentContext);
+        self::assertSame(
+            $expectedPaymentMethods,
+            $this->provider->getApplicablePaymentMethods($paymentContext)
+        );
+    }
 
-        $this->assertSame($expectedPaymentMethods, $paymentMethods);
+    public function testGetApplicablePaymentMethodsWhenDataCached(): void
+    {
+        $paymentContext = $this->createMock(PaymentContextInterface::class);
+
+        $cachedPaymentMethods = [
+            'SomeType' => $this->getPaymentMethod()
+        ];
+
+        $this->memoryCacheProvider->expects(self::once())
+            ->method('get')
+            ->with(self::identicalTo(['payment_context' => $paymentContext]))
+            ->willReturnCallback(function () use ($cachedPaymentMethods) {
+                return $cachedPaymentMethods;
+            });
+
+        $this->paymentMethodsConfigsRulesProvider->expects(self::never())
+            ->method('getPaymentMethodsConfigsRules');
+
+        $this->paymentMethodProvider->expects(self::never())
+            ->method('hasPaymentMethod');
+
+        $this->paymentMethodProvider->expects(self::never())
+            ->method('getPaymentMethod');
+
+        self::assertSame(
+            $cachedPaymentMethods,
+            $this->provider->getApplicablePaymentMethods($paymentContext)
+        );
     }
 }
