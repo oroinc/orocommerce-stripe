@@ -11,22 +11,26 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  */
 class OroStripeBundleInstaller implements Installation
 {
+    /**
+     * {@inheritDoc}
+     */
     public function getMigrationVersion(): string
     {
         return 'v1_2';
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function up(Schema $schema, QueryBag $queries): void
     {
         $this->createStripeIntegrationTransport($schema);
-
         $this->createOroStripeTransportLabelTable($schema);
-        $this->addOroStripeTransportLabelForeignKeys($schema);
-
         $this->createOroStripeTransportShortLabelTable($schema);
-        $this->addOroStripeTransportShortLabelForeignKeys($schema);
-
         $this->createOroStripeTransportAppleGooglePayLabelTable($schema);
+
+        $this->addOroStripeTransportLabelForeignKeys($schema);
+        $this->addOroStripeTransportShortLabelForeignKeys($schema);
         $this->addOroStripeTransportAppleGooglePayLabelForeignKeys($schema);
     }
 
@@ -54,11 +58,11 @@ class OroStripeBundleInstaller implements Installation
     {
         if (!$schema->hasTable('oro_stripe_transport_label')) {
             $table = $schema->createTable('oro_stripe_transport_label');
-            $table->addColumn('transport_id', 'integer', []);
-            $table->addColumn('localized_value_id', 'integer', []);
-            $table->addUniqueIndex(['localized_value_id'], 'oro_stripe_transport_label_localized_value_id');
+            $table->addColumn('transport_id', 'integer');
+            $table->addColumn('localized_value_id', 'integer');
             $table->setPrimaryKey(['transport_id', 'localized_value_id']);
-            $table->addIndex(['transport_id'], 'oro_stripe_transport_label_transport_id', []);
+            $table->addUniqueIndex(['localized_value_id'], 'oro_stripe_transport_label_localized_value_id');
+            $table->addIndex(['transport_id'], 'oro_stripe_transport_label_transport_id');
         }
     }
 
@@ -88,11 +92,11 @@ class OroStripeBundleInstaller implements Installation
     {
         if (!$schema->hasTable('oro_stripe_transport_short_label')) {
             $table = $schema->createTable('oro_stripe_transport_short_label');
-            $table->addColumn('transport_id', 'integer', []);
-            $table->addColumn('localized_value_id', 'integer', []);
-            $table->addUniqueIndex(['localized_value_id'], 'oro_stripe_transport_short_label_localized_value_id');
+            $table->addColumn('transport_id', 'integer');
+            $table->addColumn('localized_value_id', 'integer');
             $table->setPrimaryKey(['transport_id', 'localized_value_id']);
-            $table->addIndex(['transport_id'], 'oro_stripe_transport_short_label_transport_id', []);
+            $table->addUniqueIndex(['localized_value_id'], 'oro_stripe_transport_short_label_localized_value_id');
+            $table->addIndex(['transport_id'], 'oro_stripe_transport_short_label_transport_id');
         }
     }
 
@@ -122,14 +126,14 @@ class OroStripeBundleInstaller implements Installation
     {
         if (!$schema->hasTable('oro_stripe_transport_apple_google_pay_label')) {
             $table = $schema->createTable('oro_stripe_transport_apple_google_pay_label');
-            $table->addColumn('transport_id', 'integer', []);
-            $table->addColumn('localized_value_id', 'integer', []);
+            $table->addColumn('transport_id', 'integer');
+            $table->addColumn('localized_value_id', 'integer');
+            $table->setPrimaryKey(['transport_id', 'localized_value_id']);
             $table->addUniqueIndex(
                 ['localized_value_id'],
                 'oro_stripe_transport_apple_google_pay_label_localized_value_id'
             );
-            $table->setPrimaryKey(['transport_id', 'localized_value_id']);
-            $table->addIndex(['transport_id'], 'oro_stripe_transport_apple_google_pay_label_transport_id', []);
+            $table->addIndex(['transport_id'], 'oro_stripe_transport_apple_google_pay_label_transport_id');
         }
     }
 
