@@ -22,14 +22,14 @@ class ApplePayVerificationController extends AbstractController
     */
     public function verificationAction(): Response
     {
-        $website = $this->get(WebsiteManager::class)->getCurrentWebsite();
+        $website = $this->container->get(WebsiteManager::class)->getCurrentWebsite();
 
-        $verificationContent = $this->get(ConfigManager::class)
+        $verificationContent = $this->container->get(ConfigManager::class)
             ->get('oro_stripe.apple_pay_domain_verification', false, false, $website);
 
         if (empty($verificationContent)) {
             /** @var LoggerInterface $logger */
-            $logger = $this->get(LoggerInterface::class);
+            $logger = $this->container->get(LoggerInterface::class);
 
             $message = 'Apple Pay domain verification file data not found in system config.';
             $logger->error($message, [
