@@ -24,8 +24,8 @@ class StripeCallbackController extends AbstractController
         if (empty($request->getContent())) {
             return new Response('Request content is empty', 400);
         }
-        $handler = $this->get(StripeWebhookEventHandler::class);
-        $logger = $this->get(LoggerInterface::class);
+        $handler = $this->container->get(StripeWebhookEventHandler::class);
+        $logger = $this->container->get(LoggerInterface::class);
 
         try {
             $handler->handleEvent($request);

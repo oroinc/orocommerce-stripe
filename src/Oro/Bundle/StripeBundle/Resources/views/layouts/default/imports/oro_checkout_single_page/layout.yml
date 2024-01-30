@@ -15,3 +15,6 @@ layout:
                 attr:
                     id: 'stripe-payment-tmp-container'
                     class: 'stripe-payment-tmp-container'
+
+        - '@remove':
+            id: order_review_additional_data_field

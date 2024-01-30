@@ -57,6 +57,11 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-payment-transactions-grid, method: onBuildBefore }
 
+    oro_stripe.event_listener.integration_edit_listener:
+        class: Oro\Bundle\StripeBundle\EventListener\IntegrationViewListener
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.channel-update, method: onIntegrationEdit }
+
     # Stripe Placeholder Filter
     oro_stripe.placeholder.filter:
         class: Oro\Bundle\StripeBundle\Placeholder\StripeFilter
@@ -85,6 +90,11 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_payment.provider.payment_transaction'
             - '%oro_stripe.authorization_transaction_expiration_hours%'
+
+    oro_stripe.method.provider.applicable_methods_provider:
+        class: Oro\Bundle\StripeBundle\Method\Provider\SortedApplicablePaymentMethodsProvider
+        parent: oro_payment.method.provider.applicable_methods_provider
+        decorates: oro_payment.method.provider.applicable_methods_provider
 
     # Listener
     oro_stripe.entity_listener.stripe_integration:

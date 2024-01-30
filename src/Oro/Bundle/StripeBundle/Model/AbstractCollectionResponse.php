@@ -15,7 +15,7 @@ abstract class AbstractCollectionResponse implements CollectionResponseInterface
         $this->data = $data;
     }
 
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         return new \ArrayIterator($this->getItems());
     }

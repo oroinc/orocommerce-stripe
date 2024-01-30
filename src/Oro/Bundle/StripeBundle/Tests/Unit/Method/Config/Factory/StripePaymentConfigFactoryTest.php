@@ -43,6 +43,7 @@ class StripePaymentConfigFactoryTest extends TestCase
             'channel' => $channel,
             'labels' => [new LocalizedFallbackValue()],
             'shortLabels' => [new LocalizedFallbackValue()],
+            'apple_google_pay_labels' => [new LocalizedFallbackValue()],
             'apiPublicKey' => 'public key',
             'apiSecretKey' => 'secret key',
             'paymentAction' => 'manual',
@@ -61,6 +62,7 @@ class StripePaymentConfigFactoryTest extends TestCase
                 [
                     [$settings->getLabels(), null, 'test label'],
                     [$settings->getShortLabels(), null, 'test short label'],
+                    [$settings->getAppleGooglePayLabels(), null, 'test apple google pay label'],
                 ]
             );
 
@@ -70,6 +72,7 @@ class StripePaymentConfigFactoryTest extends TestCase
             'admin_label' => 'test label',
             'label' => 'test label',
             'short_label' => 'test short label',
+            'apple_google_pay_label' => 'test apple google pay label',
             'public_key' => 'public key',
             'secret_key' => 'secret key',
             'payment_action' => 'manual',

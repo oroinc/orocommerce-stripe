@@ -4,7 +4,9 @@ namespace Oro\Bundle\StripeBundle\Tests\Unit\Method\View\Provider;
 
 use Oro\Bundle\StripeBundle\Method\Config\Provider\StripePaymentConfigsProvider;
 use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
+use Oro\Bundle\StripeBundle\Method\StripeAppleGooglePaymentMethod;
 use Oro\Bundle\StripeBundle\Method\View\Provider\StripePaymentMethodsViewProvider;
+use Oro\Bundle\StripeBundle\Method\View\StripeAppleGooglePayView;
 use Oro\Bundle\StripeBundle\Method\View\StripePaymentView;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -35,6 +37,9 @@ class StripePaymentMethodsViewProviderTest extends TestCase
             ->willReturn([$config]);
 
         $this->assertTrue($this->provider->hasPaymentMethodView(self::IDENTIFIER1));
+        $this->assertTrue($this->provider->hasPaymentMethodView(
+            self::IDENTIFIER1 . StripeAppleGooglePaymentMethod::METHOD_SUFFIX
+        ));
     }
 
     public function testHasPaymentMethodViewForWrongIdentifier(): void
@@ -57,7 +62,12 @@ class StripePaymentMethodsViewProviderTest extends TestCase
             ->willReturn([$config]);
 
         $view = new StripePaymentView($this->createMock(StripePaymentConfig::class));
+        $viewAppleGooglePay = new StripeAppleGooglePayView($this->createMock(StripePaymentConfig::class));
+
         $this->assertEquals($view, $this->provider->getPaymentMethodView(self::IDENTIFIER1));
+        $this->assertEquals($viewAppleGooglePay, $this->provider->getPaymentMethodView(
+            self::IDENTIFIER1 . StripeAppleGooglePaymentMethod::METHOD_SUFFIX
+        ));
     }
 
     public function testGetPaymentMethodViewForWrongIdentifier(): void
@@ -81,11 +91,23 @@ class StripePaymentMethodsViewProviderTest extends TestCase
             ->willReturn([$config1, $config2]);
 
         $view1 = new StripePaymentView($config1);
+        $view1AppleGooglePay = new StripeAppleGooglePayView($config1);
         $view2 = new StripePaymentView($config2);
+        $view2AppleGooglePay = new StripeAppleGooglePayView($config2);
 
         $this->assertEquals(
-            [$view1, $view2],
-            $this->provider->getPaymentMethodViews([self::IDENTIFIER1, self::IDENTIFIER2])
+            [
+                $view1,
+                $view1AppleGooglePay,
+                $view2,
+                $view2AppleGooglePay,
+            ],
+            $this->provider->getPaymentMethodViews([
+                self::IDENTIFIER1,
+                self::IDENTIFIER1 . StripeAppleGooglePaymentMethod::METHOD_SUFFIX,
+                self::IDENTIFIER2,
+                self::IDENTIFIER2 . StripeAppleGooglePaymentMethod::METHOD_SUFFIX,
+            ])
         );
     }
 

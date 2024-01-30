@@ -6,6 +6,7 @@ use Monolog\Logger;
 use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
 use Oro\Bundle\StripeBundle\Method\Factory\StripePaymentMethodFactory;
 use Oro\Bundle\StripeBundle\Method\PaymentAction\PaymentActionRegistry;
+use Oro\Bundle\StripeBundle\Method\StripeAppleGooglePaymentMethod;
 use Oro\Bundle\StripeBundle\Method\StripePaymentMethod;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -31,5 +32,14 @@ class StripePaymentMethodFactoryTest extends TestCase
         $method->setLogger($this->logger);
 
         $this->assertEquals($method, $this->factory->create($config));
+    }
+
+    public function testCreateWithMethodClass(): void
+    {
+        $config = new StripePaymentConfig();
+        $method = new StripeAppleGooglePaymentMethod($config, $this->registry);
+        $method->setLogger($this->logger);
+
+        $this->assertEquals($method, $this->factory->create($config, StripeAppleGooglePaymentMethod::class));
     }
 }

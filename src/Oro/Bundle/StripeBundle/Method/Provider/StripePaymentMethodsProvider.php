@@ -6,6 +6,7 @@ use Oro\Bundle\PaymentBundle\Method\Provider\AbstractPaymentMethodProvider;
 use Oro\Bundle\StripeBundle\Method\Config\Provider\StripePaymentConfigsProvider;
 use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
 use Oro\Bundle\StripeBundle\Method\Factory\StripePaymentMethodFactory;
+use Oro\Bundle\StripeBundle\Method\StripeAppleGooglePaymentMethod;
 
 /**
  * Collects all payment methods configured with Stripe integration.
@@ -33,6 +34,11 @@ class StripePaymentMethodsProvider extends AbstractPaymentMethodProvider
             $this->addMethod(
                 $config->getPaymentMethodIdentifier(),
                 $this->paymentMethodFactory->create($config)
+            );
+
+            $this->addMethod(
+                StripeAppleGooglePaymentMethod::buildIdentifier($config->getPaymentMethodIdentifier()),
+                $this->paymentMethodFactory->create($config, StripeAppleGooglePaymentMethod::class)
             );
         }
     }
