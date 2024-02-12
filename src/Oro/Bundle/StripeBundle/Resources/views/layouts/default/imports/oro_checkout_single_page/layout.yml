@@ -14,7 +14,9 @@ layout:
                 visible: true
                 attr:
                     id: 'stripe-payment-tmp-container'
-                    class: 'stripe-payment-tmp-container'
+                vars:
+                    stripePaymentMethodNames: '=data["oro_stripe_payment_method"].getStripePaymentMethodNames(data["checkout"])'
+                    currentPaymentMethod: '=data["checkout"].getPaymentMethod()'
 
         - '@remove':
             id: order_review_additional_data_field

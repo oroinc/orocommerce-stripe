@@ -73,7 +73,9 @@ class PaymentRefundedEventHandlerTest extends TestCase
             AbstractParameterBagPaymentConfig::FIELD_PAYMENT_METHOD_IDENTIFIER => 'stripe_1'
         ]);
 
-        $event = new StripeEvent('charge.refunded', $paymentConfig, new PaymentIntentResponse([]));
+        $data = $this->createMock(ResponseObjectInterface::class);
+
+        $event = new StripeEvent('charge.refunded', $paymentConfig, $data);
 
         $this->handler->handle($event);
     }

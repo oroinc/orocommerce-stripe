@@ -7,6 +7,7 @@
     position: absolute !important;
     max-width: 230px;
     width: 100%;
+    visibility: hidden;
 }
 
 .stripe-card-element:empty::before {
@@ -17,6 +18,7 @@
 .stripe-card-element,
 .stripe-payment-tmp-container__mounted {
     width: 100%;
+    visibility: visible;
 
     @include base-ui-element(
         $use-base-style-for-input,

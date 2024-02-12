@@ -9,11 +9,6 @@ define(function(require) {
     const __ = require('orotranslation/js/translator');
 
     const StripePaymentCardComponent = BaseComponent.extend({
-        relatedSiblingComponents: {
-            // to make sure that a stripeCard is initialized first (e.g. on single page checkout)
-            stripeCard: 'stripe-card-view-component'
-        },
-
         defaults: {
             stripePaymentContainer: '#stripe-card-element',
             validationErrorContainerId: '#stripe-card-validation-container',
@@ -48,10 +43,11 @@ define(function(require) {
         /**
          * @param {Object} options
          */
-        initialize: function(options) {
+        initialize(options) {
             StripePaymentCardComponent.__super__.initialize.call(this, options);
             this.options = Object.assign({}, this.defaults, options);
             this.$el = $(options._sourceElement);
+            this.sourceElementId = this.$el.attr('id');
 
             // Try to initialize card element.
             this.initCardElement();
@@ -61,7 +57,7 @@ define(function(require) {
          * Initialize basic card elements using Stripe standard library tools, to be able to send securely payment card
          * data to the Stripe service.
          */
-        initCardElement: function() {
+        initCardElement() {
             let cardElement = this.getPaymentElement();
             if (cardElement === null) {
                 const elements = stripeClient.getStripeElements(this.elementType, this.options);
@@ -80,7 +76,7 @@ define(function(require) {
             }
 
             // Setup container for validation messages.
-            this.cardValidationContainer = $(this.options.validationErrorContainerId);
+            this.cardValidationContainer = this.$el.find(this.options.validationErrorContainerId);
 
             /**
              * Set validation handler on 'change' event according to Stripe library recommendations.
@@ -95,7 +91,7 @@ define(function(require) {
          *
          * @returns {boolean}
          */
-        paymentMethodIsSelected: function() {
+        paymentMethodIsSelected() {
             if (this.options.selectedPaymentMethod === this.options.paymentMethod) {
                 return true;
             }
@@ -113,7 +109,7 @@ define(function(require) {
          *
          * @param cardElement
          */
-        mountCardElement: function(cardElement) {
+        mountCardElement(cardElement) {
             if (!cardElement._isMounted()) {
                 const container = this.resolveContainer();
                 cardElement.mount(container);
@@ -128,7 +124,7 @@ define(function(require) {
          *
          * @param {Object} eventData
          */
-        beforeTransit: function(eventData) {
+        beforeTransit(eventData) {
             if (eventData.data.paymentMethod !== this.options.paymentMethod || eventData.stopped) {
                 return;
             }
@@ -184,7 +180,7 @@ define(function(require) {
          *
          * @returns {jQuery|HTMLElement|*}
          */
-        getPaymentElement: function() {
+        getPaymentElement() {
             const elements = stripeClient.getStripeElements(this.elementType, this.options);
             return elements.getElement(this.elementType);
         },
@@ -192,7 +188,7 @@ define(function(require) {
         /**
          * Hide card element if selected another payment method and show again if stripe method selected.
          */
-        paymentMethodChanged: function(eventData) {
+        paymentMethodChanged(eventData) {
             if (eventData.paymentMethod === this.options.paymentMethod) {
                 const cardElement = this.getPaymentElement();
                 this.mountCardElement(cardElement);
@@ -207,7 +203,7 @@ define(function(require) {
          *
          * @param event
          */
-        handleCardValidation: function(event) {
+        handleCardValidation(event) {
             this.clearValidationMessages();
             if (event.error) {
                 this.showValidationMessages(event.error.message);
@@ -218,7 +214,7 @@ define(function(require) {
          *
          * @param {String} message
          */
-        showValidationMessages: function(message) {
+        showValidationMessages(message) {
             this.cardValidationContainer.append(errorsTemplate({message: message}));
         },
 
@@ -226,7 +222,7 @@ define(function(require) {
          *
          * @param {String} message
          */
-        showErrorMessage: function(message) {
+        showErrorMessage(message) {
             mediator.execute(
                 'showFlashMessage',
                 'error',
@@ -234,18 +230,15 @@ define(function(require) {
             );
         },
 
-        clearValidationMessages: function() {
+        clearValidationMessages() {
             this.cardValidationContainer.empty();
         },
 
         /**
-         * Use alternative container (cardContainer - used when SinglePageCheckout workflow is used) otherwise use
-         * basic container (stripePaymentContainer).
-         *
          * @returns {string}
          */
-        resolveContainer: function() {
-            if ($(this.options.cardContainer).length) {
+        resolveContainer() {
+            if ($(this.options.cardContainer).length ) {
                 return this.options.cardContainer;
             }
 
@@ -268,7 +261,7 @@ define(function(require) {
         /**
          * Unbind global events handlers.
          */
-        dispose: function() {
+        dispose() {
             if (this.disposed) {
                 return;
             }

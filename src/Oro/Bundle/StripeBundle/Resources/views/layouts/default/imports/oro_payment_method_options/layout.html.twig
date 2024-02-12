@@ -1,8 +1,12 @@
 {% block _payment_methods_stripe_payment_widget %}
 
+    {% set paymentCardContainerId = 'stripe-card-element-'~name %}
+    {% set tmpPaymentCardContainerId = 'stripe-payment-tmp-container__'~name %}
     {% set component = view.options.paymentMethodComponent|default('orostripe/js/app/components/stripe-payment-card-component') %}
     {% set componentOptions = view.options.componentOptions|default({})|merge({
-        paymentMethod: name
+        paymentMethod: name,
+        stripePaymentContainer: '#'~paymentCardContainerId,
+        cardContainer: '#'~tmpPaymentCardContainerId
     }) %}
 
     {% if componentOptions.styles is not defined %}
@@ -28,12 +32,11 @@
     {% if block.vars.currentPaymentMethod is defined %}
     {% set componentOptions = componentOptions|merge({'selectedPaymentMethod': block.vars.currentPaymentMethod}) %}
     {% endif %}
-
-    <div class="checkout-form__payment-methods" data-page-component-module="{{ component }}"
+    <div id="payment-method__{{ name }}" class="checkout-form__payment-methods" data-page-component-module="{{ component }}"
          data-page-component-options="{{ componentOptions|json_encode }}">
         <div class="checkout-form__payment-methods-form">
             <div class="form-row  checkout">
-                <div id="stripe-card-element" class="stripe-card-element">{# Stripe.js injects the Card Element #}</div>
+                <div id="{{ paymentCardContainerId }}" class="stripe-card-element">{# Stripe.js injects the Card Element #}</div>
                 <div id="stripe-card-validation-container">{# Stripe.js injects validation messages #}</div>
             </div>
         </div>
@@ -42,8 +45,10 @@
 
 {% block _payment_methods_stripe_apple_google_pay_widget %}
     {% set component = view.options.paymentMethodComponent|default('orostripe/js/app/components/stripe-apple-google-pay-selection-component') %}
+    {% set paymentContainerId = 'stripe-apple-google-pay-element__' ~ name %}
     {% set componentOptions = view.options.componentOptions|default({})|merge({
         paymentMethod: name,
+        paymentContainerId: '#' ~ paymentContainerId,
         totals: totals,
         country: country
     }) %}
@@ -52,7 +57,7 @@
         {% set componentOptions = componentOptions|merge({'selectedPaymentMethod': block.vars.currentPaymentMethod}) %}
     {% endif %}
 
-    <div id="stripe-apple-google-pay-element"
+    <div id="{{ paymentContainerId }}"
          class="hidden" data-page-component-module="{{ component }}"
          data-page-component-options="{{ componentOptions|json_encode }}">
         <div id="stripe-apple-pay-item">
