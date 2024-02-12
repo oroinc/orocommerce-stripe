@@ -52,6 +52,7 @@ define(function(require) {
             StripePaymentCardComponent.__super__.initialize.call(this, options);
             this.options = Object.assign({}, this.defaults, options);
             this.$el = $(options._sourceElement);
+            this.sourceElementId = this.$el.attr('id');
 
             // Try to initialize card element.
             this.initCardElement();
@@ -80,7 +81,8 @@ define(function(require) {
             }
 
             // Setup container for validation messages.
-            this.cardValidationContainer = $(this.options.validationErrorContainerId);
+            this.cardValidationContainer =
+                $('#' + this.sourceElementId + ' ' + this.options.validationErrorContainerId);
 
             /**
              * Set validation handler on 'change' event according to Stripe library recommendations.
@@ -249,7 +251,9 @@ define(function(require) {
                 return this.options.cardContainer;
             }
 
-            return this.options.stripePaymentContainer;
+            const cardContainer = this.options.stripePaymentContainer;
+
+            return '#' + this.sourceElementId + ' ' + cardContainer;
         },
 
         stripeCardViewShow() {

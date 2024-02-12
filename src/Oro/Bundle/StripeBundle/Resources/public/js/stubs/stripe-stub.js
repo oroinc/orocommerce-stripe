@@ -33,8 +33,7 @@
                      * @param {String} domIdentifier
                      */
                     mount: function(domIdentifier) {
-                        const identifier = domIdentifier.replace('#', '');
-                        this.container = document.getElementById(identifier);
+                        this.container = document.querySelector(domIdentifier);
 
                         const form = this._buildCardForm();
                         this.container.appendChild(form);

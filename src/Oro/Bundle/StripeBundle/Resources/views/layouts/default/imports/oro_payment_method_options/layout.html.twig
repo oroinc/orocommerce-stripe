@@ -28,8 +28,7 @@
     {% if block.vars.currentPaymentMethod is defined %}
     {% set componentOptions = componentOptions|merge({'selectedPaymentMethod': block.vars.currentPaymentMethod}) %}
     {% endif %}
-
-    <div class="checkout-form__payment-methods" data-page-component-module="{{ component }}"
+    <div id="payment-method__{{ name }}" class="checkout-form__payment-methods" data-page-component-module="{{ component }}"
          data-page-component-options="{{ componentOptions|json_encode }}">
         <div class="checkout-form__payment-methods-form">
             <div class="form-row  checkout">
@@ -42,8 +41,13 @@
 
 {% block _payment_methods_stripe_apple_google_pay_widget %}
     {% set component = view.options.paymentMethodComponent|default('orostripe/js/app/components/stripe-apple-google-pay-selection-component') %}
+    {% set paymentContainerId = 'stripe-apple-google-pay-element__' ~ name %}
+    {% set selector = {
+        sourceElementSelector: '#' ~ paymentContainerId
+    } %}
     {% set componentOptions = view.options.componentOptions|default({})|merge({
         paymentMethod: name,
+        selector: selector,
         totals: totals,
         country: country
     }) %}
@@ -52,7 +56,7 @@
         {% set componentOptions = componentOptions|merge({'selectedPaymentMethod': block.vars.currentPaymentMethod}) %}
     {% endif %}
 
-    <div id="stripe-apple-google-pay-element"
+    <div id="{{ paymentContainerId }}"
          class="hidden" data-page-component-module="{{ component }}"
          data-page-component-options="{{ componentOptions|json_encode }}">
         <div id="stripe-apple-pay-item">

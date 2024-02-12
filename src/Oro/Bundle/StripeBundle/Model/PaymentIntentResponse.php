@@ -5,7 +5,9 @@ namespace Oro\Bundle\StripeBundle\Model;
 /**
  * Stores data for payment intent object responses.
  */
-class PaymentIntentResponse extends AbstractResponseObject implements ResponseObjectInterface
+class PaymentIntentResponse extends AbstractResponseObject implements
+    ResponseObjectInterface,
+    PaymentIntentAwareInterface
 {
     public const PAYMENT_INTENT_ID_PARAM = 'paymentIntentId';
     private const STATUS_FIELD_NAME = 'status';
@@ -64,5 +66,10 @@ class PaymentIntentResponse extends AbstractResponseObject implements ResponseOb
     public function getClientSecret(): ?string
     {
         return $this->getValue(self::CLIENT_SECRET_FIELD_NAME);
+    }
+
+    public function getPaymentIntentId(): ?string
+    {
+        return $this->getIdentifier();
     }
 }

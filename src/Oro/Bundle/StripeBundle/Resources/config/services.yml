@@ -96,6 +96,16 @@ services:
         parent: oro_payment.method.provider.applicable_methods_provider
         decorates: oro_payment.method.provider.applicable_methods_provider
 
+    # Layout Data Provider
+    oro_stripe.layout.data_provider.payment_method:
+        class: Oro\Bundle\StripeBundle\Layout\DataProvider\StripePaymentMethodsDataProvider
+        arguments:
+            - '@oro_checkout.provider.payment_context'
+            - '@oro_payment.method.provider.applicable_methods_provider'
+            - '@oro_stripe.payment_method.provider'
+        tags:
+            - { name: layout.data_provider, alias: oro_stripe_payment_method }
+
     # Listener
     oro_stripe.entity_listener.stripe_integration:
         class: Oro\Bundle\StripeBundle\EventListener\StripeIntegrationListener
@@ -121,6 +131,8 @@ services:
         class: Oro\Bundle\StripeBundle\Event\StripeSDKEventFactory
         arguments:
             - '@oro_stripe.method.config_provider'
+        calls:
+            - [setManagerRegistry, ['@doctrine']]
 
     # Stripe Events Handler
     oro_stripe.event_handler.stripe_webhook_handler:

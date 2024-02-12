@@ -30,7 +30,33 @@ Feature: Stripe integration single page checkout
         And I save and close form
         Then I should see "Integration saved" flash message
         And I should see Stripe in grid
+
+    Scenario: Create second Stripe Integration
+        Given I go to System/Integrations/Manage Integrations
+        And I click "Create Integration"
+        And I select "Stripe" from "Type"
+        And I fill "Stripe Form" with:
+            | Name                   | Stripe2  |
+            | Label                  | Stripe2  |
+            | Short Label            | Stripe2  |
+            | API Public Key         | pk_test  |
+            | API Secret Key         | sk_test  |
+            | Webhook Signing Secret | w_secret |
+        And I save and close form
+        Then I should see "Integration saved" flash message
+        And I should see Stripe2 in grid
+
+    Scenario: Create Stripe payment rule
         And I create payment rule with "Stripe" payment method
+        And I go to System/Payment Rules
+        And I should see StripePaymentRule in grid
+
+    Scenario: Create second Stripe payment rule
+        And I create payment rule with "Stripe2" payment method
+        And I go to System/Payment Rules
+        And I should see Stripe2PaymentRule in grid
+
+    Scenario: Activate Single Page Checkout workflow
         And I activate "Single Page Checkout" workflow
 
     Scenario: Checkout with failed stripe payment
@@ -43,16 +69,32 @@ Feature: Stripe integration single page checkout
         And I select "ORO, Fifth avenue, 10115 Berlin, Germany" from "Select Shipping Address"
         And I check "Flat Rate" on the checkout page
         # Test card number was taken from https://stripe.com/docs/
-        And I fill "Stripe Card Form Single Page" with:
+        And I fill "Stripe Card Form" with:
             | Stripe Card Number | 4000 0000 0000 9235 |
             | Stripe Exp Date    | 12 / 35             |
             | Stripe CVC         | 111                 |
             | Stripe ZIP         | 12345               |
         And I click "Submit Order"
-        And I should see "We were unable to process your payment. Please verify your payment information and try again." flash message
+        And I should see "We were unable to process your payment. Please verify your payment information and try again" flash message
 
     Scenario: Checkout with success stripe payment
-        And I fill "Stripe Card Form Single Page" with:
+        And I fill "Stripe Card Form" with:
+            | Stripe Card Number | 4242 4242 4242 4242 |
+            | Stripe Exp Date    | 12 / 35             |
+            | Stripe CVC         | 111                 |
+            | Stripe ZIP         | 12345               |
+        And I click "Submit Order"
+        Then I see the "Thank You" page with "Thank You For Your Purchase!" title
+
+    Scenario: Checkout with second stripe integration
+        Given I open page with shopping list List 2
+        And I wait line items are initialized
+        And I click "Create Order"
+        And I select "ORO, Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"
+        And I select "ORO, Fifth avenue, 10115 Berlin, Germany" from "Select Shipping Address"
+        And I check "Flat Rate" on the checkout page
+        And I check "Stripe2" on the checkout page
+        And I fill "Second Stripe Card Form" with:
             | Stripe Card Number | 4242 4242 4242 4242 |
             | Stripe Exp Date    | 12 / 35             |
             | Stripe CVC         | 111                 |
@@ -63,10 +105,12 @@ Feature: Stripe integration single page checkout
     Scenario: Check Order in admin
         Given I proceed as the Admin
         And I go to Sales/Orders
-        Then number of records should be 1
+        Then number of records should be 2
         Then I should see following grid:
             | Payment Status     | Payment Method |
+            | Payment authorized | Stripe2        |
             | Payment authorized | Stripe         |
+        And filter Order Number as is equal to "2"
         And I click on 2 in grid
         When I click "Payment History"
         And I should see following "Order Payment Transaction Grid" grid:

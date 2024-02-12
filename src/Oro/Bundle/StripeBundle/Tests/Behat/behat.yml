@@ -21,8 +21,10 @@ oro_behat_extension:
                     Stripe Exp Date: 'exp-date'
                     Stripe CVC: 'cvc'
                     Stripe ZIP: 'postal'
-        Stripe Card Form Single Page:
-            selector: '#stripe-payment-tmp-container'
+        Second Stripe Card Form:
+            selector:
+                locator: '(//*[@id="stripe-card-element"])[2]'
+                type: xpath
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
             options:
                 mapping:

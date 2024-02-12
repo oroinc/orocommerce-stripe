@@ -2,6 +2,7 @@ import _ from 'underscore';
 import $ from 'jquery';
 import BaseComponent from 'oroui/js/app/components/base/component';
 import stripeClient from 'orostripe/js/app/components/stripe-client';
+import mediator from 'oroui/js/mediator';
 
 const StripeAppleGooglePaySelectionComponent = BaseComponent.extend({
     defaults: {
@@ -28,6 +29,7 @@ const StripeAppleGooglePaySelectionComponent = BaseComponent.extend({
     initialize(options) {
         StripeAppleGooglePaySelectionComponent.__super__.initialize.call(this, options);
         this.options = Object.assign({}, this.defaults, options);
+        this.options.selector = Object.assign({}, this.defaults.selector, options.selector);
         // We could not use options._sourceElement because payment-method-selector-component component responsible
         // for methods rendering does not dispose when customer move to the next step. As a result event listeners
         // are executed when user navigates through steps and rebuild payment step layout structure.
@@ -101,6 +103,8 @@ const StripeAppleGooglePaySelectionComponent = BaseComponent.extend({
      */
     showPaymentOption() {
         this.paymentElement.removeClass('hidden');
+
+        mediator.trigger('oro-stripe:google-apple-pay-method:initialized');
     },
 
     /**

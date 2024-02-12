@@ -11,7 +11,7 @@ layout:
             siblingId: payment_methods_wrapper
             prepend: false
             options:
-                visible: true
+                visible: '=data["oro_stripe_payment_method"].getStripePaymentMethodsCount(data["checkout"])===1'
                 attr:
                     id: 'stripe-payment-tmp-container'
                     class: 'stripe-payment-tmp-container'

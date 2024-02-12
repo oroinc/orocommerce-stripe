@@ -15,6 +15,7 @@ define(function(require) {
 
         listen: {
             'oro-stripe:payment-element-mounted mediator': 'onCardMount',
+            'oro-stripe:google-apple-pay-method:initialized mediator': 'adjustElement',
             'layout:reposition mediator': 'adjustElement',
             'layout:content-relocated mediator': 'adjustElement',
             'layout:adjustHeight mediator': 'adjustElement',
