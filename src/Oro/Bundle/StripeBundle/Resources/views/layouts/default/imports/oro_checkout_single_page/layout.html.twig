@@ -1,8 +1,19 @@
 {%  block _stripe_payment_temporary_container_widget %}
     {% set attr = attr|merge({class: attr.class|default('') ~ " block"}) %}
-    <div {{ block('block_attributes') }}
-            data-page-component-view="orostripe/js/app/views/stripe-card-single-page-checkout-view"
-            data-page-component-name="stripe-card-view-component">
-        {{ block_widget(block) }}
+    <div {{ block('block_attributes') }}>
+        {% for name in stripePaymentMethodNames %}
+            {% set stripePaymentContainer = 'stripe-card-element-'~name %}
+            {% set componentOptions = {
+                'paymentMethod': name,
+                'stripePaymentContainer': '#'~stripePaymentContainer,
+                'currentPaymentMethod': currentPaymentMethod
+            } %}
+            <div id="stripe-payment-tmp-container__{{ name }}"
+                 class="stripe-payment-tmp-container"
+                 data-page-component-view="orostripe/js/app/views/stripe-card-single-page-checkout-view"
+                 data-page-component-options="{{ componentOptions|json_encode }}"
+            >
+            </div>
+        {% endfor %}
     </div>
 {% endblock %}

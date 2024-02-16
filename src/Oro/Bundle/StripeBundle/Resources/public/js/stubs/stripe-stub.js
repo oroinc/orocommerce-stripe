@@ -33,8 +33,7 @@
                      * @param {String} domIdentifier
                      */
                     mount: function(domIdentifier) {
-                        const identifier = domIdentifier.replace('#', '');
-                        this.container = document.getElementById(identifier);
+                        this.container = document.querySelector(domIdentifier);
 
                         const form = this._buildCardForm();
                         this.container.appendChild(form);
@@ -67,6 +66,17 @@
                      */
                     _buildCardForm: function() {
                         const wrapper = document.createElement('div');
+                        wrapper.setAttribute('class', 'test-stripe-container');
+
+                        const styleElement = document.createElement('style');
+                        const styles = `
+                            .test-stripe-container input {
+                                width: 50%;
+                            }
+                        `;
+                        styleElement.innerText = styles;
+                        wrapper.appendChild(styleElement);
+
                         wrapper.appendChild(this._createElement('text', 'cardnumber', 'Card number'));
                         wrapper.appendChild(this._createElement('text', 'exp-date', 'MM / YY'));
                         wrapper.appendChild(this._createElement('text', 'cvc', 'CVC'));

@@ -13,7 +13,20 @@ oro_behat_extension:
                     Payment Action: 'oro_integration_channel_form[transport][paymentAction]'
                     User Monitoring: 'oro_integration_channel_form[transport][userMonitoring]'
         Stripe Card Form:
-            selector: '#stripe-card-element'
+            selector:
+                locator: '(//div[starts-with(@id,"stripe-card-element")])[1]'
+                type: xpath
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    Stripe Card Number: 'cardnumber'
+                    Stripe Exp Date: 'exp-date'
+                    Stripe CVC: 'cvc'
+                    Stripe ZIP: 'postal'
+        Second Stripe Card Form:
+            selector:
+                locator: '(//div[starts-with(@id,"stripe-card-element")])[2]'
+                type: xpath
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
             options:
                 mapping:
@@ -22,7 +35,20 @@ oro_behat_extension:
                     Stripe CVC: 'cvc'
                     Stripe ZIP: 'postal'
         Stripe Card Form Single Page:
-            selector: '#stripe-payment-tmp-container'
+            selector:
+                locator: '(//*[contains(@class,"stripe-payment-tmp-container")])[1]'
+                type: xpath
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    Stripe Card Number: 'cardnumber'
+                    Stripe Exp Date: 'exp-date'
+                    Stripe CVC: 'cvc'
+                    Stripe ZIP: 'postal'
+        Second Stripe Card Form Single Page:
+            selector:
+                locator: '(//*[contains(@class,"stripe-payment-tmp-container")])[2]'
+                type: xpath
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
             options:
                 mapping:

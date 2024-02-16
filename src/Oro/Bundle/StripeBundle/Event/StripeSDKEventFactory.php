@@ -2,10 +2,13 @@
 
 namespace Oro\Bundle\StripeBundle\Event;
 
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\StripeBundle\Method\Config\Provider\StripePaymentConfigsProvider;
 use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
 use Oro\Bundle\StripeBundle\Model\ChargeResponse;
 use Oro\Bundle\StripeBundle\Model\CustomerResponse;
+use Oro\Bundle\StripeBundle\Model\PaymentIntentAwareInterface;
 use Oro\Bundle\StripeBundle\Model\PaymentIntentResponse;
 use Oro\Bundle\StripeBundle\Model\RefundResponse;
 use Oro\Bundle\StripeBundle\Model\ResponseObjectInterface;
@@ -28,6 +31,7 @@ class StripeSDKEventFactory implements StripeEventFactoryInterface
 {
     private const STRIPE_SIGNATURE = 'HTTP_STRIPE_SIGNATURE';
     private StripePaymentConfigsProvider $paymentConfigsProvider;
+    private ManagerRegistry $managerRegistry;
 
     protected array $responseTypeClassMapping = [
         PaymentIntent::class => PaymentIntentResponse::class,
@@ -38,9 +42,10 @@ class StripeSDKEventFactory implements StripeEventFactoryInterface
         SetupIntent::class => SetupIntentResponse::class,
     ];
 
-    public function __construct(StripePaymentConfigsProvider $paymentConfigsProvider)
+    public function __construct(StripePaymentConfigsProvider $paymentConfigsProvider, ManagerRegistry $managerRegistry)
     {
         $this->paymentConfigsProvider = $paymentConfigsProvider;
+        $this->managerRegistry = $managerRegistry;
     }
 
     public function createEventFromRequest(Request $request): StripeEventInterface
@@ -49,16 +54,37 @@ class StripeSDKEventFactory implements StripeEventFactoryInterface
 
         $event = null;
         $paymentMethodConfig = null;
+        $transactionPaymentMethod = null;
 
         // All configured Stripe Payment integrations should be iterated to find proper Stripe payment method.
         /** @var StripePaymentConfig $paymentConfig */
         foreach ($configuredPaymentConfigs as $paymentConfig) {
+            $event = null;
+
             try {
                 $event = $this->constructEvent($request, $paymentConfig);
                 $paymentMethodConfig = $paymentConfig;
-                break;
             } catch (SignatureVerificationException $exception) {
                 // skip handling because this event could be related to another configured Stripe payment integration.
+            }
+
+            if (null === $event) {
+                continue;
+            }
+
+            $eventObject = $event->data->object;
+            $responseObject = $this->createResponseObject($eventObject);
+
+            if (null === $transactionPaymentMethod) {
+                $transactionPaymentMethod = $this->getTransactionPaymentMethod($responseObject);
+            }
+
+            if (empty($transactionPaymentMethod)) {
+                continue;
+            }
+
+            if ($transactionPaymentMethod === $paymentMethodConfig->getPaymentMethodIdentifier()) {
+                break;
             }
         }
 
@@ -68,10 +94,21 @@ class StripeSDKEventFactory implements StripeEventFactoryInterface
             );
         }
 
-        $eventObject = $event->data->object;
-        $responseObject = $this->createResponseObject($eventObject);
-
         return new StripeEvent($event->type, $paymentMethodConfig, $responseObject);
+    }
+
+    protected function getTransactionPaymentMethod(?ResponseObjectInterface $responseObject): ?string
+    {
+        if (!$responseObject instanceof PaymentIntentAwareInterface
+            || empty($responseObject->getPaymentIntentId())
+        ) {
+            return null;
+        }
+
+        $paymentTransaction = $this->managerRegistry->getRepository(PaymentTransaction::class)
+            ->findOneBy(['reference' => $responseObject->getPaymentIntentId()]);
+
+        return $paymentTransaction->getPaymentMethod();
     }
 
     protected function createResponseObject($eventObject): ?ResponseObjectInterface
