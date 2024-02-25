@@ -16,9 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class StripeCallbackController extends AbstractController
 {
-    /**
-     * @Route("/handle-events", name="oro_stripe_frontend_handle_events")
-     */
+    #[Route(path: '/handle-events', name: 'oro_stripe_frontend_handle_events')]
     public function handleEventsAction(Request $request): Response
     {
         if (empty($request->getContent())) {

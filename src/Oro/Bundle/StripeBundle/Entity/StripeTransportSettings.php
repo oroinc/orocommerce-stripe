@@ -4,16 +4,17 @@ namespace Oro\Bundle\StripeBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\StripeBundle\Entity\Repository\StripeTransportSettingsRepository;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * Stripe settings entity. Stores basic configuration options for Stripe Integration.
- *
- * @ORM\Entity(repositoryClass="Oro\Bundle\StripeBundle\Entity\Repository\StripeTransportSettingsRepository")
  */
+#[ORM\Entity(repositoryClass: StripeTransportSettingsRepository::class)]
 class StripeTransportSettings extends Transport
 {
     public const LABELS = 'labels';
@@ -32,94 +33,64 @@ class StripeTransportSettings extends Transport
     protected ?ParameterBag $settings = null;
 
     /**
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_stripe_transport_label",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="transport_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
+     * @var Collection<int, LocalizedFallbackValue>
      */
+    #[ORM\ManyToMany(targetEntity: LocalizedFallbackValue::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ORM\JoinTable(name: 'oro_stripe_transport_label')]
+    #[ORM\JoinColumn(name: 'transport_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'localized_value_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
     protected ?Collection $labels = null;
 
     /**
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_stripe_transport_short_label",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="transport_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
+     * @var Collection<int, LocalizedFallbackValue>
      */
+    #[ORM\ManyToMany(targetEntity: LocalizedFallbackValue::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ORM\JoinTable(name: 'oro_stripe_transport_short_label')]
+    #[ORM\JoinColumn(name: 'transport_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'localized_value_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
     protected ?Collection $shortLabels = null;
 
     /**
-     * @ORM\ManyToMany(
-     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     * @ORM\JoinTable(
-     *      name="oro_stripe_transport_apple_google_pay_label",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="transport_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
+     * @var Collection<int, LocalizedFallbackValue>
      */
+    #[ORM\ManyToMany(targetEntity: LocalizedFallbackValue::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ORM\JoinTable(name: 'oro_stripe_transport_apple_google_pay_label')]
+    #[ORM\JoinColumn(name: 'transport_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'localized_value_id', referencedColumnName: 'id', unique: true, onDelete: 'CASCADE')]
     protected ?Collection $appleGooglePayLabels = null;
 
-    /**
-     * @ORM\Column(name="stripe_api_public_key", type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(name: 'stripe_api_public_key', type: Types::STRING, length: 255, nullable: true)]
     protected ?string $apiPublicKey = null;
 
-    /**
-     * @ORM\Column(name="stripe_api_secret_key", type="crypted_string", length=255, nullable=true)
-     */
+    #[ORM\Column(name: 'stripe_api_secret_key', type: 'crypted_string', length: 255, nullable: true)]
     protected ?string $apiSecretKey = null;
 
-    /**
-     * @ORM\Column(name="stripe_signing_secret", type="crypted_string", length=255, nullable=true)
-     */
+    #[ORM\Column(name: 'stripe_signing_secret', type: 'crypted_string', length: 255, nullable: true)]
     protected ?string $signingSecret = null;
 
-    /**
-     * @ORM\Column(name="stripe_payment_action", type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(name: 'stripe_payment_action', type: Types::STRING, length: 255, nullable: true)]
     protected ?string $paymentAction = null;
 
-    /**
-     * @ORM\Column(name="stripe_user_monitoring", type="boolean", length=255, nullable=true, options={"default"=false})
-     */
+    #[ORM\Column(
+        name: 'stripe_user_monitoring',
+        type: Types::BOOLEAN,
+        length: 255,
+        nullable: true,
+        options: ['default' => false]
+    )]
     protected ?bool $userMonitoring = false;
 
     protected ?bool $supportPartialCapture = true;
 
-    /**
-     * @ORM\Column(name="stripe_enable_re_authorize", type="boolean", nullable=true, options={"default"=false})
-     */
+    #[ORM\Column(
+        name: 'stripe_enable_re_authorize',
+        type: Types::BOOLEAN,
+        nullable: true,
+        options: ['default' => false]
+    )]
     protected ?bool $enableReAuthorize = false;
 
-    /**
-     * @ORM\Column(name="stripe_re_authorization_error_email", type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(name: 'stripe_re_authorization_error_email', type: Types::STRING, length: 255, nullable: true)]
     protected ?string $reAuthorizationErrorEmail = null;
 
     public function __construct()

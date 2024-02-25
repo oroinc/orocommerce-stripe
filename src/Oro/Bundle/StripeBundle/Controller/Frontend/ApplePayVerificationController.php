@@ -15,11 +15,10 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ApplePayVerificationController extends AbstractController
 {
-    /**
-    * @Route(
-    *     "/.well-known/apple-developer-merchantid-domain-association",
-    *     name="oro_stripe_frontend_apple_pay_verification")
-    */
+    #[Route(
+        path: '/.well-known/apple-developer-merchantid-domain-association',
+        name: 'oro_stripe_frontend_apple_pay_verification'
+    )]
     public function verificationAction(): Response
     {
         $website = $this->container->get(WebsiteManager::class)->getCurrentWebsite();
