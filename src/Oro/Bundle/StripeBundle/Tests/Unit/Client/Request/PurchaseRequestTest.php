@@ -31,6 +31,8 @@ class PurchaseRequestTest extends TestCase
     public function testGetRequestDataWithPaymentIntentId(array $additionalOptions, array $expected): void
     {
         $this->paymentTransaction->setTransactionOptions(['additionalData' => json_encode($additionalOptions)]);
+        $this->paymentTransaction->setAmount('123.45');
+        $this->paymentTransaction->setCurrency('USD');
         $result = $this->request->getRequestData();
         $this->assertEquals($expected, $result);
     }
@@ -45,8 +47,8 @@ class PurchaseRequestTest extends TestCase
             ],
             [
                 'payment_method' => 1,
-                'amount' => 0.0,
-                'currency' => null,
+                'amount' => 12345,
+                'currency' => 'USD',
                 'confirmation_method' => 'manual',
                 'capture_method' => 'manual',
                 'confirm' => true,
@@ -64,8 +66,8 @@ class PurchaseRequestTest extends TestCase
             ],
             [
                 'payment_method' => 1,
-                'amount' => 0.0,
-                'currency' => null,
+                'amount' => 12345,
+                'currency' => 'USD',
                 'confirmation_method' => 'manual',
                 'capture_method' => 'manual',
                 'confirm' => true,

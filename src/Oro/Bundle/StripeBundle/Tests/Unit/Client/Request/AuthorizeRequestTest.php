@@ -31,6 +31,7 @@ class AuthorizeRequestTest extends TestCase
     public function testGetRequestDataWithPaymentIntentId(array $additionalOptions, array $expected): void
     {
         $this->paymentTransaction->setTransactionOptions(['additionalData' => json_encode($additionalOptions)]);
+        $this->paymentTransaction->setCurrency('USD');
         $result = $this->request->getRequestData();
         $this->assertEquals($expected, $result);
     }
@@ -46,7 +47,7 @@ class AuthorizeRequestTest extends TestCase
             [
                 'payment_method' => 1,
                 'amount' => 0.0,
-                'currency' => null,
+                'currency' => 'USD',
                 'confirmation_method' => 'manual',
                 'capture_method' => 'manual',
                 'confirm' => true,
@@ -65,7 +66,7 @@ class AuthorizeRequestTest extends TestCase
             [
                 'payment_method' => 1,
                 'amount' => 0.0,
-                'currency' => null,
+                'currency' => 'USD',
                 'confirmation_method' => 'manual',
                 'capture_method' => 'manual',
                 'confirm' => true,

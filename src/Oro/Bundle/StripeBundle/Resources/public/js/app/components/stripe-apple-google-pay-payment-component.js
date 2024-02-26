@@ -18,6 +18,11 @@ const StripeAppleGooglePayPaymentComponent = StripePaymentComponent.extend({
     paymentRequest: null,
     stripePaymentShown: false,
     form: null,
+    zeroDecimalCurrencies: [
+        'BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA',
+        'PYG', 'RWF', 'UGX', 'VND', 'VUV', 'XAF', 'XOF', 'XPF'
+    ],
+    threeDecimalCurrencies: ['BHD', 'JOD', 'KWD', 'OMR', 'TND'],
 
     /**
      * @inheritdoc
@@ -34,6 +39,19 @@ const StripeAppleGooglePayPaymentComponent = StripePaymentComponent.extend({
         StripeAppleGooglePayPaymentComponent.__super__.initialize.call(this, this.options);
 
         this.initStripePaymentRequest();
+    },
+
+    convertToStripeFormat(value, currency) {
+        // https://docs.stripe.com/currencies#zero-decimal
+        if (this.zeroDecimalCurrencies.includes(currency)) {
+            return Math.round(numeral(value.toFixed(0)).value());
+        }
+        // https://docs.stripe.com/currencies#three-decimal
+        if (this.threeDecimalCurrencies.includes(currency)) {
+            return Math.round(numeral(value.toFixed(2)).multiply(1000).value());
+        }
+        // https://docs.stripe.com/currencies#presentment-currencies
+        return Math.round(numeral(value.toFixed(2)).multiply(100).value());
     },
 
     /**
@@ -53,7 +71,10 @@ const StripeAppleGooglePayPaymentComponent = StripePaymentComponent.extend({
             currency: totals.total.currency.toLowerCase(),
             total: {
                 label: totals.total.label,
-                amount: Math.round(numeral(totals.total.signedAmount).multiply(100).value())
+                amount: this.convertToStripeFormat(
+                    totals.total.signedAmount,
+                    totals.total.currency
+                )
             },
             displayItems: subtotals
         });
@@ -118,9 +139,9 @@ const StripeAppleGooglePayPaymentComponent = StripePaymentComponent.extend({
 
             subtotals.push({
                 label: item.label,
-                amount: Math.round(numeral(item.signedAmount).multiply(100).value())
+                amount: this.convertToStripeFormat(item.signedAmount, item.currency)
             });
-        });
+        }, this);
 
         return subtotals;
     },
