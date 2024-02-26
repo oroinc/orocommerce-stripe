@@ -47,10 +47,12 @@ class RefundResponse extends AbstractResponseObject implements RefundResponseInt
     public function getRefundedAmount(): float
     {
         $amount = $this->getValue('amount');
+        $currency = $this->getValue('currency');
 
-        if (!$amount) {
-            throw new \LogicException('Refund amount could not be empty');
+        if (!$amount || !$currency) {
+            throw new \LogicException('Refund amount or currency could not be empty.');
         }
-        return PaymentAmountConverter::convertFromStripeFormat($amount);
+
+        return PaymentAmountConverter::convertFromStripeFormatUsingCurrency($amount, $currency);
     }
 }

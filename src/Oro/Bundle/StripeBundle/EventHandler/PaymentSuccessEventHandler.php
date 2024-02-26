@@ -61,7 +61,10 @@ class PaymentSuccessEventHandler extends AbstractStripeEventHandler implements S
     {
         $responseData = $responseObject->getData();
         if (isset($responseData['data']['amount_received'])) {
-            return PaymentAmountConverter::convertFromStripeFormat($responseData['data']['amount_received']);
+            return PaymentAmountConverter::convertFromStripeFormatUsingCurrency(
+                $responseData['data']['amount_received'],
+                $responseData['data']['currency'],
+            );
         }
 
         return null;

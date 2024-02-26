@@ -137,7 +137,31 @@ class RefundResponseTest extends TestCase
         ]);
 
         $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Refund amount could not be empty');
+        $this->expectExceptionMessage('Refund amount or currency could not be empty.');
+
+        $response->getRefundedAmount();
+    }
+
+    public function testGetRefundedCurrencyThrowsException()
+    {
+        $response = new RefundResponse([
+            'id' => 're_1',
+            'object' => 'refund',
+            'amount' => 1001,
+            'balance_transaction' => null,
+            'charge' => 'ch_31',
+            'created' => 1664898946,
+            'metadata' => [],
+            'payment_intent' => null,
+            'reason' => null,
+            'receipt_number' => null,
+            'source_transfer_reversal' => null,
+            'status' => 'succeeded',
+            'transfer_reversal' => null
+        ]);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage('Refund amount or currency could not be empty.');
 
         $response->getRefundedAmount();
     }

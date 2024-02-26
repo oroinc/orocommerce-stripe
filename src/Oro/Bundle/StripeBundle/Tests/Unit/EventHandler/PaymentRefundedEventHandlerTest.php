@@ -340,6 +340,7 @@ class PaymentRefundedEventHandlerTest extends TestCase
                     'id' => 're_2',
                     'payment_intent' => 'pi_1',
                     'amount' => 10000,
+                    'currency' => 'USD',
                     'status' => 'succeeded'
                 ]
             ]
