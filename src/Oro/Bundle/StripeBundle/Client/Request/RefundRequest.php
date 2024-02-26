@@ -35,7 +35,10 @@ class RefundRequest extends StripeApiRequestAbstract
         return [
             'payment_intent' => $this->getPaymentId(),
             'reason' => $this->getRefundReason(),
-            'amount' => PaymentAmountConverter::convertToStripeFormat((float)$this->transaction->getAmount()),
+            'amount' => PaymentAmountConverter::convertToStripeFormat(
+                (float)$this->transaction->getAmount(),
+                $this->transaction->getCurrency(),
+            ),
         ];
     }
 

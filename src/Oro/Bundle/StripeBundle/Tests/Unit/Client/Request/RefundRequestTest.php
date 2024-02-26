@@ -26,12 +26,14 @@ class RefundRequestTest extends TestCase
         $sourceTransaction = new PaymentTransaction();
         $transaction = new PaymentTransaction();
         $transaction->setSourcePaymentTransaction($sourceTransaction);
+        $transaction->setCurrency('USD');
         yield [$transaction];
 
         $sourceTransaction = new PaymentTransaction();
         $sourceTransaction->setResponse(['test' => true]);
         $transaction = new PaymentTransaction();
         $transaction->setSourcePaymentTransaction($sourceTransaction);
+        $transaction->setCurrency('USD');
         yield [$transaction];
     }
 
@@ -41,6 +43,7 @@ class RefundRequestTest extends TestCase
         $sourceTransaction->setResponse([PaymentIntentResponse::PAYMENT_INTENT_ID_PARAM => 'test']);
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setSourcePaymentTransaction($sourceTransaction);
+        $paymentTransaction->setCurrency('USD');
 
         $request = new RefundRequest($paymentTransaction);
         $this->assertEquals('test', $request->getPaymentId());
@@ -62,6 +65,7 @@ class RefundRequestTest extends TestCase
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setSourcePaymentTransaction($sourceTransaction);
         $paymentTransaction->setAmount(20.00);
+        $paymentTransaction->setCurrency('USD');
 
         yield [
             $paymentTransaction,
@@ -78,6 +82,7 @@ class RefundRequestTest extends TestCase
         $paymentTransaction->setTransactionOptions(['refundReason' => 'abandoned']);
         $paymentTransaction->setSourcePaymentTransaction($sourceTransaction);
         $paymentTransaction->setAmount(40.00);
+        $paymentTransaction->setCurrency('USD');
 
         yield [
             $paymentTransaction,

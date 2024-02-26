@@ -77,6 +77,7 @@ class StripeGatewayTest extends TestCase
     public function testPurchaseSuccess(): void
     {
         $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setCurrency('USD');
         $paymentTransaction->setTransactionOptions([
             'additionalData' => json_encode([
                 'stripePaymentMethodId' => 1
@@ -99,6 +100,7 @@ class StripeGatewayTest extends TestCase
     public function testPurchaseFailed(): void
     {
         $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setCurrency('USD');
         $paymentTransaction->setTransactionOptions([
             'additionalData' => json_encode([
                 'stripePaymentMethodId' => 1
@@ -123,6 +125,7 @@ class StripeGatewayTest extends TestCase
     public function testConfirmSuccess(): void
     {
         $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setCurrency('USD');
         $paymentTransaction->setTransactionOptions([
             'additionalData' => json_encode([
                 ConfirmRequest::PAYMENT_INTENT_ID_PARAM => 1
@@ -155,6 +158,7 @@ class StripeGatewayTest extends TestCase
     public function testConfirmNorFoundPaymentIntent(): void
     {
         $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setCurrency('USD');
         $paymentTransaction->setTransactionOptions([
             'additionalData' => json_encode([
                 ConfirmRequest::PAYMENT_INTENT_ID_PARAM => 1
@@ -177,6 +181,7 @@ class StripeGatewayTest extends TestCase
     public function testConfirmApiErrorException(): void
     {
         $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setCurrency('USD');
         $paymentTransaction->setTransactionOptions([
             'additionalData' => json_encode([
                 ConfirmRequest::PAYMENT_INTENT_ID_PARAM => 1
@@ -204,6 +209,7 @@ class StripeGatewayTest extends TestCase
     public function testCaptureSuccess(): void
     {
         $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setCurrency('USD');
         $paymentTransaction->setResponse([
             PaymentIntentResponse::PAYMENT_INTENT_ID_PARAM => 1
         ]);
@@ -223,6 +229,7 @@ class StripeGatewayTest extends TestCase
     public function testCaptureFailed(): void
     {
         $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setCurrency('USD');
         $paymentTransaction->setResponse([
             PaymentIntentResponse::PAYMENT_INTENT_ID_PARAM => 1
         ]);
@@ -244,6 +251,7 @@ class StripeGatewayTest extends TestCase
     public function testCancelSuccess(): void
     {
         $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setCurrency('USD');
         $sourcePaymentTransaction = new PaymentTransaction();
         $sourcePaymentTransaction->setResponse([
             PaymentIntentResponse::PAYMENT_INTENT_ID_PARAM => 1
@@ -265,6 +273,7 @@ class StripeGatewayTest extends TestCase
     public function testCancelFailed(): void
     {
         $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setCurrency('USD');
         $sourcePaymentTransaction = new PaymentTransaction();
         $sourcePaymentTransaction->setResponse([
             PaymentIntentResponse::PAYMENT_INTENT_ID_PARAM => 1
@@ -288,6 +297,7 @@ class StripeGatewayTest extends TestCase
     public function testCreateSetupIntentSuccess(): void
     {
         $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setCurrency('USD');
         $paymentTransaction->setResponse([
             PaymentIntentResponse::PAYMENT_INTENT_ID_PARAM => 1
         ]);
@@ -320,6 +330,7 @@ class StripeGatewayTest extends TestCase
     public function testCreateSetupIntentFailed(): void
     {
         $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setCurrency('USD');
         $paymentTransaction->setResponse([
             PaymentIntentResponse::PAYMENT_INTENT_ID_PARAM => 1
         ]);
@@ -533,6 +544,7 @@ class StripeGatewayTest extends TestCase
     public function testRefundSuccess(): void
     {
         $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setCurrency('USD');
         $sourcePaymentTransaction = new PaymentTransaction();
         $sourcePaymentTransaction->setResponse([
             PaymentIntentResponse::PAYMENT_INTENT_ID_PARAM => 1
@@ -559,6 +571,7 @@ class StripeGatewayTest extends TestCase
     public function testRefundFailed(): void
     {
         $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction->setCurrency('USD');
         $sourcePaymentTransaction = new PaymentTransaction();
         $sourcePaymentTransaction->setResponse([
             PaymentIntentResponse::PAYMENT_INTENT_ID_PARAM => 1

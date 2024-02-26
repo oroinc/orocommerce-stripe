@@ -32,7 +32,10 @@ class PurchaseRequest extends StripeApiRequestAbstract
 
         $requestData = [
             'payment_method' => $this->getPaymentMethodId(),
-            'amount' => PaymentAmountConverter::convertToStripeFormat((float)$this->transaction->getAmount()),
+            'amount' => PaymentAmountConverter::convertToStripeFormat(
+                (float)$this->transaction->getAmount(),
+                $this->transaction->getCurrency()
+            ),
             'currency' => $this->transaction->getCurrency(),
             'confirmation_method' => self::DEFAULT_CONFIRMATION_METHOD,
             'capture_method' => $this->config->getPaymentAction(),
