@@ -19,6 +19,7 @@ class CaptureRequestTest extends TestCase
     {
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setAmount($amount);
+        $paymentTransaction->setCurrency('USD');
 
         $request = new CaptureRequest($paymentTransaction);
         $this->assertEquals(['amount_to_capture' => $expected], $request->getRequestData());
@@ -28,6 +29,7 @@ class CaptureRequestTest extends TestCase
     {
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setAmount(100);
+        $paymentTransaction->setCurrency('USD');
 
         $request = new CaptureRequest($paymentTransaction, 50);
         $this->assertEquals(['amount_to_capture' => 5000], $request->getRequestData());

@@ -21,9 +21,8 @@ class CaptureRequest extends StripeApiRequestAbstract
     public function getRequestData(): array
     {
         $amount = $this->amount ?? (float)$this->transaction->getAmount();
+        $currency = $this->transaction->getCurrency();
 
-        return [
-            'amount_to_capture' => PaymentAmountConverter::convertToStripeFormat($amount)
-        ];
+        return ['amount_to_capture' => PaymentAmountConverter::convertToStripeFormat($amount, $currency)];
     }
 }
