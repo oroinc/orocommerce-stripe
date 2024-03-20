@@ -60,7 +60,6 @@ Feature: Stripe integration
         Given I proceed as the Buyer
         And I signed in as AmandaRCole@example.org on the store frontend
         When I open page with shopping list List 1
-        And I wait line items are initialized
         And I click "Create Order"
         And I click "Ship to This Address"
         And I click "Continue"
@@ -106,7 +105,6 @@ Feature: Stripe integration
     Scenario: Checkout with second stripe integration
         Given I proceed as the Buyer
         When I open page with shopping list List 2
-        And I wait line items are initialized
         And I click "Create Order"
         And I click "Ship to This Address"
         And I click "Continue"
@@ -152,7 +150,6 @@ Feature: Stripe integration
     Scenario: Checkout with automatic stripe payment
         Given I proceed as the Buyer
         When I open page with shopping list List 2
-        And I wait line items are initialized
         And I click "Create Order"
         And I click "Ship to This Address"
         And I click "Continue"

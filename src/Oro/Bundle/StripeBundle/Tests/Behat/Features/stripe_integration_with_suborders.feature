@@ -51,7 +51,6 @@ Feature: Stripe integration with suborders
         Given I proceed as the Buyer
         And I signed in as AmandaRCole@example.org on the store frontend
         When I open page with shopping list List 1
-        And I wait line items are initialized
         And I click "Create Order"
         And I click "Ship to This Address"
         And I click "Continue"

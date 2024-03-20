@@ -63,7 +63,6 @@ Feature: Stripe integration single page checkout
         Given I proceed as the Buyer
         And I signed in as AmandaRCole@example.org on the store frontend
         When I open page with shopping list List 1
-        And I wait line items are initialized
         And I click "Create Order"
         And I select "ORO, Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"
         And I select "ORO, Fifth avenue, 10115 Berlin, Germany" from "Select Shipping Address"
@@ -88,7 +87,6 @@ Feature: Stripe integration single page checkout
 
     Scenario: Checkout with second stripe integration
         Given I open page with shopping list List 2
-        And I wait line items are initialized
         And I click "Create Order"
         And I select "ORO, Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"
         And I select "ORO, Fifth avenue, 10115 Berlin, Germany" from "Select Shipping Address"
