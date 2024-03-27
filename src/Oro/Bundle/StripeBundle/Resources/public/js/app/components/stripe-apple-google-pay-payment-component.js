@@ -8,7 +8,7 @@ import StripePaymentComponent from 'orostripe/js/app/components/stripe-payment-c
 const StripeAppleGooglePayPaymentComponent = StripePaymentComponent.extend({
     defaults: {
         selector: {
-            checkoutButtonSelector: '.order-checkout-widget button[type="submit"]',
+            checkoutButtonSelector: '.checkout-form button[type="submit"]',
             paymentMethodSelector: '[name$="[payment_method]"]'
         },
         country: 'US'
