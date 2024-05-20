@@ -8,7 +8,7 @@ import StripePaymentComponent from 'orostripe/js/app/components/stripe-payment-c
 const StripeAppleGooglePayPaymentComponent = StripePaymentComponent.extend({
     defaults: {
         selector: {
-            checkoutButtonSelector: '.checkout-form button[type="submit"]',
+            checkoutButtonSelector: '.checkout-form__submit[type="submit"]',
             paymentMethodSelector: '[name$="[payment_method]"]'
         },
         country: 'US'
@@ -54,13 +54,17 @@ const StripeAppleGooglePayPaymentComponent = StripePaymentComponent.extend({
         return Math.round(numeral(value.toFixed(2)).multiply(100).value());
     },
 
+    getForm($element) {
+        return $element.prop('form') ? $($element.prop('form')) : $element.closest('form');
+    },
+
     /**
      * Initialize event listener on checkout form submit to display Google/Apple Pay dialog window.
      * Initialize event listener on event when customer submits Google/Apple Pay dialog form.
      */
     initStripePaymentRequest() {
         const checkoutButton = $(this.options.selector.checkoutButtonSelector);
-        this.form = checkoutButton.closest('form');
+        this.form = this.getForm(checkoutButton);
 
         const totals = this.options.totals;
         const subtotals = this.getStripePaymentRequestSubtotals();
