@@ -48,7 +48,7 @@ class EntitiesTransactionsProvider
             $subPaymentTransaction->setTransactionOptions($sourceTransaction->getTransactionOptions());
             $subPaymentTransaction->setSourcePaymentTransaction($sourceTransaction);
 
-            $entitiesTransactions []= $subPaymentTransaction;
+            $entitiesTransactions [] = $subPaymentTransaction;
         }
 
         return $entitiesTransactions;
