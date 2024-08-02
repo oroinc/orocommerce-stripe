@@ -98,7 +98,7 @@ const StripeAppleGooglePayPaymentComponent = StripePaymentComponent.extend({
             // Set flag as true only when customer user submitted Google/Apple pay dialog window form.
             this.stripePaymentShown = true;
 
-            this.form.submit();
+            this.form.trigger('submit');
         });
     },
 

@@ -124,7 +124,7 @@ const StripeAppleGooglePaySelectionComponent = BaseComponent.extend({
 
         $(firstRadioInput).attr('checked', 'checked')
             .trigger('click')
-            .change();
+            .trigger('change');
     },
 
     refreshSelectedPaymentOptionFromFormField() {
@@ -146,7 +146,7 @@ const StripeAppleGooglePaySelectionComponent = BaseComponent.extend({
 
         paymentMethodToSelect.attr('checked', 'checked')
             .trigger('click')
-            .change();
+            .trigger('change');
     },
 
     /**
