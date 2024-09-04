@@ -87,9 +87,10 @@ Feature: Stripe integration
 
     Scenario: Capture Order in admin
         Given I proceed as the Admin
-        And I go to Sales/Orders
+        When I go to Sales/Orders
+        And I show column Payment Method in grid
         Then number of records should be 1
-        Then I should see following grid:
+        And I should see following grid:
             | Payment Status     | Payment Method |
             | Payment authorized | Stripe         |
         And I click on 1 in grid
@@ -165,9 +166,10 @@ Feature: Stripe integration
 
     Scenario: Check Order with automatic payment in admin
         Given I proceed as the Admin
-        And I go to Sales/Orders
+        When I go to Sales/Orders
+        And I show column Payment Method in grid
         Then number of records should be 3
-        Then I should see following grid:
+        And I should see following grid:
             | Payment Status     | Payment Method |
             | Paid in full       | Stripe         |
             | Payment authorized | Stripe2        |

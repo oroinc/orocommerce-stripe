@@ -111,9 +111,10 @@ Feature: Stripe integration single page checkout
 
     Scenario: Check Order in admin
         Given I proceed as the Admin
-        And I go to Sales/Orders
+        When I go to Sales/Orders
+        And I show column Payment Method in grid
         Then number of records should be 2
-        Then I should see following grid:
+        And I should see following grid:
             | Payment Status     | Payment Method |
             | Payment authorized | Stripe2        |
             | Payment authorized | Stripe         |

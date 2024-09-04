@@ -68,7 +68,8 @@ Feature: Stripe integration with suborders
 
     Scenario: Capture Sub Order in admin
         Given I proceed as the Admin
-        And I go to Sales/Orders
+        When I go to Sales/Orders
+        And I show column Payment Method in grid
         Then number of records should be 3
         And I sort grid by "Order Number"
         Then I should see following grid:
@@ -145,9 +146,9 @@ Feature: Stripe integration with suborders
         And I click "Yes, Cancel Authorization" in modal window
         Then I should see "The payment of $46.00 has been canceled successfully." flash message
         And I should see following "SubOrders Grid" grid:
-            | Order Number | Total  | Payment Status   | Payment Method | Shipping Method |
-            | 1-2          | $46.00 | Payment canceled | Stripe         | Multi Shipping  |
-            | 1-1          | $13.00 | Refunded         | Stripe         | Multi Shipping  |
+            | Order Number | Total  | Payment Status   |
+            | 1-2          | $46.00 | Payment canceled |
+            | 1-1          | $13.00 | Refunded         |
         When I click on Payment canceled in grid "SubOrders Grid"
         And I click "Activity"
         Then I should see "Payment authorization hold was cancelled. Notes: Cancel Authorization Note"
