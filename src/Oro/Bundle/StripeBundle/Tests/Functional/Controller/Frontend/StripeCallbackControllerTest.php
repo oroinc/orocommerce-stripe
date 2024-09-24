@@ -12,6 +12,7 @@ class StripeCallbackControllerTest extends WebTestCase
     /** @var StripeWebhookEventHandler|\PHPUnit\Framework\MockObject\MockObject|null  */
     private $webhookEventHandler;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -21,6 +22,7 @@ class StripeCallbackControllerTest extends WebTestCase
         $this->getContainer()->set(StripeWebhookEventHandler::class, $this->webhookEventHandler);
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         parent::tearDown();

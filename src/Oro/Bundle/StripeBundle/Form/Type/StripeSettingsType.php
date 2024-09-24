@@ -31,6 +31,7 @@ class StripeSettingsType extends AbstractType
         $this->translator = $translator;
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -100,6 +101,7 @@ class StripeSettingsType extends AbstractType
             ]);
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -120,6 +122,7 @@ class StripeSettingsType extends AbstractType
         ]);
     }
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::BLOCK_PREFIX;

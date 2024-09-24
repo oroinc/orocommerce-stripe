@@ -16,6 +16,7 @@ class StripeEventHandlerRegistryTest extends TestCase
     private StripeEventHandlerRegistry $handlerRegistry;
     private StripeEventHandlerInterface $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->handler = new TestEventHandler();

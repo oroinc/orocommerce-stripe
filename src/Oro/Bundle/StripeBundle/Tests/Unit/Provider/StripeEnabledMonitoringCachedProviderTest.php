@@ -20,6 +20,7 @@ class StripeEnabledMonitoringCachedProviderTest extends TestCase
     private ManagerRegistry|MockObject $manager;
     private StripeEnabledMonitoringCachedProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->frontendHelper = $this->createMock(FrontendHelper::class);

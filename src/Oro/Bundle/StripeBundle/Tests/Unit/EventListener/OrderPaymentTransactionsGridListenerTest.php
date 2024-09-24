@@ -21,6 +21,7 @@ class OrderPaymentTransactionsGridListenerTest extends TestCase
     private PaymentTransactionRepository|MockObject $paymentTransactionRepositoryMock;
     private OrderPaymentTransactionsGridListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->managerRegistryMock = $this->createMock(ManagerRegistry::class);

@@ -16,11 +16,13 @@ class PaymentSuccessEventHandler extends AbstractStripeEventHandler implements S
 {
     private const PAYMENT_INTENT_SUCCEEDED_EVENT = 'payment_intent.succeeded';
 
+    #[\Override]
     public function isSupported(StripeEventInterface $event): bool
     {
         return $event->getEventName() === self::PAYMENT_INTENT_SUCCEEDED_EVENT;
     }
 
+    #[\Override]
     protected function createPaymentTransaction(
         ResponseObjectInterface $responseObject,
         string $paymentMethodIdentifier

@@ -18,6 +18,7 @@ class StripeNotificationManagerTest extends TestCase
     private LoggerInterface|MockObject $logger;
     private StripeNotificationManager $notificationManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);

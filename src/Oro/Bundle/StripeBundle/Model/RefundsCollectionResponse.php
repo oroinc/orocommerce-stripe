@@ -7,6 +7,7 @@ namespace Oro\Bundle\StripeBundle\Model;
  */
 class RefundsCollectionResponse extends AbstractCollectionResponse
 {
+    #[\Override]
     protected function createItem(array $itemData)
     {
         return new RefundResponse($itemData);

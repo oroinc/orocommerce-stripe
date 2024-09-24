@@ -43,6 +43,7 @@ class StripeGateway implements StripeGatewayInterface
         return $this->client;
     }
 
+    #[\Override]
     public function purchase(StripeApiRequestInterface $request): ResponseObjectInterface
     {
         try {
@@ -54,6 +55,7 @@ class StripeGateway implements StripeGatewayInterface
         return new PaymentIntentResponse($this->getResponseData($paymentIntent));
     }
 
+    #[\Override]
     public function confirm(StripeApiRequestInterface $request): ResponseObjectInterface
     {
         try {
@@ -72,6 +74,7 @@ class StripeGateway implements StripeGatewayInterface
         return new PaymentIntentResponse($this->getResponseData($paymentIntent));
     }
 
+    #[\Override]
     public function capture(StripeApiRequestInterface $request): ResponseObjectInterface
     {
         try {
@@ -86,6 +89,7 @@ class StripeGateway implements StripeGatewayInterface
         return new PaymentIntentResponse($this->getResponseData($paymentIntent));
     }
 
+    #[\Override]
     public function cancel(StripeApiRequestInterface $request): ResponseObjectInterface
     {
         try {
@@ -100,6 +104,7 @@ class StripeGateway implements StripeGatewayInterface
         return new PaymentIntentResponse($this->getResponseData($paymentIntent));
     }
 
+    #[\Override]
     public function createSetupIntent(StripeApiRequestInterface $request): ResponseObjectInterface
     {
         try {
@@ -111,6 +116,7 @@ class StripeGateway implements StripeGatewayInterface
         return new SetupIntentResponse($this->getResponseData($setupIntent));
     }
 
+    #[\Override]
     public function createCustomer(StripeApiRequestInterface $request): ResponseObjectInterface
     {
         try {
@@ -132,6 +138,7 @@ class StripeGateway implements StripeGatewayInterface
         return new CustomerResponse($this->getResponseData($customer));
     }
 
+    #[\Override]
     public function findSetupIntentCustomer(string $setupIntentId): ResponseObjectInterface
     {
         try {
@@ -144,6 +151,7 @@ class StripeGateway implements StripeGatewayInterface
         return new CustomerResponse($this->getResponseData($customer));
     }
 
+    #[\Override]
     public function findSetupIntent(string $setupIntentId): ResponseObjectInterface
     {
         try {
@@ -155,6 +163,7 @@ class StripeGateway implements StripeGatewayInterface
         return new SetupIntentResponse($this->getResponseData($setupIntent));
     }
 
+    #[\Override]
     public function refund(StripeApiRequestInterface $request): ResponseObjectInterface
     {
         try {
@@ -166,6 +175,7 @@ class StripeGateway implements StripeGatewayInterface
         return new RefundResponse($this->getResponseData($refund));
     }
 
+    #[\Override]
     public function getAllRefunds(array $criteria): CollectionResponseInterface
     {
         try {

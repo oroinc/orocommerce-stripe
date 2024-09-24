@@ -13,16 +13,19 @@ class SetupIntentResponse extends AbstractResponseObject implements ResponseObje
     private const CLIENT_SECRET_FIELD_NAME = 'client_secret';
     private const NEXT_ACTION_FIELD_NAME = 'next_action';
 
+    #[\Override]
     public function getStatus(): string
     {
         return $this->getValue(self::STATUS_FIELD_NAME);
     }
 
+    #[\Override]
     public function getIdentifier(): string
     {
         return $this->getValue(self::ID_FIELD_NAME);
     }
 
+    #[\Override]
     public function getData(): array
     {
         return [

@@ -15,11 +15,13 @@ class PaymentCanceledEventHandler extends AbstractStripeEventHandler implements 
 {
     private const PAYMENT_INTENT_CANCELED_EVENT = 'payment_intent.canceled';
 
+    #[\Override]
     public function isSupported(StripeEventInterface $event): bool
     {
         return $event->getEventName() === self::PAYMENT_INTENT_CANCELED_EVENT;
     }
 
+    #[\Override]
     protected function createPaymentTransaction(
         ResponseObjectInterface $responseObject,
         string $paymentMethodIdentifier

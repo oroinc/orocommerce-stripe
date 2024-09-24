@@ -12,6 +12,7 @@ use Oro\Bundle\StripeBundle\Method\StripeAppleGooglePaymentMethod;
  */
 class SortedApplicablePaymentMethodsProvider extends ApplicablePaymentMethodsProvider
 {
+    #[\Override]
     protected function getActualApplicablePaymentMethods(PaymentContextInterface $context): array
     {
         $applicablePaymentMethods = parent::getActualApplicablePaymentMethods($context);

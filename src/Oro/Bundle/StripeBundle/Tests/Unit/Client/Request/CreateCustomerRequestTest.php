@@ -23,6 +23,7 @@ class CreateCustomerRequestTest extends TestCase
     private PaymentTransaction $paymentTransaction;
     private CreateCustomerRequest $request;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->paymentTransaction = new PaymentTransaction();

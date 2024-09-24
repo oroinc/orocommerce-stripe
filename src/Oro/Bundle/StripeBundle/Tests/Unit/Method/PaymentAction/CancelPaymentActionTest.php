@@ -22,6 +22,7 @@ class CancelPaymentActionTest extends TestCase
 
     private CancelPaymentAction $action;
 
+    #[\Override]
     protected function setUp(): void
     {
         $factory = $this->createMock(StripeGatewayFactoryInterface::class);

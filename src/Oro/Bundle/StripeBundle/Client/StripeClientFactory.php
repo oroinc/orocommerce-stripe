@@ -9,6 +9,7 @@ use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
  */
 class StripeClientFactory implements StripeGatewayFactoryInterface
 {
+    #[\Override]
     public function create(StripePaymentConfig $config): StripeGatewayInterface
     {
         if (!$config->getSecretKey()) {

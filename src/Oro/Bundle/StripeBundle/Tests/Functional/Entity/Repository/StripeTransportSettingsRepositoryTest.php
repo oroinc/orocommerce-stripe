@@ -11,6 +11,7 @@ class StripeTransportSettingsRepositoryTest extends WebTestCase
 {
     protected StripeTransportSettingsRepository $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

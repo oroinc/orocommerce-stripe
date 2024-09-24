@@ -17,6 +17,7 @@ class StripePaymentMethodFactoryTest extends TestCase
     private Logger|MockObject $logger;
     private StripePaymentMethodFactory $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(PaymentActionRegistry::class);

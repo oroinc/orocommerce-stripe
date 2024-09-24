@@ -12,6 +12,7 @@ class StripeUrlExtension extends AbstractExtension
 {
     public const STRIPE_LIBRARY_URL = 'https://js.stripe.com/v3/';
 
+    #[\Override]
     public function getFunctions()
     {
         return [

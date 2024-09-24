@@ -8,6 +8,7 @@ use Oro\Bundle\StripeBundle\Method\StripeAppleGooglePaymentMethod;
 
 class StripeAppleGooglePaymentMethodTest extends StripePaymentMethodTest
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -19,6 +20,7 @@ class StripeAppleGooglePaymentMethodTest extends StripePaymentMethodTest
         $this->method = new StripeAppleGooglePaymentMethod($config, $this->registry);
     }
 
+    #[\Override]
     public function testGetIdentifier(): void
     {
         $this->assertEquals('test_apple_google_pay', $this->method->getIdentifier());

@@ -30,6 +30,7 @@ class ReAuthorizationHandlerTest extends TestCase
 
     private ReAuthorizationHandler $handler;
 
+    #[\Override]
     public function setUp(): void
     {
         $this->transactionsProvider = $this->createMock(EntitiesTransactionsProvider::class);

@@ -13,21 +13,25 @@ class RefundResponse extends AbstractResponseObject implements RefundResponseInt
     private const PAYMENT_INTENT_FIELD = 'payment_intent';
     private const STATUS_FIELD = 'status';
 
+    #[\Override]
     public function getPaymentIntentId(): ?string
     {
         return $this->getValue(self::PAYMENT_INTENT_FIELD);
     }
 
+    #[\Override]
     public function getStatus(): string
     {
         return $this->getValue(self::STATUS_FIELD);
     }
 
+    #[\Override]
     public function getIdentifier(): string
     {
         return $this->getValue(self::IDENTIFIER_FIELD);
     }
 
+    #[\Override]
     public function getData(): array
     {
         return [
@@ -44,6 +48,7 @@ class RefundResponse extends AbstractResponseObject implements RefundResponseInt
         ];
     }
 
+    #[\Override]
     public function getRefundedAmount(): float
     {
         $amount = $this->getValue('amount');

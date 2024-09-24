@@ -32,11 +32,13 @@ class ReAuthorizeCronCommand extends Command implements
         $this->reAuthorizationHandler = $reAuthorizationHandler;
     }
 
+    #[\Override]
     public function isActive()
     {
         return $this->transactionsProvider->hasExpiringAuthorizationTransactions();
     }
 
+    #[\Override]
     public function getDefaultDefinition()
     {
         // At minute 0 past every hour.
@@ -44,6 +46,7 @@ class ReAuthorizeCronCommand extends Command implements
     }
 
     /** @noinspection PhpMissingParentCallCommonInspection */
+    #[\Override]
     protected function configure()
     {
         $this->setDescription('Cancels expiring Stripe authorization holds and places new ones instead.')
@@ -59,6 +62,7 @@ HELP
         ;
     }
 
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('Starting Stripe authorizations processing');

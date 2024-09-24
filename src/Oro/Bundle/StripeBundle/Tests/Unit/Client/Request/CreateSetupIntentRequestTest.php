@@ -16,6 +16,7 @@ class CreateSetupIntentRequestTest extends TestCase
     private PaymentTransaction $paymentTransaction;
     private CreateSetupIntentRequest $request;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->paymentTransaction = new PaymentTransaction();

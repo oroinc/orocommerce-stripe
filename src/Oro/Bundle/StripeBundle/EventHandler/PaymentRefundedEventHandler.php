@@ -37,6 +37,7 @@ class PaymentRefundedEventHandler extends AbstractStripeEventHandler implements 
         $this->stripeClientFactory = $stripeClientFactory;
     }
 
+    #[\Override]
     public function handle(StripeEventInterface $event): void
     {
         $chargeResponseObject = $event->getData();
@@ -97,6 +98,7 @@ class PaymentRefundedEventHandler extends AbstractStripeEventHandler implements 
         }
     }
 
+    #[\Override]
     protected function createPaymentTransaction(
         ResponseObjectInterface $responseObject,
         string $paymentMethodIdentifier
@@ -122,6 +124,7 @@ class PaymentRefundedEventHandler extends AbstractStripeEventHandler implements 
         );
     }
 
+    #[\Override]
     public function isSupported(StripeEventInterface $event): bool
     {
         return $event->getEventName() === self::PAYMENT_REFUNDED_EVENT;

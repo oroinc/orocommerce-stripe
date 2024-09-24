@@ -25,6 +25,7 @@ class PurchaseRequest extends StripeApiRequestAbstract
         $this->config = $config;
     }
 
+    #[\Override]
     public function getRequestData(): array
     {
         $additionalOptions = $this->getTransactionAdditionalData();
@@ -53,6 +54,7 @@ class PurchaseRequest extends StripeApiRequestAbstract
         return $requestData;
     }
 
+    #[\Override]
     public function getPaymentId(): ?string
     {
         return null;

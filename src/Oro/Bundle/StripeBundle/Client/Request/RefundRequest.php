@@ -13,6 +13,7 @@ class RefundRequest extends StripeApiRequestAbstract
     private const DEFAULT_REFUND_REASON_PARAM = 'requested_by_customer';
     private const REFUND_REASON_PARAM = 'refundReason';
 
+    #[\Override]
     public function getPaymentId(): ?string
     {
         $paymentId = $this->transaction->getSourcePaymentTransaction()
@@ -30,6 +31,7 @@ class RefundRequest extends StripeApiRequestAbstract
         return $paymentId;
     }
 
+    #[\Override]
     public function getRequestData(): array
     {
         return [

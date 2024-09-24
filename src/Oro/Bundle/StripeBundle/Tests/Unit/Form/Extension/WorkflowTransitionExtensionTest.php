@@ -12,6 +12,7 @@ class WorkflowTransitionExtensionTest extends \PHPUnit\Framework\TestCase
     private FormBuilderInterface $builder;
     private WorkflowTransitionExtension $formExtension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->builder = $this->createMock(FormBuilderInterface::class);

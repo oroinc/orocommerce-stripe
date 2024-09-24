@@ -57,6 +57,7 @@ class StripeGatewayTest extends TestCase
 
     private StripeGateway $gateway;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->paymentService = $this->createMock(PaymentIntentService::class);

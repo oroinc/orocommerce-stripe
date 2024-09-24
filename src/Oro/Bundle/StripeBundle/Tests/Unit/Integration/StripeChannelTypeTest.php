@@ -9,6 +9,7 @@ class StripeChannelTypeTest extends TestCase
 {
     private StripeChannelType $channel;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->channel = new StripeChannelType();

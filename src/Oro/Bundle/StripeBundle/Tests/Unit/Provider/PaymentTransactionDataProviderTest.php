@@ -14,6 +14,7 @@ class PaymentTransactionDataProviderTest extends TestCase
     private PaymentTransactionRepository|MockObject $transactionRepository;
     private PaymentTransactionDataProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->transactionRepository = $this->createMock(PaymentTransactionRepository::class);

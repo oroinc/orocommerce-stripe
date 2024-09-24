@@ -11,9 +11,7 @@ class StripePaymentConfigTest extends AbstractPaymentConfigTestCase
     /** @var StripePaymentConfig */
     protected $config;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getPaymentConfig(): PaymentConfigInterface
     {
         $params = [
@@ -33,6 +31,7 @@ class StripePaymentConfigTest extends AbstractPaymentConfigTestCase
         return new StripePaymentConfig($params);
     }
 
+    #[\Override]
     public function testGetAdminLabel(): void
     {
         $this->assertEquals('admin label', $this->config->getAdminLabel());

@@ -26,6 +26,7 @@ class CancelPaymentAction extends PaymentActionAbstract implements PaymentAction
         $this->paymentTransactionProvider = $paymentTransactionProvider;
     }
 
+    #[\Override]
     public function execute(
         StripePaymentConfig $config,
         PaymentTransaction $paymentTransaction
@@ -54,6 +55,7 @@ class CancelPaymentAction extends PaymentActionAbstract implements PaymentAction
         return $response;
     }
 
+    #[\Override]
     public function isApplicable(string $action, PaymentTransaction $paymentTransaction): bool
     {
         return $action === PaymentMethodInterface::CANCEL;

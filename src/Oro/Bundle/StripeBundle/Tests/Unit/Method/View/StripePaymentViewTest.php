@@ -12,6 +12,7 @@ class StripePaymentViewTest extends TestCase
     protected StripePaymentConfig $config;
     protected StripePaymentView $view;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->config = new StripePaymentConfig([

@@ -23,6 +23,7 @@ abstract class AbstractIntentResponse implements StripeApiResponseInterface
 
     abstract protected function getIntentSecretName(): string;
 
+    #[\Override]
     public function prepareResponse(): array
     {
         $response = [
@@ -39,6 +40,7 @@ abstract class AbstractIntentResponse implements StripeApiResponseInterface
         return $response;
     }
 
+    #[\Override]
     public function isSuccessful(): bool
     {
         return !$this->isRequiresAdditionalActions()

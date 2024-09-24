@@ -14,6 +14,7 @@ class EntitiesTransactionsProviderTest extends WebTestCase
 {
     private EntitiesTransactionsProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

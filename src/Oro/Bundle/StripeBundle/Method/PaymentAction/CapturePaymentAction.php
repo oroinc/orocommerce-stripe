@@ -26,6 +26,7 @@ class CapturePaymentAction extends PaymentActionAbstract implements PaymentActio
         $this->paymentTransactionProvider = $paymentTransactionProvider;
     }
 
+    #[\Override]
     public function execute(
         StripePaymentConfig $config,
         PaymentTransaction $paymentTransaction
@@ -52,6 +53,7 @@ class CapturePaymentAction extends PaymentActionAbstract implements PaymentActio
         return $response;
     }
 
+    #[\Override]
     public function isApplicable(string $action, PaymentTransaction $paymentTransaction): bool
     {
         return $action === PaymentMethodInterface::CAPTURE;

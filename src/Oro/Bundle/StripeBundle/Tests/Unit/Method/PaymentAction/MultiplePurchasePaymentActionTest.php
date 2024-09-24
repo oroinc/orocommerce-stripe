@@ -20,6 +20,7 @@ use Stripe\SetupIntent;
 
 class MultiplePurchasePaymentActionTest extends MultiPaymentTestCase
 {
+    #[\Override]
     protected function createAction(): PurchasePaymentActionAbstract
     {
         return new MultiplePurchasePaymentAction(

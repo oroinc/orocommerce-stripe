@@ -28,6 +28,7 @@ class PaymentTransactionFullyRefunded extends AbstractCondition implements Conte
         $this->transactionDataProvider = $transactionDataProvider;
     }
 
+    #[\Override]
     public function initialize(array $options)
     {
         if (array_key_exists('transaction', $options)) {
@@ -41,6 +42,7 @@ class PaymentTransactionFullyRefunded extends AbstractCondition implements Conte
         return $this;
     }
 
+    #[\Override]
     protected function isConditionAllowed($context)
     {
         /** @var PaymentTransaction $transaction */
@@ -50,6 +52,7 @@ class PaymentTransactionFullyRefunded extends AbstractCondition implements Conte
         return !(bool)$availableAmountToRefund;
     }
 
+    #[\Override]
     public function getName()
     {
         return self::NAME;

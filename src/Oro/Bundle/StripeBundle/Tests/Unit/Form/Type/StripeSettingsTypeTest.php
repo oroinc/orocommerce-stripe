@@ -35,12 +35,14 @@ class StripeSettingsTypeTest extends FormIntegrationTestCase
 
     private Translator|MockObject $translator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->translator = $this->createMock(Translator::class);
         parent::setUp();
     }
 
+    #[\Override]
     protected function getExtensions(): array
     {
         $repositoryLocalization = $this->createMock(ObjectRepository::class);

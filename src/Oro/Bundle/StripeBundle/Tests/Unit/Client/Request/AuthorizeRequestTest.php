@@ -15,6 +15,7 @@ class AuthorizeRequestTest extends TestCase
     private AuthorizeRequest $request;
     private PaymentTransaction $paymentTransaction;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->paymentTransaction = new PaymentTransaction();

@@ -11,9 +11,7 @@ class Configuration implements ConfigurationInterface
     public const ROOT_NODE = 'oro_stripe';
     public const APPLE_PAY_DOMAIN_VERIFICATION = 'apple_pay_domain_verification';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder(self::ROOT_NODE);

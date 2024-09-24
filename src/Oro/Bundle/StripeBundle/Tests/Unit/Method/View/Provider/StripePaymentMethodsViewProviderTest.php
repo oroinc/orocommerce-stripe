@@ -21,6 +21,7 @@ class StripePaymentMethodsViewProviderTest extends TestCase
     protected StripePaymentMethodsViewProvider $provider;
     protected string $paymentConfigClass;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configProvider = $this->createMock(StripePaymentConfigsProvider::class);

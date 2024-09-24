@@ -15,6 +15,7 @@ class StripeFilterTest extends TestCase
     private StripeEnabledMonitoringCachedProvider|MockObject $provider;
     private StripeFilter $filter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->requestStack = $this->createMock(RequestStack::class);

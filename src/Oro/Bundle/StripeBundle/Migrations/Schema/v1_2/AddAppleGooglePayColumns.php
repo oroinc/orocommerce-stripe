@@ -8,6 +8,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class AddAppleGooglePayColumns implements Migration
 {
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->createOroStripeTransportAppleGooglePayLabelTable($schema);

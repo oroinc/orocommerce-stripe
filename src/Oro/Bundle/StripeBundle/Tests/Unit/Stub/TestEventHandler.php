@@ -7,10 +7,12 @@ use Oro\Bundle\StripeBundle\EventHandler\StripeEventHandlerInterface;
 
 class TestEventHandler implements StripeEventHandlerInterface
 {
+    #[\Override]
     public function handle(StripeEventInterface $event): void
     {
     }
 
+    #[\Override]
     public function isSupported(StripeEventInterface $event): bool
     {
         return $event->getEventName() === 'test_payment.succeeded';

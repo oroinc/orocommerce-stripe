@@ -17,6 +17,7 @@ class ReAuthorizeCronCommandTest extends TestCase
 
     private ReAuthorizeCronCommand $command;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->transactionsProvider = $this->createMock(EntitiesTransactionsProvider::class);
