@@ -64,8 +64,8 @@ Feature: Stripe integration single page checkout
         And I signed in as AmandaRCole@example.org on the store frontend
         When I open page with shopping list List 1
         And I click "Create Order"
-        And I select "ORO, Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"
-        And I select "ORO, Fifth avenue, 10115 Berlin, Germany" from "Select Shipping Address"
+        And I select "ORO, Fifth avenue, 10115 Berlin, Germany" from "Billing Address"
+        And I select "ORO, Fifth avenue, 10115 Berlin, Germany" from "Shipping Address"
         And I check "Flat Rate" on the checkout page
         # Test card number was taken from https://stripe.com/docs/
         And I fill "Stripe Card Form Single Page" with:
@@ -82,13 +82,13 @@ Feature: Stripe integration single page checkout
             | Stripe Exp Date    | 12 / 35             |
             | Stripe CVC         | 111                 |
             | Stripe ZIP         | 12345               |
-        When I select "Please select an address" from "Select Billing Address"
+        When I select "Please select an address" from "Billing Address"
         Then "Stripe Card Form Single Page" must contain values:
             | Stripe Card Number | 4242 4242 4242 4242 |
             | Stripe Exp Date    | 12 / 35             |
             | Stripe CVC         | 111                 |
             | Stripe ZIP         | 12345               |
-        And I select "ORO, Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"
+        And I select "ORO, Fifth avenue, 10115 Berlin, Germany" from "Billing Address"
 
     Scenario: Checkout with success stripe payment
         When I click "Submit Order"
@@ -97,8 +97,8 @@ Feature: Stripe integration single page checkout
     Scenario: Checkout with second stripe integration
         Given I open page with shopping list List 2
         And I click "Create Order"
-        And I select "ORO, Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"
-        And I select "ORO, Fifth avenue, 10115 Berlin, Germany" from "Select Shipping Address"
+        And I select "ORO, Fifth avenue, 10115 Berlin, Germany" from "Billing Address"
+        And I select "ORO, Fifth avenue, 10115 Berlin, Germany" from "Shipping Address"
         And I check "Flat Rate" on the checkout page
         And I check "Stripe2" on the checkout page
         And I fill "Second Stripe Card Form Single Page" with:
