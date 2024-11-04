@@ -48,6 +48,7 @@ class StripeSDKEventFactory implements StripeEventFactoryInterface
         $this->managerRegistry = $managerRegistry;
     }
 
+    #[\Override]
     public function createEventFromRequest(Request $request): StripeEventInterface
     {
         $configuredPaymentConfigs = $this->paymentConfigsProvider->getConfigs();

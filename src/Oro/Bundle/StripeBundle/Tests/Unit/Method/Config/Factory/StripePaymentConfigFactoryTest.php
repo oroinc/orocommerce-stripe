@@ -22,6 +22,7 @@ class StripePaymentConfigFactoryTest extends TestCase
     private LocalizationHelper|MockObject $localizationHelper;
     private IntegrationIdentifierGeneratorInterface|MockObject $identifierGenerator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);

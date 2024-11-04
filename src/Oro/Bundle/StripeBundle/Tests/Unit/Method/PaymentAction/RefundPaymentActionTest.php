@@ -22,6 +22,7 @@ class RefundPaymentActionTest extends TestCase
 
     private RefundPaymentAction $action;
 
+    #[\Override]
     protected function setUp(): void
     {
         $factory = $this->createMock(StripeGatewayFactoryInterface::class);

@@ -24,6 +24,7 @@ class StripePaymentMethodTest extends TestCase
 
     protected PaymentActionRegistry|MockObject $registry;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(PaymentActionRegistry::class);

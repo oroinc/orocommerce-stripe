@@ -12,6 +12,7 @@ class StripeIntegrationTransportTest extends TestCase
 {
     private StripeIntegrationTransport $transport;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->transport = new class() extends StripeIntegrationTransport {

@@ -20,6 +20,7 @@ class StripePaymentMethodsDataProviderTest extends TestCase
     private StripePaymentMethodsProvider|MockObject $stripePaymentMethodsProvider;
     private StripePaymentMethodsDataProvider $stripePaymentMethodsDataProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutPaymentContextProvider = $this->createMock(CheckoutPaymentContextProvider::class);

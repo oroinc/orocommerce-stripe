@@ -11,21 +11,25 @@ class ChargeResponse extends AbstractResponseObject implements ResponseObjectInt
     private const STATUS_FIELD = 'status';
     private const ID_FIELD = 'id';
 
+    #[\Override]
     public function getPaymentIntentId(): ?string
     {
         return $this->getValue(self::PAYMENT_INTENT_ID_FIELD);
     }
 
+    #[\Override]
     public function getStatus(): string
     {
         return $this->getValue(self::STATUS_FIELD);
     }
 
+    #[\Override]
     public function getIdentifier(): string
     {
         return $this->getValue(self::ID_FIELD);
     }
 
+    #[\Override]
     public function getData(): array
     {
         return [

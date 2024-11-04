@@ -27,6 +27,7 @@ class CreateCustomerRequest extends StripeApiRequestAbstract
         $this->entityNameResolver = $entityNameResolver;
     }
 
+    #[\Override]
     public function getRequestData(): array
     {
         $requestData = [
@@ -47,6 +48,7 @@ class CreateCustomerRequest extends StripeApiRequestAbstract
         );
     }
 
+    #[\Override]
     public function getPaymentId(): ?string
     {
         return null;

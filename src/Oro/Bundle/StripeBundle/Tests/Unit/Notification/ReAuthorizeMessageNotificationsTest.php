@@ -27,6 +27,7 @@ class ReAuthorizeMessageNotificationsTest extends TestCase
     private LocaleSettings|MockObject $localeSettings;
     private ReAuthorizeMessageNotifications $messageNotifications;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->notificationManager = $this->createMock(StripeNotificationManager::class);

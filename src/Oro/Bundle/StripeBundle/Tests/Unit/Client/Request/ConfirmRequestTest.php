@@ -11,6 +11,7 @@ class ConfirmRequestTest extends TestCase
 {
     private ConfirmRequest $request;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->request = new ConfirmRequest(new PaymentTransaction());

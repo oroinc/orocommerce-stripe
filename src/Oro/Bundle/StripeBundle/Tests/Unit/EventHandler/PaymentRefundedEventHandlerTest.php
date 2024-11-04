@@ -32,6 +32,7 @@ class PaymentRefundedEventHandlerTest extends TestCase
 
     private PaymentRefundedEventHandler $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->managerRegistry = $this->createMock(ManagerRegistry::class);

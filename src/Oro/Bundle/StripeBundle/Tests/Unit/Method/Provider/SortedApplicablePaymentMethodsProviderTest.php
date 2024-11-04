@@ -25,6 +25,7 @@ class SortedApplicablePaymentMethodsProviderTest extends \PHPUnit\Framework\Test
     /** @var SortedApplicablePaymentMethodsProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);

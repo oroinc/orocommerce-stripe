@@ -18,6 +18,7 @@ class CaptureRequest extends StripeApiRequestAbstract
         $this->amount = $amount;
     }
 
+    #[\Override]
     public function getRequestData(): array
     {
         $amount = $this->amount ?? (float)$this->transaction->getAmount();

@@ -25,6 +25,7 @@ class ConfirmPaymentAction extends PaymentActionAbstract implements PaymentActio
         $this->entitiesTransactionsProvider = $entitiesTransactionsProvider;
     }
 
+    #[\Override]
     public function execute(
         StripePaymentConfig $config,
         PaymentTransaction $paymentTransaction
@@ -39,6 +40,7 @@ class ConfirmPaymentAction extends PaymentActionAbstract implements PaymentActio
         return $response;
     }
 
+    #[\Override]
     public function isApplicable(string $action, PaymentTransaction $paymentTransaction): bool
     {
         return $action === self::CONFIRM_ACTION

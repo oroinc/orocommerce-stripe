@@ -15,16 +15,19 @@ class PaymentIntentResponse extends AbstractResponseObject implements
     private const CLIENT_SECRET_FIELD_NAME = 'client_secret';
     private const NEXT_ACTION_FIELD_NAME = 'next_action';
 
+    #[\Override]
     public function getStatus(): string
     {
         return $this->getValue(self::STATUS_FIELD_NAME);
     }
 
+    #[\Override]
     public function getIdentifier(): string
     {
         return $this->getValue(self::ID_FIELD_NAME);
     }
 
+    #[\Override]
     public function getData(): array
     {
         return [
@@ -68,6 +71,7 @@ class PaymentIntentResponse extends AbstractResponseObject implements
         return $this->getValue(self::CLIENT_SECRET_FIELD_NAME);
     }
 
+    #[\Override]
     public function getPaymentIntentId(): ?string
     {
         return $this->getIdentifier();

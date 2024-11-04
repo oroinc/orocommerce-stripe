@@ -22,6 +22,7 @@ class StripePaymentConfig extends AbstractParameterBagPaymentConfig
     public const ALLOW_RE_AUTHORIZE = 'enable_re_authorize';
     public const RE_AUTHORIZATION_ERROR_EMAIL = 're_authorization_error_email';
 
+    #[\Override]
     public function getAdminLabel(): ?string
     {
         return $this->get(self::ADMIN_LABEL);

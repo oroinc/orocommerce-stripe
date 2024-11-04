@@ -9,6 +9,7 @@ class ApplePayVerificationControllerTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

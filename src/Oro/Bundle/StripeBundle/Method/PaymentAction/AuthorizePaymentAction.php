@@ -14,6 +14,7 @@ use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
  */
 class AuthorizePaymentAction extends PaymentActionAbstract implements PaymentActionInterface
 {
+    #[\Override]
     public function execute(
         StripePaymentConfig $config,
         PaymentTransaction $paymentTransaction
@@ -28,6 +29,7 @@ class AuthorizePaymentAction extends PaymentActionAbstract implements PaymentAct
         return $response;
     }
 
+    #[\Override]
     public function isApplicable(string $action, PaymentTransaction $paymentTransaction): bool
     {
         return $action === PaymentMethodInterface::AUTHORIZE;

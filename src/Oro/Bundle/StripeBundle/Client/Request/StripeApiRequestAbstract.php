@@ -19,6 +19,7 @@ abstract class StripeApiRequestAbstract implements StripeApiRequestInterface
         $this->transaction = $transaction;
     }
 
+    #[\Override]
     public function getPaymentId(): ?string
     {
         $paymentResponse = $this->transaction->getResponse();

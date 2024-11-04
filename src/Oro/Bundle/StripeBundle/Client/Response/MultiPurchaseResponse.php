@@ -10,6 +10,7 @@ class MultiPurchaseResponse implements StripeApiResponseInterface
     private bool $successful = true;
     private bool $hasSuccessful = false;
 
+    #[\Override]
     public function prepareResponse(): array
     {
         return [
@@ -19,6 +20,7 @@ class MultiPurchaseResponse implements StripeApiResponseInterface
         ];
     }
 
+    #[\Override]
     public function isSuccessful(): bool
     {
         return $this->successful;

@@ -34,6 +34,7 @@ class PurchasePaymentActionTest extends TestCase
 
     private PurchasePaymentAction $action;
 
+    #[\Override]
     protected function setUp(): void
     {
         $factory = $this->createMock(StripeGatewayFactoryInterface::class);

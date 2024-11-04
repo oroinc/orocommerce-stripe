@@ -24,21 +24,25 @@ class StripeEvent implements StripeEventInterface
         $this->data = $data;
     }
 
+    #[\Override]
     public function getEventName(): string
     {
         return $this->eventName;
     }
 
+    #[\Override]
     public function getData(): ResponseObjectInterface
     {
         return $this->data;
     }
 
+    #[\Override]
     public function getPaymentMethodIdentifier(): string
     {
         return $this->paymentConfig->getPaymentMethodIdentifier();
     }
 
+    #[\Override]
     public function getPaymentConfig(): StripePaymentConfig
     {
         return $this->paymentConfig;

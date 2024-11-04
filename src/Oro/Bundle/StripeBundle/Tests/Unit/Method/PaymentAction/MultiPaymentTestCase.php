@@ -26,6 +26,7 @@ abstract class MultiPaymentTestCase extends TestCase
     protected LoggerInterface|MockObject $logger;
     protected PurchasePaymentActionAbstract $action;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->factory = $this->createMock(StripeGatewayFactoryInterface::class);

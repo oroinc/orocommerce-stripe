@@ -22,6 +22,7 @@ class CapturePaymentActionTest extends TestCase
     private PaymentTransactionProvider|MockObject $transactionProvider;
     private CapturePaymentAction $action;
 
+    #[\Override]
     protected function setUp(): void
     {
         $factory = $this->createMock(StripeGatewayFactoryInterface::class);

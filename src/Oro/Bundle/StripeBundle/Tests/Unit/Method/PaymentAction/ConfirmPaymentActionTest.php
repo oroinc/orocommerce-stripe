@@ -21,6 +21,7 @@ class ConfirmPaymentActionTest extends TestCase
     private EntitiesTransactionsProvider|MockObject $entitiesTransactionsProvider;
     private ConfirmPaymentAction $action;
 
+    #[\Override]
     protected function setUp(): void
     {
         $factory = $this->createMock(StripeGatewayFactoryInterface::class);

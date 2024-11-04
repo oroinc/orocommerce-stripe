@@ -37,6 +37,7 @@ class PaymentTransactionPartialRefundActionTest extends \PHPUnit\Framework\TestC
     /** @var PaymentTransactionPartialRefundAction */
     private $action;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->contextAccessor = $this->createMock(ContextAccessor::class);

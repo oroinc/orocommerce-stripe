@@ -28,6 +28,7 @@ class PaymentSuccessEventHandlerTest extends TestCase
 
     private PaymentSuccessEventHandler $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->managerRegistry = $this->createMock(ManagerRegistry::class);

@@ -31,6 +31,7 @@ class StripeGatewayMock implements StripeGatewayInterface
         $this->config = $config;
     }
 
+    #[\Override]
     public function purchase(StripeApiRequestInterface $request): ResponseObjectInterface
     {
         $paymentIntent = $this->createPaymentIntent();
@@ -40,6 +41,7 @@ class StripeGatewayMock implements StripeGatewayInterface
         return new PaymentIntentResponse($paymentIntent->toArray());
     }
 
+    #[\Override]
     public function confirm(StripeApiRequestInterface $request): ResponseObjectInterface
     {
         $paymentIntent = $this->createPaymentIntent();
@@ -48,6 +50,7 @@ class StripeGatewayMock implements StripeGatewayInterface
         return new PaymentIntentResponse($paymentIntent->toArray());
     }
 
+    #[\Override]
     public function capture(StripeApiRequestInterface $request): ResponseObjectInterface
     {
         $paymentIntent = $this->createPaymentIntent();
@@ -56,24 +59,28 @@ class StripeGatewayMock implements StripeGatewayInterface
         return new PaymentIntentResponse($paymentIntent->toArray());
     }
 
+    #[\Override]
     public function createCustomer(StripeApiRequestInterface $request): ResponseObjectInterface
     {
         $customer = $this->createCustomerObject();
         return new CustomerResponse($customer->toArray());
     }
 
+    #[\Override]
     public function createSetupIntent(StripeApiRequestInterface $request): ResponseObjectInterface
     {
         $setupIntent = $this->createSetupIntentObject();
         return new SetupIntentResponse($setupIntent->toArray());
     }
 
+    #[\Override]
     public function findSetupIntentCustomer(string $setupIntentId): ResponseObjectInterface
     {
         $customer = $this->createCustomerObject();
         return new CustomerResponse($customer->toArray());
     }
 
+    #[\Override]
     public function findSetupIntent(string $setupIntentId): ResponseObjectInterface
     {
         $setupIntent = $this->createSetupIntentObject();
@@ -118,6 +125,7 @@ class StripeGatewayMock implements StripeGatewayInterface
         };
     }
 
+    #[\Override]
     public function cancel(StripeApiRequestInterface $request): ResponseObjectInterface
     {
         $paymentIntent = PaymentIntent::constructFrom([
@@ -129,6 +137,7 @@ class StripeGatewayMock implements StripeGatewayInterface
         return new PaymentIntentResponse($paymentIntent->toArray());
     }
 
+    #[\Override]
     public function refund(StripeApiRequestInterface $request): ResponseObjectInterface
     {
         $refund = Refund::constructFrom([
@@ -140,6 +149,7 @@ class StripeGatewayMock implements StripeGatewayInterface
         return new RefundResponse($refund->toArray());
     }
 
+    #[\Override]
     public function getAllRefunds(array $criteria): CollectionResponseInterface
     {
         $refund1 = Refund::constructFrom([

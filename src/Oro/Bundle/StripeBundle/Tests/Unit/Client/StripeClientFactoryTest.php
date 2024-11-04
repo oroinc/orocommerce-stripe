@@ -12,6 +12,7 @@ class StripeClientFactoryTest extends TestCase
 {
     private StripeClientFactory $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->factory = new StripeClientFactory();

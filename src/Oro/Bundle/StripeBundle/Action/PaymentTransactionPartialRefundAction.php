@@ -11,18 +11,21 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class PaymentTransactionPartialRefundAction extends PaymentTransactionRefundAction
 {
+    #[\Override]
     protected function configureOptionsResolver(OptionsResolver $resolver)
     {
         parent::configureOptionsResolver($resolver);
         $resolver->setRequired('amount');
     }
 
+    #[\Override]
     protected function configureValuesResolver(OptionsResolver $resolver)
     {
         parent::configureValuesResolver($resolver);
         $resolver->setRequired('amount');
     }
 
+    #[\Override]
     protected function createTransaction(PaymentTransaction $sourceTransaction, array $options): PaymentTransaction
     {
         $refundPaymentTransaction = parent::createTransaction($sourceTransaction, $options);

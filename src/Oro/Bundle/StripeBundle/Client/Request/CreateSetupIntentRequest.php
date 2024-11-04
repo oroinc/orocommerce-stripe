@@ -11,6 +11,7 @@ class CreateSetupIntentRequest extends StripeApiRequestAbstract
 {
     private const DEFAULT_USAGE_PARAM_VALUE = 'off_session';
 
+    #[\Override]
     public function getRequestData(): array
     {
         $requestData = [
@@ -34,6 +35,7 @@ class CreateSetupIntentRequest extends StripeApiRequestAbstract
         return $requestData;
     }
 
+    #[\Override]
     public function getPaymentId(): ?string
     {
         return null;

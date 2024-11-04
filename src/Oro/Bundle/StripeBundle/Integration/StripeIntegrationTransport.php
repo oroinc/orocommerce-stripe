@@ -15,21 +15,25 @@ class StripeIntegrationTransport implements TransportInterface
 {
     protected ?ParameterBag $settings = null;
 
+    #[\Override]
     public function init(Transport $transportEntity): void
     {
         $this->settings = $transportEntity->getSettingsBag();
     }
 
+    #[\Override]
     public function getLabel(): string
     {
         return 'oro.stripe.settings.label';
     }
 
+    #[\Override]
     public function getSettingsFormType(): string
     {
         return StripeSettingsType::class;
     }
 
+    #[\Override]
     public function getSettingsEntityFQCN(): string
     {
         return StripeTransportSettings::class;

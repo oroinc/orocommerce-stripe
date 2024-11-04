@@ -12,11 +12,13 @@ class StripeChannelType implements ChannelInterface, IconAwareIntegrationInterfa
 {
     public const TYPE = 'stripe';
 
+    #[\Override]
     public function getLabel(): string
     {
         return 'oro.stripe.channel_type.label';
     }
 
+    #[\Override]
     public function getIcon(): string
     {
         return 'bundles/orostripe/img/stripe-logo.png';

@@ -23,6 +23,7 @@ class StripeSDKEventFactoryTest extends TestCase
     private MockObject|ManagerRegistry $managerRegistry;
     private MockObject|StripeSDKEventFactory $eventFactory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->paymentConfigsProvider = $this->createMock(StripePaymentConfigsProvider::class);

@@ -15,6 +15,7 @@ class PaymentTransactionFullyRefundedTest extends TestCase
     private PaymentTransactionDataProvider|MockObject $transactionDataProvider;
     private PaymentTransactionFullyRefunded $condition;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->transactionDataProvider = $this->createMock(PaymentTransactionDataProvider::class);

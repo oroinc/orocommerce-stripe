@@ -17,6 +17,7 @@ class MultiplePurchasePaymentAction extends PurchasePaymentActionAbstract implem
      * SetupIntent flow is used as payment method storage and could be used in future to generate
      * PaymentIntent for each related transaction.
      */
+    #[\Override]
     public function execute(
         StripePaymentConfig $config,
         PaymentTransaction $paymentTransaction
@@ -41,6 +42,7 @@ class MultiplePurchasePaymentAction extends PurchasePaymentActionAbstract implem
         return $response;
     }
 
+    #[\Override]
     public function isApplicable(string $action, PaymentTransaction $paymentTransaction): bool
     {
         return $action === PaymentMethodInterface::PURCHASE

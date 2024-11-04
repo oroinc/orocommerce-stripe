@@ -8,6 +8,7 @@ use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
 
 class StripeClientFactoryMock implements StripeGatewayFactoryInterface
 {
+    #[\Override]
     public function create(StripePaymentConfig $config): StripeGatewayInterface
     {
         if (!$config->getSecretKey()) {

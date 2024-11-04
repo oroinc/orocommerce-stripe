@@ -9,6 +9,7 @@ class StripeAppleGooglePaymentMethod extends StripePaymentMethod
 {
     public const METHOD_SUFFIX = '_apple_google_pay';
 
+    #[\Override]
     public function getIdentifier(): string
     {
         return self::buildIdentifier(parent::getIdentifier());

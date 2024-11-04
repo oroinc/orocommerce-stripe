@@ -13,6 +13,7 @@ use Oro\Bundle\StripeBundle\Method\StripePaymentActionMapper;
  */
 class PurchasePaymentAction extends PurchasePaymentActionAbstract implements PaymentActionInterface
 {
+    #[\Override]
     public function execute(
         StripePaymentConfig $config,
         PaymentTransaction $paymentTransaction
@@ -32,6 +33,7 @@ class PurchasePaymentAction extends PurchasePaymentActionAbstract implements Pay
         return $this->executePurchase($config, $paymentTransaction);
     }
 
+    #[\Override]
     public function isApplicable(string $action, PaymentTransaction $paymentTransaction): bool
     {
         return $action === PaymentMethodInterface::PURCHASE

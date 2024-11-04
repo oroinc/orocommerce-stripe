@@ -19,6 +19,7 @@ class StripePaymentView implements PaymentMethodViewInterface
         $this->config = $config;
     }
 
+    #[\Override]
     public function getOptions(PaymentContextInterface $context): array
     {
         return [
@@ -31,26 +32,31 @@ class StripePaymentView implements PaymentMethodViewInterface
         ];
     }
 
+    #[\Override]
     public function getBlock(): string
     {
         return '_payment_methods_stripe_payment_widget';
     }
 
+    #[\Override]
     public function getLabel(): string
     {
         return $this->config->getLabel();
     }
 
+    #[\Override]
     public function getAdminLabel(): string
     {
         return $this->config->getAdminLabel();
     }
 
+    #[\Override]
     public function getShortLabel(): string
     {
         return $this->config->getShortLabel();
     }
 
+    #[\Override]
     public function getPaymentMethodIdentifier(): string
     {
         return $this->config->getPaymentMethodIdentifier();

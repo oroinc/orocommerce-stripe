@@ -9,11 +9,13 @@ class ConfirmRequest extends StripeApiRequestAbstract
 {
     public const PAYMENT_INTENT_ID_PARAM = 'paymentIntentId';
 
+    #[\Override]
     public function getRequestData(): array
     {
         return [];
     }
 
+    #[\Override]
     public function getPaymentId(): ?string
     {
         $paymentData = $this->getTransactionAdditionalData();

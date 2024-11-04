@@ -18,6 +18,7 @@ class StripeWebhookEventHandlerTest extends TestCase
 
     private StripeWebhookEventHandler $eventHandler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->eventFactoryMock = $this->createMock(StripeEventFactoryInterface::class);

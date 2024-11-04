@@ -86,6 +86,7 @@ class LoadPaymentTransactions extends AbstractFixture implements ContainerAwareI
         ],
     ];
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $transactionExpireHours = $this->container
@@ -119,6 +120,7 @@ class LoadPaymentTransactions extends AbstractFixture implements ContainerAwareI
         $manager->flush();
     }
 
+    #[\Override]
     public function setContainer(ContainerInterface $container = null): void
     {
         $this->container = $container;

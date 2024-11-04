@@ -25,6 +25,7 @@ class StripePaymentMethodsProvider extends AbstractPaymentMethodProvider
         $this->paymentMethodFactory = $paymentMethodFactory;
     }
 
+    #[\Override]
     protected function collectMethods(): void
     {
         $paymentConfigs = $this->paymentsConfigProvider->getConfigs();

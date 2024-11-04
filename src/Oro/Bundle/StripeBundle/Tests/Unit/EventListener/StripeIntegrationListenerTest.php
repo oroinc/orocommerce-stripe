@@ -17,6 +17,7 @@ class StripeIntegrationListenerTest extends TestCase
     private MockObject|CacheItemPoolInterface $cache;
     private StripeIntegrationListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->cache = $this->createMock(CacheItemPoolInterface::class);

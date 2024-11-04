@@ -103,6 +103,7 @@ class StripeTransportSettings extends Transport
         $this->appleGooglePayLabels = new ArrayCollection([$defaultAppleGooglePayLabel]);
     }
 
+    #[\Override]
     public function getSettingsBag(): ParameterBag
     {
         if (null === $this->settings) {

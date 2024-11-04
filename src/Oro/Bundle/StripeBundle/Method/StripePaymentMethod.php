@@ -35,6 +35,7 @@ class StripePaymentMethod implements PaymentMethodInterface
         $this->logger = $logger;
     }
 
+    #[\Override]
     public function execute($action, PaymentTransaction $paymentTransaction): array
     {
         try {
@@ -59,6 +60,7 @@ class StripePaymentMethod implements PaymentMethodInterface
         }
     }
 
+    #[\Override]
     public function getIdentifier(): string
     {
         return $this->config->getPaymentMethodIdentifier();
@@ -68,11 +70,13 @@ class StripePaymentMethod implements PaymentMethodInterface
      * According to the documentation minimal amount to order should be greater than 0.5
      * @see https://stripe.com/docs/api/payment_intents/object#payment_intent_object-amount.
      */
+    #[\Override]
     public function isApplicable(PaymentContextInterface $context): bool
     {
         return $context->getTotal() >= self::MINIMAL_AMOUNT_TO_ORDER;
     }
 
+    #[\Override]
     public function supports($actionName): bool
     {
         return in_array($actionName, [

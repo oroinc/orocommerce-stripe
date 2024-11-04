@@ -12,6 +12,7 @@ class CancelRequest extends StripeApiRequestAbstract
     private const DEFAULT_CANCELLATION_REASON_PARAM = 'requested_by_customer';
     private const CANCEL_REASON_PARAM = 'cancelReason';
 
+    #[\Override]
     public function getPaymentId(): ?string
     {
         $paymentId = $this->transaction->getSourcePaymentTransaction()
@@ -29,6 +30,7 @@ class CancelRequest extends StripeApiRequestAbstract
         return $paymentId;
     }
 
+    #[\Override]
     public function getRequestData(): array
     {
         return [

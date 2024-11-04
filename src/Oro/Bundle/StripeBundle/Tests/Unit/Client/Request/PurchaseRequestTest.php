@@ -15,6 +15,7 @@ class PurchaseRequestTest extends TestCase
     private PurchaseRequest $request;
     private PaymentTransaction $paymentTransaction;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->paymentTransaction = new PaymentTransaction();

@@ -10,9 +10,7 @@ use Symfony\Component\DependencyInjection\Loader;
 
 class OroStripeExtension extends Extension
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(array $configs, ContainerBuilder $container): void
     {
         $config = $this->processConfiguration($this->getConfiguration($configs, $container), $configs);

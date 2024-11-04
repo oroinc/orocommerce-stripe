@@ -9,6 +9,7 @@ use Oro\Bundle\StripeBundle\Method\StripePaymentActionMapper;
  */
 class AuthorizeRequest extends PurchaseRequest
 {
+    #[\Override]
     public function getRequestData(): array
     {
         $requestData = parent::getRequestData();

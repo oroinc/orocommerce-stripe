@@ -19,6 +19,7 @@ class AuthorizePaymentActionTest extends TestCase
     private StripeGatewayInterface|MockObject $client;
     private AuthorizePaymentAction $action;
 
+    #[\Override]
     protected function setUp(): void
     {
         $factory = $this->createMock(StripeGatewayFactoryInterface::class);

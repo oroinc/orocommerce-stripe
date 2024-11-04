@@ -28,6 +28,7 @@ class StripePaymentCallBackListenerTest extends TestCase
 
     private StripePaymentCallBackListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);

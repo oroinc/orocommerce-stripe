@@ -19,11 +19,13 @@ class WorkflowTransitionExtension extends AbstractTypeExtension
     protected const APPLICABLE_STEP = 'order_review';
     protected const ADDITIONAL_DATA_FIELD_NAME = 'additional_data';
 
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [WorkflowTransitionType::class];
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if (!$this->isApplicable($options)) {

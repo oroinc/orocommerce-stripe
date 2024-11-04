@@ -13,6 +13,7 @@ use Oro\Bundle\StripeBundle\Model\SetupIntentResponse;
  */
 class MultipleConfirmPaymentAction extends PurchasePaymentActionAbstract implements PaymentActionInterface
 {
+    #[\Override]
     public function execute(
         StripePaymentConfig $config,
         PaymentTransaction $paymentTransaction
@@ -38,6 +39,7 @@ class MultipleConfirmPaymentAction extends PurchasePaymentActionAbstract impleme
         return $response;
     }
 
+    #[\Override]
     public function isApplicable(string $action, PaymentTransaction $paymentTransaction): bool
     {
         return $action === self::CONFIRM_ACTION

@@ -23,6 +23,7 @@ class StripePaymentMethodsProviderTest extends TestCase
     private StripePaymentMethodsProvider $methodProvider;
     private string $paymentConfigClass;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->factory = $this->createMock(StripePaymentMethodFactory::class);

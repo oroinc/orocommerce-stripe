@@ -22,6 +22,7 @@ class StripePaymentMethodsViewProvider extends AbstractPaymentMethodViewProvider
         $this->configProvider = $configProvider;
     }
 
+    #[\Override]
     protected function buildViews(): void
     {
         $paymentConfigs = $this->configProvider->getConfigs();
