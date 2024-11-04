@@ -55,6 +55,7 @@ Feature: Stripe integration with suborders
         And I click "Ship to This Address"
         And I click "Continue"
         And I click "Continue"
+        And I scroll to top
         And I click on "Checkout Payment Method" with title "Stripe"
         # Test card number was taken from https://stripe.com/docs/
         And I fill "Stripe Card Form" with:
