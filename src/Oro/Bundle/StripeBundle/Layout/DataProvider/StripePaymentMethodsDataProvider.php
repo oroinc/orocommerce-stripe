@@ -53,4 +53,9 @@ class StripePaymentMethodsDataProvider
 
         return array_keys($applicableStripeCardMethods);
     }
+
+    public function getStripePaymentMethodsCount(Checkout $checkout): int
+    {
+        return count($this->getStripePaymentMethodNames($checkout));
+    }
 }

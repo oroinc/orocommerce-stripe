@@ -15,9 +15,9 @@ use PHPUnit\Framework\TestCase;
 
 class StripePaymentMethodsDataProviderTest extends TestCase
 {
-    private CheckoutPaymentContextProvider|MockObject $checkoutPaymentContextProvider;
-    private ApplicablePaymentMethodsProvider|MockObject $applicablePaymentMethodsProvider;
-    private StripePaymentMethodsProvider|MockObject $stripePaymentMethodsProvider;
+    private CheckoutPaymentContextProvider&MockObject $checkoutPaymentContextProvider;
+    private ApplicablePaymentMethodsProvider&MockObject $applicablePaymentMethodsProvider;
+    private StripePaymentMethodsProvider&MockObject $stripePaymentMethodsProvider;
     private StripePaymentMethodsDataProvider $stripePaymentMethodsDataProvider;
 
     #[\Override]
@@ -34,28 +34,28 @@ class StripePaymentMethodsDataProviderTest extends TestCase
         );
     }
 
-    public function testGetStripePaymentMethodNames()
+    public function testGetStripePaymentMethodNames(): void
     {
         $checkout = new Checkout();
         $paymentContext = $this->createMock(PaymentContextInterface::class);
 
         $generalPaymentMethod = $this->createMock(PaymentMethodInterface::class);
-        $generalPaymentMethod->expects($this->any())
+        $generalPaymentMethod->expects(self::any())
             ->method('getIdentifier')
             ->willReturn('payment_method');
 
         $stripePaymentMethod = $this->createMock(StripeAppleGooglePaymentMethod::class);
-        $stripePaymentMethod->expects($this->any())
+        $stripePaymentMethod->expects(self::any())
             ->method('getIdentifier')
             ->willReturn('stripe_1');
 
         $stripeAppleGooglePaymentMethod = $this->createMock(StripeAppleGooglePaymentMethod::class);
-        $stripeAppleGooglePaymentMethod->expects($this->any())
+        $stripeAppleGooglePaymentMethod->expects(self::any())
             ->method('getIdentifier')
             ->willReturn('stripe_1_apple_google_pay');
 
         $unavailableStripePaymentMethod = $this->createMock(PaymentMethodInterface::class);
-        $unavailableStripePaymentMethod->expects($this->any())
+        $unavailableStripePaymentMethod->expects(self::any())
             ->method('getIdentifier')
             ->willReturn('unavailable_stripe');
 
@@ -71,38 +71,104 @@ class StripePaymentMethodsDataProviderTest extends TestCase
             $unavailableStripePaymentMethod->getIdentifier() => $unavailableStripePaymentMethod,
         ];
 
-        $this->checkoutPaymentContextProvider->expects($this->once())
+        $this->checkoutPaymentContextProvider->expects(self::once())
             ->method('getContext')
             ->with($checkout)
             ->willReturn($paymentContext);
 
-        $this->applicablePaymentMethodsProvider->expects($this->once())
+        $this->applicablePaymentMethodsProvider->expects(self::once())
             ->method('getApplicablePaymentMethods')
             ->with($paymentContext)
             ->willReturn($applicableMethods);
 
-        $this->stripePaymentMethodsProvider->expects($this->once())
+        $this->stripePaymentMethodsProvider->expects(self::once())
             ->method('getPaymentMethods')
             ->willReturn($stripeMethods);
 
-        $this->assertEquals(
+        self::assertEquals(
             ['stripe_1'],
             $this->stripePaymentMethodsDataProvider->getStripePaymentMethodNames($checkout)
         );
     }
 
-    public function testGetStripePaymentMethodNamesNoPaymentContext()
+    public function testGetStripePaymentMethodNamesNoPaymentContext(): void
     {
         $checkout = new Checkout();
 
-        $this->checkoutPaymentContextProvider->expects($this->once())
+        $this->checkoutPaymentContextProvider->expects(self::once())
             ->method('getContext')
             ->with($checkout)
             ->willReturn(null);
 
-        $this->assertEquals(
-            [],
+        self::assertEquals([], $this->stripePaymentMethodsDataProvider->getStripePaymentMethodNames($checkout));
+    }
+
+    public function testGetStripePaymentMethodsCount(): void
+    {
+        $checkout = new Checkout();
+        $paymentContext = $this->createMock(PaymentContextInterface::class);
+
+        $generalPaymentMethod = $this->createMock(PaymentMethodInterface::class);
+        $generalPaymentMethod->expects(self::any())
+            ->method('getIdentifier')
+            ->willReturn('payment_method');
+
+        $stripePaymentMethod = $this->createMock(StripeAppleGooglePaymentMethod::class);
+        $stripePaymentMethod->expects(self::any())
+            ->method('getIdentifier')
+            ->willReturn('stripe_1');
+
+        $stripeAppleGooglePaymentMethod = $this->createMock(StripeAppleGooglePaymentMethod::class);
+        $stripeAppleGooglePaymentMethod->expects(self::any())
+            ->method('getIdentifier')
+            ->willReturn('stripe_1_apple_google_pay');
+
+        $unavailableStripePaymentMethod = $this->createMock(PaymentMethodInterface::class);
+        $unavailableStripePaymentMethod->expects(self::any())
+            ->method('getIdentifier')
+            ->willReturn('unavailable_stripe');
+
+        $applicableMethods = [
+            $generalPaymentMethod->getIdentifier() => $generalPaymentMethod,
+            $stripePaymentMethod->getIdentifier() => $stripePaymentMethod,
+            $stripeAppleGooglePaymentMethod->getIdentifier() => $stripeAppleGooglePaymentMethod,
+        ];
+
+        $stripeMethods = [
+            $stripePaymentMethod->getIdentifier() => $stripePaymentMethod,
+            $stripeAppleGooglePaymentMethod->getIdentifier() => $stripeAppleGooglePaymentMethod,
+            $unavailableStripePaymentMethod->getIdentifier() => $unavailableStripePaymentMethod,
+        ];
+
+        $this->checkoutPaymentContextProvider->expects(self::once())
+            ->method('getContext')
+            ->with($checkout)
+            ->willReturn($paymentContext);
+
+        $this->applicablePaymentMethodsProvider->expects(self::once())
+            ->method('getApplicablePaymentMethods')
+            ->with($paymentContext)
+            ->willReturn($applicableMethods);
+
+        $this->stripePaymentMethodsProvider->expects(self::once())
+            ->method('getPaymentMethods')
+            ->willReturn($stripeMethods);
+
+        self::assertEquals(
+            ['stripe_1'],
             $this->stripePaymentMethodsDataProvider->getStripePaymentMethodNames($checkout)
         );
+    }
+
+    public function testGetStripePaymentMethodsCountNoPaymentContext(): void
+    {
+        $checkout = new Checkout();
+
+        $this->checkoutPaymentContextProvider->expects(self::once())
+            ->method('getContext')
+            ->with($checkout)
+            ->willReturn(null);
+
+        self::assertEquals(0, $this->stripePaymentMethodsDataProvider->getStripePaymentMethodsCount($checkout));
     }
 }
