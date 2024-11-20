@@ -117,7 +117,7 @@ Feature: Stripe integration
             | Stripe CVC         | 111                 |
             | Stripe ZIP         | 12345               |
         And I click "Continue"
-        And I uncheck "Delete this shopping list after submitting order" on the "Order Review" checkout step and press Submit Order
+        And I uncheck "Delete this shopping list after ordering" on the "Order Review" checkout step and press Submit Order
         Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
     Scenario: Edit Stripe Integration
