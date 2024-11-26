@@ -34,6 +34,11 @@ class StripeFilterTest extends TestCase
             ->method('getMainRequest')
             ->willReturn($request);
 
+        $this->provider
+            ->expects($this->once())
+            ->method('isStripeEnabled')
+            ->willReturn(true);
+
         $this->provider->expects($this->never())
             ->method('isStripeMonitoringEnabled');
 
@@ -48,6 +53,11 @@ class StripeFilterTest extends TestCase
         $this->requestStack->expects($this->once())
             ->method('getMainRequest')
             ->willReturn($request);
+
+        $this->provider
+            ->expects($this->once())
+            ->method('isStripeEnabled')
+            ->willReturn(true);
 
         $this->provider->expects($this->once())
             ->method('isStripeMonitoringEnabled')
@@ -65,9 +75,30 @@ class StripeFilterTest extends TestCase
             ->method('getMainRequest')
             ->willReturn($request);
 
+        $this->provider
+            ->expects($this->once())
+            ->method('isStripeEnabled')
+            ->willReturn(true);
+
         $this->provider->expects($this->once())
             ->method('isStripeMonitoringEnabled')
             ->willReturn(false);
+
+        $this->assertFalse($this->filter->isApplicable());
+    }
+
+    public function testIsApplicableWithDisabledStripeFailed(): void
+    {
+        $this->requestStack->expects($this->never())
+            ->method('getMainRequest');
+
+        $this->provider
+            ->expects($this->once())
+            ->method('isStripeEnabled')
+            ->willReturn(false);
+
+        $this->provider->expects($this->never())
+            ->method('isStripeMonitoringEnabled');
 
         $this->assertFalse($this->filter->isApplicable());
     }

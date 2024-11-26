@@ -83,6 +83,8 @@ services:
             - '@oro_frontend.request.frontend_helper'
             - '@oro_stripe.integration.cache'
             - '@doctrine'
+        calls:
+            - ['setTokenAccessor', ['@oro_security.token_accessor']]
 
     oro_stripe.provider.entities_transactions:
         class: Oro\Bundle\StripeBundle\Provider\EntitiesTransactionsProvider
@@ -114,6 +116,7 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\IntegrationBundle\Entity\Channel, event: prePersist, method: prePersistChannel }
             - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\IntegrationBundle\Entity\Channel, event: preUpdate, method: preUpdateChannel }
+            - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\IntegrationBundle\Entity\Channel, event: preRemove, method: preRemoveChannel }
             - { name: doctrine.orm.entity_listener, entity: Oro\Bundle\StripeBundle\Entity\StripeTransportSettings, event: preUpdate, method: preUpdateSettings }
 
     # Stripe Client
@@ -214,3 +217,15 @@ services:
         public: true
         arguments:
             - '@oro_payment.repository.payment_transaction'
+
+    oro_stripe.repository.stripe_settings:
+        alias: Oro\Bundle\StripeBundle\Entity\Repository\StripeTransportSettingsRepository
+
+    Oro\Bundle\StripeBundle\Entity\Repository\StripeTransportSettingsRepository:
+        parent: oro_entity.abstract_repository
+        arguments:
+            - 'Oro\Bundle\StripeBundle\Entity\StripeTransportSettings'
+        calls:
+            - [setAclHelper, ['@oro_security.acl_helper']]
+        tags:
+            - { name: doctrine.repository_service }
