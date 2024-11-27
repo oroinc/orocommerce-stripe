@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\StripeBundle\EventListener;
 
-use Doctrine\ORM\Event\PreRemoveEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Oro\Bundle\CacheBundle\Generator\UniversalCacheKeyGenerator;
