@@ -2,30 +2,40 @@
 
 namespace Oro\Bundle\StripeBundle\Entity\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 /**
  * Repository for StripeTransportSettings entity
  */
-class StripeTransportSettingsRepository extends EntityRepository
+class StripeTransportSettingsRepository extends ServiceEntityRepository
 {
+    private ?AclHelper $aclHelper = null;
+
+    public function setAclHelper(AclHelper $aclHelper): self
+    {
+        $this->aclHelper = $aclHelper;
+
+        return $this;
+    }
+
     public function getEnabledSettingsByType(string $type): array
     {
-        return $this->getEnabledSettingsByTypeQueryBuilder($type)
-            ->getQuery()
-            ->getResult();
+        $qb = $this->getEnabledSettingsByTypeQueryBuilder($type);
+
+        return $this->aclHelper->apply($qb)->getResult();
     }
 
     public function getEnabledMonitoringSettingsByType(string $type): array
     {
         $qb = $this->getEnabledSettingsByTypeQueryBuilder($type);
+        $qb
+            ->andWhere($qb->expr()->eq('settings.userMonitoring', ':monitoring'))
+            ->setParameter('monitoring', true);
 
-        return $qb->andWhere($qb->expr()->eq('settings.userMonitoring', ':monitoring'))
-            ->setParameter('monitoring', true)
-            ->getQuery()
-            ->getResult();
+        return $this->aclHelper->apply($qb)->getResult();
     }
 
     private function getEnabledSettingsByTypeQueryBuilder(string $type): QueryBuilder

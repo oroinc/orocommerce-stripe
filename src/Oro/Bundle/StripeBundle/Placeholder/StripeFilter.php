@@ -23,6 +23,10 @@ class StripeFilter
 
     public function isApplicable(): bool
     {
+        if (!$this->provider->isStripeEnabled()) {
+            return false;
+        }
+
         return $this->isCheckoutPage() || $this->provider->isStripeMonitoringEnabled();
     }
 
