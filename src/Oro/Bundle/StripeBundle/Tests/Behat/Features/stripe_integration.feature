@@ -94,7 +94,7 @@ Feature: Stripe integration
             | Payment Status     | Payment Method |
             | Payment authorized | Stripe         |
         And I click on 1 in grid
-        When I click "Payment History"
+        When I click "Payments"
         And I should see following "Order Payment Transaction Grid" grid:
             | Payment Method | Type      | Amount | Successful |
             | Stripe         | Authorize | $13.00 | Yes        |
@@ -176,7 +176,7 @@ Feature: Stripe integration
             | Paid in full       | Stripe         |
         And filter Order Number as is equal to "4"
         And I click on 4 in grid
-        When I click "Payment History"
+        When I click "Payments"
         And I should see following "Order Payment Transaction Grid" grid:
             | Payment Method | Type    | Amount | Successful |
             | Stripe         | Capture | $13.00 | Yes        |
