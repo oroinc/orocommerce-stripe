@@ -120,7 +120,7 @@ Feature: Stripe integration single page checkout
             | Payment authorized | Stripe         |
         And filter Order Number as is equal to "2"
         And I click on 2 in grid
-        When I click "Payment History"
+        When I click "Payments"
         And I should see following "Order Payment Transaction Grid" grid:
             | Payment Method | Type      | Amount | Successful |
             | Stripe         | Authorize | $13.00 | Yes        |

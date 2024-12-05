@@ -79,11 +79,11 @@ Feature: Stripe integration with suborders
             | 1-1          | Payment authorized | Stripe         |
             | 1-2          | Payment authorized | Stripe         |
         And I click on 1 in grid
-        When I click "Payment History"
+        When I click "Payments"
         Then I should see following "Order Payment Transaction Grid" grid:
             | Payment Method | Type     | Amount | Successful |
             | Stripe         | Purchase | $59.00 | Yes        |
-        When I click "Sub-Orders Payment History"
+        When I click "Payments"
         Then I should see following "First Sub Order Payment Transaction Grid" grid:
             | Payment Method | Type      | Amount | Successful |
             | Stripe         | Authorize | $13.00 | Yes        |
@@ -96,7 +96,7 @@ Feature: Stripe integration with suborders
         Then I should see "Charge The Customer" in the "UiWindow Title" element
         When I click "Yes, Charge" in modal window
         Then I should see "The payment of $13.00 has been captured successfully" flash message
-        When I click "Sub-Orders Payment History"
+        When I click "Payments"
         Then I should see following "First Sub Order Payment Transaction Grid" grid:
             | Payment Method | Type      | Amount | Successful |
             | Stripe         | Capture   | $13.00 | Yes        |
@@ -125,7 +125,7 @@ Feature: Stripe integration with suborders
         And I click "Activity"
         Then I should see "Payment refund was initiated. Notes: Refund Payment Note"
         And I should see "Payment refund was initiated. Notes: Another refund Payment Note"
-        When I click "Payment History"
+        When I click "Payments"
         Then I should see following "Order Payment Transaction Grid" grid:
             | Payment Method | Type      | Amount | Successful |
             | Stripe         | Refund    | $8.00  | Yes        |
@@ -137,7 +137,7 @@ Feature: Stripe integration with suborders
         Given I go to Sales/Orders
         And I sort grid by "Order Number"
         And I click on 1 in grid
-        And I click "Sub-Orders Payment History"
+        And I click "Payments"
         And I click "Sub-Order #1-2"
         When I click "Cancel Authorization" on row "Authorize" in grid "Second Sub Order Payment Transaction Grid"
         Then I should see "Cancel Authorization" in the "UiDialog Title" element
@@ -153,7 +153,7 @@ Feature: Stripe integration with suborders
         When I click on Payment canceled in grid "SubOrders Grid"
         And I click "Activity"
         Then I should see "Payment authorization hold was cancelled. Notes: Cancel Authorization Note"
-        When I click "Payment History"
+        When I click "Payments"
         Then I should see following "Order Payment Transaction Grid" grid:
             | Payment Method | Type      | Amount | Successful |
             | Stripe         | Cancel    | $46.00 | Yes        |
