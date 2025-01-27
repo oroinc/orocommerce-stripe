@@ -82,7 +82,7 @@ Feature: Stripe integration single page checkout
             | Stripe Exp Date    | 12 / 35             |
             | Stripe CVC         | 111                 |
             | Stripe ZIP         | 12345               |
-        When I select "Please select an address" from "Billing Address"
+        When I check "Use billing address" on the checkout page
         Then "Stripe Card Form Single Page" must contain values:
             | Stripe Card Number | 4242 4242 4242 4242 |
             | Stripe Exp Date    | 12 / 35             |
