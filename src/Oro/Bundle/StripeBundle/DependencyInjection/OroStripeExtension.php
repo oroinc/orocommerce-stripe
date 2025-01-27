@@ -18,9 +18,14 @@ class OroStripeExtension extends Extension
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
+        $loader->load('services_api.yml');
         $loader->load('form_types.yml');
         $loader->load('method.yml');
         $loader->load('payment_actions.yml');
         $loader->load('controllers.yml');
+
+        if ('test' === $container->getParameter('kernel.environment')) {
+            $loader->load('services_test.yml');
+        }
     }
 }

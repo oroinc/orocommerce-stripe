@@ -1,0 +1,68 @@
+services:
+    oro_stripe.api.checkout_payment_subresource_provider:
+        class: Oro\Bundle\CheckoutBundle\Api\CheckoutPaymentSubresourceProvider
+        arguments:
+            - '@oro_stripe.payment_method.provider'
+            - 'paymentStripe'
+        tags:
+            - { name: oro_checkout.api.checkout_payment_subresource_provider }
+
+    oro_stripe.api.build_form_builder_for_pay_with_stripe_subresource:
+        class: Oro\Bundle\ApiBundle\Processor\Subresource\ChangeSubresource\BuildFormBuilder
+        arguments:
+            - '@oro_api.form_helper'
+        tags:
+            - { name: oro.api.processor, action: add_subresource, group: transform_data, requestType: frontend, association: paymentStripe, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: 100 }
+
+    oro_stripe.api.validate_checkout_is_ready_for_payment:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\ValidateCheckoutIsReadyForPayment
+        arguments:
+            - '@oro_api.action_processor_bag'
+            - '@router'
+            - '@oro_api.rest.routes_registry'
+            - '@oro_api.value_normalizer'
+        tags:
+            - { name: oro.api.processor, action: add_subresource, group: data_security_check, requestType: frontend, association: paymentStripe, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: 5 }
+
+    oro_stripe.api.validate_checkout_payment_method_is_applicable:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\ValidateCheckoutPaymentMethodIsApplicable
+        arguments:
+            - '@oro_stripe.api.checkout_payment_subresource_provider'
+        tags:
+            - { name: oro.api.processor, action: add_subresource, group: data_security_check, requestType: frontend, association: paymentStripe, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout }
+
+    oro_stripe.api.prepare_form_data_for_checkout_payment_subresource:
+        class: Oro\Bundle\StripeBundle\Api\Processor\PrepareStripePaymentSubresourceFormData
+        tags:
+            - { name: oro.api.processor, action: add_subresource, group: load_data, requestType: frontend, association: paymentStripe, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: -99 }
+
+    oro_stripe.api.handle_checkout_payment_subresource:
+        class: Oro\Bundle\StripeBundle\Api\Processor\HandleStripePaymentSubresource
+        arguments:
+            - '@oro_checkout.action_group.split_order_actions'
+            - '@oro_checkout.action_group.checkout_actions'
+            - '@oro_checkout.action_group.address_actions'
+            - '@oro_action.action_executor'
+            - '@oro_payment.provider.payment_status'
+            - '@oro_checkout.provider.grouped_line_items'
+            - '@oro_api.doctrine_helper'
+            - '@oro_api.save_data_handler'
+        tags:
+            - { name: oro.api.processor, action: add_subresource, group: save_data, requestType: frontend, association: paymentStripe, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout }
+
+    oro_stripe.api.build_form_builder_for_stripe_payment_info_subresource:
+        class: Oro\Bundle\ApiBundle\Processor\Subresource\ChangeSubresource\BuildFormBuilder
+        arguments:
+            - '@oro_api.form_helper'
+        tags:
+            - { name: oro.api.processor, action: add_subresource, group: transform_data, requestType: frontend, association: paymentInfoStripe, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: 100 }
+
+    oro_stripe.api.prepare_form_data_for_checkout_payment_info_subresource:
+        class: Oro\Bundle\StripeBundle\Api\Processor\PrepareStripePaymentInfoSubresourceFormData
+        tags:
+            - { name: oro.api.processor, action: add_subresource, group: load_data, requestType: frontend, association: paymentInfoStripe, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: -99 }
+
+    oro_stripe.api.handle_stripe_payment_info_subresource:
+        class: Oro\Bundle\StripeBundle\Api\Processor\HandleStripePaymentInfoSubresource
+        tags:
+            - { name: oro.api.processor, action: add_subresource, group: save_data, requestType: frontend, association: paymentInfoStripe, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout }

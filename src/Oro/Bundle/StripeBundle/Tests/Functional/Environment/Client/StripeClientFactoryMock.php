@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\StripeBundle\Tests\Behat\Mock\Client;
+namespace Oro\Bundle\StripeBundle\Tests\Functional\Environment\Client;
 
 use Oro\Bundle\StripeBundle\Client\StripeGatewayFactoryInterface;
 use Oro\Bundle\StripeBundle\Client\StripeGatewayInterface;

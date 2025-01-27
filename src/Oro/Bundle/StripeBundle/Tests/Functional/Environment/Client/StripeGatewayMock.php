@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\StripeBundle\Tests\Behat\Mock\Client;
+namespace Oro\Bundle\StripeBundle\Tests\Functional\Environment\Client;
 
 use Oro\Bundle\StripeBundle\Client\Request\StripeApiRequestInterface;
 use Oro\Bundle\StripeBundle\Client\StripeGatewayInterface;
@@ -19,9 +19,9 @@ use Stripe\SetupIntent;
 
 class StripeGatewayMock implements StripeGatewayInterface
 {
-    private const NO_AUTH_CARD = '4242 4242 4242 4242';
-    private const AUTH_CARD = '4000 0027 6000 3184';
-    private const ERROR_CARD = '4000 0000 0000 9235';
+    public const NO_AUTH_CARD = '4242 4242 4242 4242';
+    public const AUTH_CARD = '4000 0027 6000 3184';
+    public const ERROR_CARD = '4000 0000 0000 9235';
 
     #[\Override]
     public function purchase(StripeApiRequestInterface $request): ResponseObjectInterface
@@ -29,6 +29,9 @@ class StripeGatewayMock implements StripeGatewayInterface
         $paymentIntent = $this->createPaymentIntent();
         $data = $request->getRequestData();
         $paymentIntent->status = $this->getStatus($data['payment_method']);
+        if (PaymentIntent::STATUS_REQUIRES_ACTION === $paymentIntent->status) {
+            $paymentIntent->next_action = ['type' => 'use_stripe_sdk'];
+        }
 
         return new PaymentIntentResponse($paymentIntent->toArray());
     }
@@ -46,7 +49,7 @@ class StripeGatewayMock implements StripeGatewayInterface
     public function capture(StripeApiRequestInterface $request): ResponseObjectInterface
     {
         $paymentIntent = $this->createPaymentIntent();
-        $paymentIntent->status = 'succeeded';
+        $paymentIntent->status = PaymentIntent::STATUS_SUCCEEDED;
 
         return new PaymentIntentResponse($paymentIntent->toArray());
     }
@@ -80,7 +83,7 @@ class StripeGatewayMock implements StripeGatewayInterface
     {
         $paymentIntent = PaymentIntent::constructFrom([
             'id' => 'pi_1',
-            'status' => 'canceled',
+            'status' => PaymentIntent::STATUS_CANCELED,
             'charges' => []
         ]);
 
@@ -93,7 +96,7 @@ class StripeGatewayMock implements StripeGatewayInterface
         $refund = Refund::constructFrom([
             'id' => 'ref_1',
             'payment_intent' => 'pi_1',
-            'status' => 'succeeded'
+            'status' => PaymentIntent::STATUS_SUCCEEDED
         ]);
 
         return new RefundResponse($refund->toArray());
@@ -105,13 +108,12 @@ class StripeGatewayMock implements StripeGatewayInterface
         $refund1 = Refund::constructFrom([
             'id' => 're_1',
             'payment_intent' => 'pi_1',
-            'status' => 'succeeded'
+            'status' => PaymentIntent::STATUS_SUCCEEDED
         ]);
-
         $refund2 = Refund::constructFrom([
             'id' => 're_2',
             'payment_intent' => 'pi_1',
-            'status' => 'succeeded'
+            'status' => PaymentIntent::STATUS_SUCCEEDED
         ]);
 
         return new RefundsCollectionResponse((new Collection(['data' => [$refund1, $refund2]]))->toArray());
@@ -138,15 +140,15 @@ class StripeGatewayMock implements StripeGatewayInterface
         return SetupIntent::constructFrom([
             'id' => 'seti_1',
             'payment_method' => 'pm_1',
-            'status' => 'succeeded'
+            'status' => PaymentIntent::STATUS_SUCCEEDED
         ]);
     }
 
     private function getStatus(string $card): string
     {
         return match ($card) {
-            self::NO_AUTH_CARD => 'succeeded',
-            self::AUTH_CARD => 'requires_action',
+            self::NO_AUTH_CARD => PaymentIntent::STATUS_SUCCEEDED,
+            self::AUTH_CARD => PaymentIntent::STATUS_REQUIRES_ACTION,
             self::ERROR_CARD => 'error'
         };
     }

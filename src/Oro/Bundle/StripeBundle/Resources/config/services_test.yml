@@ -1,0 +1,4 @@
+services:
+    oro_stripe.tests.client.factory_mock:
+        class: Oro\Bundle\StripeBundle\Tests\Functional\Environment\Client\StripeClientFactoryMock
+        decorates: oro_stripe.client.factory
