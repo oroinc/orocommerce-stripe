@@ -121,7 +121,7 @@ class LoadPaymentTransactions extends AbstractFixture implements ContainerAwareI
     }
 
     #[\Override]
-    public function setContainer(ContainerInterface $container = null): void
+    public function setContainer(?ContainerInterface $container = null): void
     {
         $this->container = $container;
     }
