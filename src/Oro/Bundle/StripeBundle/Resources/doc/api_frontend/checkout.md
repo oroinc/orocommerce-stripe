@@ -8,6 +8,8 @@
 
 Apply stripe-related payment information to the checkout.
 
+Follow the [Storefront Checkout API Guide](https://doc.oroinc.com/api/checkout-api/#stripe-payment) for more details about the checkout process using the API.
+
 {@request:json_api}
 Example:
 
@@ -30,6 +32,8 @@ The Stripe payment method requires the Stripe payment method identifier to be se
 
 When the payment is complete, an application should make a second request to the subresource to complete the checkout or to properly handle payment errors.
 If the payment requires additional actions, such as 3D Secure authentication, the request will fail with an error containing additional data required to complete the payment. If the payment is successful, the order resource is returned in response.
+
+Follow the [Storefront Checkout API Guide](https://doc.oroinc.com/api/checkout-api/#stripe-payment) for more details about the checkout process using the API.
 
 {@request:json_api}
 Example of the request:
