@@ -10,18 +10,12 @@ use Oro\Bundle\StripeBundle\Model\ResponseObjectInterface;
  */
 class StripeEvent implements StripeEventInterface
 {
-    private string $eventName;
-    private ResponseObjectInterface $data;
-    private StripePaymentConfig $paymentConfig;
-
     public function __construct(
-        string $eventName,
-        StripePaymentConfig $paymentConfig,
-        ResponseObjectInterface $data
+        private string $eventName,
+        private StripePaymentConfig $paymentConfig,
+        private ResponseObjectInterface $data,
+        private ?string $paymentMethodIdentifier = null
     ) {
-        $this->eventName = $eventName;
-        $this->paymentConfig = $paymentConfig;
-        $this->data = $data;
     }
 
     #[\Override]
@@ -39,7 +33,7 @@ class StripeEvent implements StripeEventInterface
     #[\Override]
     public function getPaymentMethodIdentifier(): string
     {
-        return $this->paymentConfig->getPaymentMethodIdentifier();
+        return $this->paymentMethodIdentifier ?? $this->paymentConfig->getPaymentMethodIdentifier();
     }
 
     #[\Override]

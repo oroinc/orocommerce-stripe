@@ -141,7 +141,7 @@ Feature: Stripe integration with suborders
         And I click "Sub-Order #1-2"
         When I click "Cancel Authorization" on row "Authorize" in grid "Second Sub Order Payment Transaction Grid"
         Then I should see "Cancel Authorization" in the "UiDialog Title" element
-        And I should see "The $46.00 payment will be cancelled. Are you sure you want to continue?"
+        And I should see "The $46.00 payment will be canceled. Are you sure you want to continue?"
         And I fill form with:
             | Notes | Cancel Authorization Note |
         And I click "Yes, Cancel Authorization" in modal window
@@ -152,7 +152,7 @@ Feature: Stripe integration with suborders
             | 1-1          | $13.00 | Refunded         |
         When I click on Payment canceled in grid "SubOrders Grid"
         And I click "Activity"
-        Then I should see "Payment authorization hold was cancelled. Notes: Cancel Authorization Note"
+        Then I should see "Payment authorization hold was canceled. Notes: Cancel Authorization Note"
         When I click "Payments"
         Then I should see following "Order Payment Transaction Grid" grid:
             | Payment Method | Type      | Amount | Successful |

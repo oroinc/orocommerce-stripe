@@ -10,17 +10,17 @@ use Oro\Bundle\StripeBundle\Entity\StripeTransportSettings;
  */
 class StripePaymentConfig extends AbstractParameterBagPaymentConfig
 {
-    public const ADMIN_LABEL = 'admin_label';
-    public const APPLE_GOOGLE_PAY_LABEL = 'apple_google_pay_label';
-    public const PUBLIC_KEY = 'public_key';
-    public const SECRET_KEY = 'secret_key';
-    public const USER_MONITORING_ENABLED = 'user_monitoring_enabled';
-    public const PAYMENT_ACTION = 'payment_action';
-    public const LOCALE = 'locale';
-    public const SIGNING_SECRET = 'signing_secret';
-    public const SUPPORT_PARTIAL_CAPTURE = 'support_partial_capture';
-    public const ALLOW_RE_AUTHORIZE = 'enable_re_authorize';
-    public const RE_AUTHORIZATION_ERROR_EMAIL = 're_authorization_error_email';
+    public const string ADMIN_LABEL = 'admin_label';
+    public const string APPLE_GOOGLE_PAY_LABEL = 'apple_google_pay_label';
+    public const string PUBLIC_KEY = 'public_key';
+    public const string SECRET_KEY = 'secret_key';
+    public const string USER_MONITORING_ENABLED = 'user_monitoring_enabled';
+    public const string PAYMENT_ACTION = 'payment_action';
+    public const string LOCALE = 'locale';
+    public const string SIGNING_SECRET = 'signing_secret';
+    public const string SUPPORT_PARTIAL_CAPTURE = 'support_partial_capture';
+    public const string ALLOW_RE_AUTHORIZE = 'enable_re_authorize';
+    public const string RE_AUTHORIZATION_ERROR_EMAIL = 're_authorization_error_email';
 
     #[\Override]
     public function getAdminLabel(): ?string

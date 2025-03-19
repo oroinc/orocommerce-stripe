@@ -88,7 +88,7 @@ operations:
                 parameters: [$.transactionOptions, {'refundReason': $.refundReason}]
         preconditions:
             '@and':
-                - '@acl_granted': ['REFUND_PAYMENTS', $.order]
+                - '@acl_granted': ['REFUND_PAYMENTS', $.entity]
                 - '@equal': [$.data.entity_class, 'Oro\Bundle\OrderBundle\Entity\Order']
                 - '@equal': [$.data.action, $.paymentMethodAction]
                 - '@equal': [$.data.active, false]
@@ -118,15 +118,15 @@ operations:
                     '@equal': ['$.result[successful]', true]
                 actions:
                     - '@translate':
-                        id: 'oro.order.payment_transaction.note.refund.default_message'
+                        id: 'oro.payment.payment_transaction.note.refund.default_message'
                         attribute: $.noteDefaultMessage
                     - '@add_string_suffix':
                         attribute: $.note
                         string: $.noteDefaultMessage
                         stringSuffix: $.noteMessage
-                    - '@create_note': [$.note, $.order]
+                    - '@create_note': [$.note, $.entity]
                     - '@flash_message':
-                        message: oro.order.payment_transaction.refund.result.success
+                        message: oro.payment.payment_transaction.refund.result.success
                         message_parameters:
                             'amount': $.amountWithCurrency
                         type: 'success'

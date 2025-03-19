@@ -1,5 +1,6 @@
 parameters:
     oro_stripe.authorization_transaction_expiration_hours: 164
+    oro_stripe.placeholder.filter.allowed_routes: ['oro_checkout_frontend_checkout']
 
 services:
     # Command
@@ -69,6 +70,8 @@ services:
         arguments:
             - '@request_stack'
             - '@oro_stripe.provider.stripe_enabled_monitoring_cached'
+        calls:
+            - [setAllowedRoutes, ['%oro_stripe.placeholder.filter.allowed_routes%']]
 
     # Cache
     oro_stripe.integration.cache:

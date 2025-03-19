@@ -17,18 +17,18 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 #[ORM\Entity(repositoryClass: StripeTransportSettingsRepository::class)]
 class StripeTransportSettings extends Transport
 {
-    public const LABELS = 'labels';
-    public const SHORT_LABELS = 'short_labels';
-    public const APPLE_GOOGLE_PAY_LABELS = 'apple_google_pay_labels';
-    public const API_PUBLIC_KEY = 'public_key';
-    public const API_SECRET_KEY = 'secret_key';
-    public const USER_MONITORING = 'user_monitoring';
-    public const PAYMENT_ACTION = 'payment_action';
-    public const SIGNING_SECRET = 'signing_secret';
-    public const ALLOW_RE_AUTHORIZE = 'allow_re_authorize';
-    public const RE_AUTHORIZATION_ERROR_EMAIL = 're_authorization_error_email';
+    public const string LABELS = 'labels';
+    public const string SHORT_LABELS = 'short_labels';
+    public const string APPLE_GOOGLE_PAY_LABELS = 'apple_google_pay_labels';
+    public const string API_PUBLIC_KEY = 'public_key';
+    public const string API_SECRET_KEY = 'secret_key';
+    public const string USER_MONITORING = 'user_monitoring';
+    public const string PAYMENT_ACTION = 'payment_action';
+    public const string SIGNING_SECRET = 'signing_secret';
+    public const string ALLOW_RE_AUTHORIZE = 'allow_re_authorize';
+    public const string RE_AUTHORIZATION_ERROR_EMAIL = 're_authorization_error_email';
 
-    public const DEFAULT_APPLE_GOOGLE_PAY_LABEL = 'Apple Pay/Google Pay';
+    public const string DEFAULT_APPLE_GOOGLE_PAY_LABEL = 'Apple Pay/Google Pay';
 
     protected ?ParameterBag $settings = null;
 

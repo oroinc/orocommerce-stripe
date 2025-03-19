@@ -7,7 +7,6 @@ services:
         arguments:
             - '@oro_stripe.method.config_provider'
             - '@oro_stripe.payment_method.factory'
-
         tags:
             - { name: oro_payment.payment_method_provider }
 

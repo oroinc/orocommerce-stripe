@@ -13,7 +13,7 @@ use Oro\Bundle\StripeBundle\Model\SetupIntentResponse;
  */
 class PurchaseRequest extends StripeApiRequestAbstract
 {
-    private const DEFAULT_CONFIRMATION_METHOD = 'manual';
+    private const string DEFAULT_CONFIRMATION_METHOD = 'manual';
 
     private StripePaymentConfig $config;
 

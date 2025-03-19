@@ -24,6 +24,7 @@ class StripeFilterTest extends TestCase
             $this->requestStack,
             $this->provider
         );
+        $this->filter->setAllowedRoutes(['oro_checkout_frontend_checkout']);
     }
 
     public function testIsApplicableOnCheckoutPage(): void
@@ -43,6 +44,27 @@ class StripeFilterTest extends TestCase
         $this->provider->expects($this->never())
             ->method('isStripeMonitoringEnabled');
 
+        $this->assertTrue($this->filter->isApplicable());
+    }
+
+    public function testIsApplicableOnAnotherPage(): void
+    {
+        $request = new Request();
+        $request->attributes->set('_route', 'oro_sample_payment_page');
+
+        $this->requestStack->expects($this->once())
+            ->method('getMainRequest')
+            ->willReturn($request);
+
+        $this->provider
+            ->expects($this->once())
+            ->method('isStripeEnabled')
+            ->willReturn(true);
+
+        $this->provider->expects($this->never())
+            ->method('isStripeMonitoringEnabled');
+
+        $this->filter->setAllowedRoutes(['oro_sample_payment_page']);
         $this->assertTrue($this->filter->isApplicable());
     }
 

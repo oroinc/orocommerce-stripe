@@ -60,11 +60,12 @@ define(function(require) {
          *
          * @param {String} type
          * @param {Object} options
+         * @param {Object} elementsOptions
          */
-        getStripeElements: function(type, options) {
+        getStripeElements: function(type, options, elementsOptions = {}) {
             const identifier = options.paymentMethod;
             if (!this.elements[identifier]) {
-                this.elements[identifier] = this.getStripeInstance(options).elements();
+                this.elements[identifier] = this.getStripeInstance(options).elements(elementsOptions);
             }
 
             return this.elements[identifier];

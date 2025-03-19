@@ -330,7 +330,8 @@ class PaymentRefundedEventHandlerTest extends TestCase
             new StripePaymentConfig([
                 AbstractParameterBagPaymentConfig::FIELD_PAYMENT_METHOD_IDENTIFIER => 'stripe_1'
             ]),
-            $responseObject
+            $responseObject,
+            'stripe_1'
         );
     }
 

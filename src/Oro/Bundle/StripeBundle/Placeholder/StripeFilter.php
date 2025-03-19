@@ -10,15 +10,27 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class StripeFilter
 {
-    private const CHECKOUT_ROUTE_NAME = 'oro_checkout_frontend_checkout';
-
     private RequestStack $requestStack;
+
     private StripeEnabledMonitoringCachedProvider $provider;
+
+    /**
+     * @var array<string>
+     */
+    private $allowedRoutes = [];
 
     public function __construct(RequestStack $requestStack, StripeEnabledMonitoringCachedProvider $provider)
     {
         $this->requestStack = $requestStack;
         $this->provider = $provider;
+    }
+
+    /**
+     * @param string[] $allowedRoutes
+     */
+    public function setAllowedRoutes(array $allowedRoutes): void
+    {
+        $this->allowedRoutes = $allowedRoutes;
     }
 
     public function isApplicable(): bool
@@ -27,12 +39,13 @@ class StripeFilter
             return false;
         }
 
-        return $this->isCheckoutPage() || $this->provider->isStripeMonitoringEnabled();
+        return $this->isRouteAllowed() || $this->provider->isStripeMonitoringEnabled();
     }
 
-    private function isCheckoutPage(): bool
+    private function isRouteAllowed(): bool
     {
         $request = $this->requestStack->getMainRequest();
-        return $request->attributes->get('_route') === self::CHECKOUT_ROUTE_NAME;
+
+        return $request && in_array($request->attributes->get('_route'), $this->allowedRoutes, true);
     }
 }

@@ -95,7 +95,7 @@ class StripeSDKEventFactory implements StripeEventFactoryInterface
             );
         }
 
-        return new StripeEvent($event->type, $paymentMethodConfig, $responseObject);
+        return new StripeEvent($event->type, $paymentMethodConfig, $responseObject, $transactionPaymentMethod);
     }
 
     protected function getTransactionPaymentMethod(?ResponseObjectInterface $responseObject): ?string

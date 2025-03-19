@@ -10,13 +10,11 @@ use Oro\Bundle\StripeBundle\Model\PaymentIntentResponse;
  */
 abstract class StripeApiRequestAbstract implements StripeApiRequestInterface
 {
-    protected const STRIPE_PAYMENT_METHOD_ID_PARAM = 'stripePaymentMethodId';
+    public const string STRIPE_PAYMENT_METHOD_ID_PARAM = 'stripePaymentMethodId';
 
-    protected PaymentTransaction $transaction;
-
-    public function __construct(PaymentTransaction $transaction)
-    {
-        $this->transaction = $transaction;
+    public function __construct(
+        protected PaymentTransaction $transaction
+    ) {
     }
 
     #[\Override]
