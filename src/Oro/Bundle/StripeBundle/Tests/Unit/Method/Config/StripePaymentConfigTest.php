@@ -2,23 +2,24 @@
 
 namespace Oro\Bundle\StripeBundle\Tests\Unit\Method\Config;
 
-use Oro\Bundle\PaymentBundle\Method\Config\PaymentConfigInterface;
-use Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config\AbstractPaymentConfigTestCase;
 use Oro\Bundle\StripeBundle\Method\Config\StripePaymentConfig;
+use PHPUnit\Framework\TestCase;
 
-class StripePaymentConfigTest extends AbstractPaymentConfigTestCase
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
+class StripePaymentConfigTest extends TestCase
 {
-    /** @var StripePaymentConfig */
-    protected $config;
+    private StripePaymentConfig $config;
 
     #[\Override]
-    protected function getPaymentConfig(): PaymentConfigInterface
+    protected function setUp(): void
     {
-        $params = [
+        $this->config = new StripePaymentConfig([
             StripePaymentConfig::FIELD_PAYMENT_METHOD_IDENTIFIER => 'test_payment_method_identifier',
             StripePaymentConfig::FIELD_LABEL => 'test label',
             StripePaymentConfig::FIELD_SHORT_LABEL => 'test short label',
-            StripePaymentConfig::ADMIN_LABEL => 'admin label',
+            StripePaymentConfig::ADMIN_LABEL => 'test admin label',
             StripePaymentConfig::APPLE_GOOGLE_PAY_LABEL => 'apple_google_pay_label',
             StripePaymentConfig::PUBLIC_KEY => 'public key',
             StripePaymentConfig::SECRET_KEY => 'secret key',
@@ -26,49 +27,61 @@ class StripePaymentConfigTest extends AbstractPaymentConfigTestCase
             StripePaymentConfig::PAYMENT_ACTION => 'manual',
             StripePaymentConfig::ALLOW_RE_AUTHORIZE => true,
             StripePaymentConfig::RE_AUTHORIZATION_ERROR_EMAIL => ['test@test.com']
-        ];
-
-        return new StripePaymentConfig($params);
+        ]);
     }
 
-    #[\Override]
+    public function testGetLabel(): void
+    {
+        self::assertSame('test label', $this->config->getLabel());
+    }
+
+    public function testGetShortLabel(): void
+    {
+        self::assertSame('test short label', $this->config->getShortLabel());
+    }
+
     public function testGetAdminLabel(): void
     {
-        $this->assertEquals('admin label', $this->config->getAdminLabel());
+        self::assertSame('test admin label', $this->config->getAdminLabel());
+    }
+
+    public function testGetPaymentMethodIdentifier(): void
+    {
+        self::assertSame('test_payment_method_identifier', $this->config->getPaymentMethodIdentifier());
     }
 
     public function testGetGetAppleGooglePayLabel(): void
     {
-        $this->assertEquals('apple_google_pay_label', $this->config->getAppleGooglePayLabel());
+        self::assertEquals('apple_google_pay_label', $this->config->getAppleGooglePayLabel());
     }
 
     public function testGetPublicKey(): void
     {
-        $this->assertEquals('public key', $this->config->getPublicKey());
+        self::assertEquals('public key', $this->config->getPublicKey());
     }
 
     public function testGetSecretKey(): void
     {
-        $this->assertEquals('secret key', $this->config->getSecretKey());
+        self::assertEquals('secret key', $this->config->getSecretKey());
     }
 
     public function testIsUserMonitoringEnabled(): void
     {
-        $this->assertTrue($this->config->isUserMonitoringEnabled());
+        self::assertTrue($this->config->isUserMonitoringEnabled());
     }
 
     public function testGetPaymentAction(): void
     {
-        $this->assertEquals('manual', $this->config->getPaymentAction());
+        self::assertEquals('manual', $this->config->getPaymentAction());
     }
 
     public function testIsReAuthorizationAllowed(): void
     {
-        $this->assertTrue($this->config->isReAuthorizationAllowed());
+        self::assertTrue($this->config->isReAuthorizationAllowed());
     }
 
     public function testGetReAuthorizationErrorEmail(): void
     {
-        $this->assertEquals(['test@test.com'], $this->config->getReAuthorizationErrorEmail());
+        self::assertEquals(['test@test.com'], $this->config->getReAuthorizationErrorEmail());
     }
 }
