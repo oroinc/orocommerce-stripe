@@ -1,7 +1,6 @@
 operations:
     oro_stripe_order_payment_transaction_cancel:
         extends: oro_order_payment_transaction_cancel
-        substitute_operation: oro_order_payment_transaction_cancel
         attributes:
             cancelReason:
                 label: oro.stripe.action.attribute.cancel_reason.label
@@ -34,7 +33,6 @@ operations:
 
     oro_stripe_order_payment_transaction_refund:
         extends: oro_order_payment_transaction_refund
-        substitute_operation: oro_order_payment_transaction_refund
         replace:
             - actions
             - preconditions
