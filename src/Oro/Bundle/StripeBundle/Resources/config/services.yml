@@ -128,6 +128,8 @@ services:
     # Twig
     oro_stripe.twig.stripe_url_extension:
         class: Oro\Bundle\StripeBundle\Twig\StripeUrlExtension
+        arguments:
+            - '%oro_asset.external_resources%'
         tags:
             - { name: twig.extension }
 

@@ -2,7 +2,8 @@ services:
     oro_stripe.twig.stripe_url_extension.mock:
         class: Oro\Bundle\StripeBundle\Tests\Behat\Mock\Twig\StripeUrlExtensionMock
         decorates: oro_stripe.twig.stripe_url_extension
-
+        arguments:
+            - '%oro_asset.external_resources%'
 
     oro_stripe.client.factory_mock:
         class: Oro\Bundle\StripeBundle\Tests\Behat\Mock\Client\StripeClientFactoryMock
