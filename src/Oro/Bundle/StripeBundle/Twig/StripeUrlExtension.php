@@ -10,9 +10,7 @@ use Twig\TwigFunction;
  */
 class StripeUrlExtension extends AbstractExtension
 {
-    public function __construct(protected array $externalResources)
-    {
-    }
+    public const STRIPE_LIBRARY_URL = 'https://js.stripe.com/v3/';
 
     #[\Override]
     public function getFunctions()
@@ -24,6 +22,6 @@ class StripeUrlExtension extends AbstractExtension
 
     public function getStripeLibraryUrl(): string
     {
-        return $this->externalResources['stripe_js_library']['link'];
+        return static::STRIPE_LIBRARY_URL;
     }
 }
