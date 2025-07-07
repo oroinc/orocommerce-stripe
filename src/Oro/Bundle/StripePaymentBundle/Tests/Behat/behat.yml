@@ -1,0 +1,38 @@
+oro_behat_extension:
+    suites:
+        OroStripePaymentBundle:
+            contexts:
+                - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+                - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
+                - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+                - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+                - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\BrowserTabContext
+            paths:
+                - '@OroStripePaymentBundle/Tests/Behat/Features'
+    elements:
+        Configuration Stripe Payment Element Form:
+            selector: 'form[name="oro_integration_channel_form"]'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    Name: 'oro_integration_channel_form[name]'
+                    API Public Key: 'oro_integration_channel_form[transport][apiPublicKey]'
+                    API Secret Key: 'oro_integration_channel_form[transport][apiSecretKey]'
+                    Payment Method Name: 'oro_integration_channel_form[transport][paymentMethodName]'
+                    Payment Method Label: 'oro_integration_channel_form[transport][paymentMethodLabels][values][default]'
+                    Payment Method Short Label: 'oro_integration_channel_form[transport][paymentMethodShortLabels][values][default]'
+                    Create Webhook Endpoint Automatically: 'oro_integration_channel_form[transport][webhookCreate]'
+                    Webhook Signing Secret: 'oro_integration_channel_form[transport][webhookSecret]'
+
+        Invoice Stripe Payment Element Form:
+            selector:
+                locator: '//div[starts-with(@id,"invoice-payment-method__stripe_payment_element")]'
+                type: xpath
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    Stripe Card Number: 'cardnumber'
+                    Stripe Exp Date: 'exp-date'
+                    Stripe CVC: 'cvc'
+                    Stripe ZIP: 'postal'

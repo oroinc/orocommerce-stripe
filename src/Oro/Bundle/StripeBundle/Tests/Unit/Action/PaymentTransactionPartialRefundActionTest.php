@@ -181,7 +181,6 @@ class PaymentTransactionPartialRefundActionTest extends \PHPUnit\Framework\TestC
             [['someOption' => 'someValue']],
             [['object' => 'someValue']],
             [['currency' => 'someCurrency']],
-            [['paymentMethod' => 'somePaymentMethod']],
         ];
     }
 

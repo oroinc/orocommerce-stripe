@@ -1,0 +1,67 @@
+operations:
+
+    # Disables the regular action for the non-Stripe payment methods.
+    oro_invoice_payment_transaction_cancel:
+        preactions:
+            -   '@assign_value':
+                    parameters: [ $.supportedPaymentMethodClasses, [
+                        'Oro\Bundle\StripeBundle\Method\StripePaymentMethod',
+                        'Oro\Bundle\StripeBundle\Method\StripeAppleGooglePayMethod',
+                        'Oro\Bundle\StripePaymentBundle\PaymentMethod\StripePaymentElement\StripePaymentElementMethod'
+                    ] ]
+        preconditions:
+            '@and':
+                -   '@not_in': [ $.paymentMethodClass, $.supportedPaymentMethodClasses ]
+
+    # Enables the Stripe-specific action for the Stripe payment methods on the Invoice Payments datagrid.
+    # Enables the action for `StripePaymentElementMethod`.
+    oro_stripe_invoice_payment_transaction_cancel:
+        extends: oro_stripe_payment_transaction_cancel
+        datagrids:
+            - invoice-payment-transactions-grid
+        preactions:
+            -   '@assign_value':
+                    parameters: [ $.supportedPaymentMethodClasses, [
+                        'Oro\Bundle\StripeBundle\Method\StripePaymentMethod',
+                        'Oro\Bundle\StripeBundle\Method\StripeAppleGooglePayMethod',
+                        'Oro\Bundle\StripePaymentBundle\PaymentMethod\StripePaymentElement\StripePaymentElementMethod'
+                    ] ]
+        preconditions:
+            '@and':
+                -   '@in': [ $.paymentMethodClass, $.supportedPaymentMethodClasses ]
+
+    # Disables the regular action for the non-Stripe payment methods.
+    oro_invoice_payment_transaction_refund:
+        preactions:
+            -   '@assign_value':
+                    parameters: [ $.supportedPaymentMethodClasses, [
+                        'Oro\Bundle\StripeBundle\Method\StripePaymentMethod',
+                        'Oro\Bundle\StripeBundle\Method\StripeAppleGooglePayMethod',
+                        'Oro\Bundle\StripePaymentBundle\PaymentMethod\StripePaymentElement\StripePaymentElementMethod'
+                    ] ]
+        preconditions:
+            '@and':
+                -   '@not_in': [ $.paymentMethodClass, $.supportedPaymentMethodClasses ]
+
+    # Enables the Stripe-specific action for the Stripe payment methods on the Invoice Payments datagrid.
+    # Enables the action for `StripePaymentElementMethod`.
+    oro_stripe_invoice_payment_transaction_refund:
+        extends: oro_stripe_payment_transaction_refund
+        datagrids:
+            - invoice-payment-transactions-grid
+        preactions:
+            -   '@assign_value':
+                    parameters: [ $.supportedPaymentMethodClasses, [
+                        'Oro\Bundle\StripeBundle\Method\StripePaymentMethod',
+                        'Oro\Bundle\StripeBundle\Method\StripeAppleGooglePayMethod',
+                        'Oro\Bundle\StripePaymentBundle\PaymentMethod\StripePaymentElement\StripePaymentElementMethod'
+                    ] ]
+        preconditions:
+            '@and':
+                -   '@in': [ $.paymentMethodClass, $.supportedPaymentMethodClasses ]
+
+    # Enables the Stripe-specific action for the Stripe payment methods on the Invoice Payments datagrid.
+    oro_stripe_invoice_payment_transaction_re_authorize:
+        extends: oro_stripe_payment_transaction_re_authorize
+        datagrids:
+            - invoice-payment-transactions-grid

@@ -1,0 +1,11 @@
+placeholders:
+    placeholders:
+        scripts_before:
+            items:
+                stripe_script: ~
+
+    items:
+        stripe_script:
+            template: '@@OroStripePayment/Placeholder/stripeScript.html.twig'
+            data: '@oro_stripe_payment.placeholder.stripe_script->getData()'
+            applicable: '@oro_stripe_payment.placeholder.stripe_script->isApplicable()'

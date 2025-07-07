@@ -1,0 +1,36 @@
+{%- block oro_stripe_payment_element_widget -%}
+    {%- import '@OroUI/macros.html.twig' as UI -%}
+
+    {%- set component = 'orostripepayment/js/app/components/invoice-payment/stripe-payment-element-invoice-payment-component' -%}
+    {%- set component_name = 'invoice-payment-method__' ~ payment_method_view.identifier -%}
+    {%- set component_options = {
+        'paymentMethodIdentifier': payment_method_view.identifier,
+        'stripeOptions': payment_method_view.options.stripeOptions,
+        'stripeElementsObjectOptions': payment_method_view.options.stripeElementsObjectOptions|merge({
+            'appearance': { 'labels': 'floating' },
+        }),
+        'stripePaymentElementOptions': payment_method_view.options.stripePaymentElementOptions|merge({
+            'layout': {
+                'type': 'tabs',
+            }
+        }),
+    } -%}
+
+    <div id="{{ component_name }}" data-role="invoice-payment-method"
+         class="invoice-payment-method invoice-payment-method__stripe-payment-element"
+            {{- UI.renderPageComponentAttributes({
+                'name': component_name,
+                'module': component,
+                'options': component_options
+            }) -}}>
+        <div data-role="invoice-payment-method-form" class="invoice-payment-method-form">
+            <div class="form-row">
+                <div data-role="stripe-payment-element-container" class="stripe-payment-element-container">
+                    {# Stripe Payment Element placeholder #}
+                </div>
+                <div data-role="stripe-validation-container" class="stripe-validation-container">
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

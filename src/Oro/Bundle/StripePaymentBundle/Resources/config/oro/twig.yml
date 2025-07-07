@@ -1,0 +1,2 @@
+bundles:
+    - '@OroStripePayment/Form/stripePaymentElementSettings.html.twig'

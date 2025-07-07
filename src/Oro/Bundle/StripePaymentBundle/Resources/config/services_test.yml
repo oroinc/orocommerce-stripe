@@ -1,0 +1,4 @@
+services:
+    oro_stripe_payment.test.stripe.client.factory:
+        decorates: 'oro_stripe_payment.stripe_client.factory'
+        class: 'Oro\Bundle\StripePaymentBundle\Test\StripeClient\MockingStripeClientFactory'

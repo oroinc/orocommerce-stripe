@@ -1,0 +1,22 @@
+services:
+
+    oro_stripe_payment.stripe_webhook_endpoint.executor:
+        class: 'Oro\Bundle\StripePaymentBundle\StripeWebhookEndpoint\Executor\StripeWebhookEndpointActionExecutorComposite'
+        arguments:
+            - !tagged_iterator { tag: 'oro_stripe_payment.stripe_webhook_endpoint.executor' }
+
+    oro_stripe_payment.stripe_webhook_endpoint.executor.webhook_endpoint_create_or_update:
+        class: 'Oro\Bundle\StripePaymentBundle\StripeWebhookEndpoint\Executor\CreateOrUpdateStripeActionExecutor'
+        arguments:
+            - '@oro_stripe_payment.stripe_client.factory'
+            - '@event_dispatcher'
+        tags:
+            - { name: 'oro_stripe_payment.stripe_webhook_endpoint.executor' }
+
+    oro_stripe_payment.stripe_webhook_endpoint.executor.webhook_endpoint_delete:
+        class: 'Oro\Bundle\StripePaymentBundle\StripeWebhookEndpoint\Executor\DeleteStripeActionExecutor'
+        arguments:
+            - '@oro_stripe_payment.stripe_client.factory'
+            - '@event_dispatcher'
+        tags:
+            - { name: 'oro_stripe_payment.stripe_webhook_endpoint.executor' }

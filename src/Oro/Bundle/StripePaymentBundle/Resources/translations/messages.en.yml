@@ -1,0 +1,108 @@
+oro:
+    stripe_payment:
+        payment_element:
+            label: Stripe Payment Element
+            groups:
+                integration.title: Integration Settings
+                payment_element.title: Payment Element
+                advanced.title: Advanced Settings
+                other.title: Other
+            payment_method_name:
+                label: Payment Method Name
+                tooltip: The name for payment method to use in back-office, e.g. 'Stripe Payment Element'.
+            payment_method_labels:
+                label: Payment Method Label
+                tooltip: The label for payment method to use in the storefront, e.g. 'Stripe Payment'.
+                default: Stripe
+            payment_method_short_labels:
+                label: Payment Method Short Label
+                tooltip: The short variant of the label for payment method to use in the storefront, e.g. 'Stripe'.
+                default: Stripe
+            api_public_key:
+                label: API Public Key
+                tooltip: |-
+                    Stripe Publishable Key (starts with 'pk_test_' or 'pk_live_'). 
+                    Used for client-side Stripe transactions.
+                    Get it from your Stripe Dashboard under Developers → API Keys.
+            api_secret_key:
+                label: API Secret Key
+                tooltip: |-
+                    Your Stripe Secret Key (starts with 'sk_test_' or 'sk_live_').
+                    Used for server-side operations like processing payments. Never share this publicly.
+                    Find it in your Stripe Dashboard under Developers → API Keys.
+            webhook_create:
+                label: Create Webhook Endpoint Automatically
+                tooltip: |
+                    If enabled, the system will automatically create and configure a Stripe webhook endpoint for you.
+                    This ensures real-time payment events (e.g., successful charges, refunds, or failures) are sent to your application.
+                webhook_endpoint_url:
+                    label: Webhook Endpoint URL
+                    tooltip: |
+                        Copy this URL and paste it into your Stripe Dashboard under Developers → Webhooks → Add endpoint.
+                        This ensures real-time payment events (e.g., successful charges, refunds, or failures) are sent to your application.
+            webhook_secret:
+                label: Webhook Signing Secret
+                tooltip: The signing secret for your Stripe webhook endpoint. This ensures that incoming webhook events are genuinely from Stripe.
+            capture_method:
+                label: Payment Action for Supported Methods
+                tooltip: |-
+                    Deferred capture based on a prior initial authorization is supported only for the following 
+                    payment methods when using the Stripe integration: %payment_methods_with_manual_capture%. All other payment 
+                    methods will trigger an immediate capture (or a similar action resulting in the transfer of funds).
+                manual: Manual (Authorize)
+                automatic: Automatic (Capture)
+            re_authorization_enabled:
+                label: Automatically Re-Authorize Every 6 Days 20 Hours
+                tooltip: |-
+                    Enables automatic re-authorization every 6 days and 20 hours for uncaptured payments.
+                    Prevents expired authorizations (Stripe's default is 7 days) to ensure you can still capture funds.
+            re_authorization_email:
+                label: Re-Authorization Notification Email
+                tooltip: |-
+                    This email address will receive alerts when automatic payment re-authorizations fail.
+                    Ensures you can take action before authorized payments expire (Stripe's default is 7 days).
+            user_monitoring_enabled:
+                label: User Monitoring
+                tooltip: |-
+                    Loads stripe.js on every storefront page to enable fraud detection.
+                    This allows Stripe to monitor user behavior and device signals for suspicious activity,
+                    helping prevent payment fraud and abuse.
+            apple_pay_domain_verification_advice:
+                message: |-
+                    When using Apple Pay please make sure to upload the Apple Pay domain verification file
+                    in the configuration of the website(s) where Apple Pay will be used 
+                    (see Commerce ➞ Sales ➞ Checkout ➞ Checkout Options ➞ Apple Pay Domain Verification
+                    in the website configuration).
+        webhook_endpoint:
+            create_update:
+                error.message: |-
+                    An error occurred while creating/updating the Stripe webhook endpoint. You might need to manually provide the Webhook Signing Secret.
+                    Details: %message%
+            delete:
+                error.message: |-
+                    An error occurred while deleting the Stripe webhook endpoint.
+                    Details: %message%
+        operation:
+            re_authorize:
+                label: Re-Authorize Payment
+                confirmation:
+                    success: The payment authorization of %amount% is renewed.
+                    error: Failed to renew the payment authorization of %amount%.
+        stripe_payment_method_type:
+            affirm.label: 'Affirm'
+            afterpay_clearpay.label: 'Afterpay/Clearpay'
+            alma.label: 'Alma'
+            amazon_pay.label: 'Amazon Pay'
+            billie.label: 'Billie'
+            capchase_pay.label: 'Capchase Pay'
+            card.label: 'Cards'
+            cashapp.label: 'Cash App Pay'
+            klarna.label: 'Klarna'
+            kriya.label: 'Kriya'
+            link.label: 'Link'
+            mobilepay.label: 'MobilePay'
+            mondu.label: 'Mondu'
+            paypal.label: 'PayPal'
+            revolut_pay.label: 'Revolut Pay'
+            sequra.label: 'SeQura'
+            vipps.label: 'Vipps'

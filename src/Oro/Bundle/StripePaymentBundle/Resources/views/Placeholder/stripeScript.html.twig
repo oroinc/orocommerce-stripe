@@ -1,0 +1,3 @@
+{%- if data.stripe_script_url|default('') is not empty -%}
+    <script src="{{ data.stripe_script_url }}"></script>
+{%- endif -%}

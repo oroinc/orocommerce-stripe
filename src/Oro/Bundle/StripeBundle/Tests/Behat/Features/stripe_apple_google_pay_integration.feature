@@ -19,7 +19,7 @@ Feature: Stripe Apple Google Pay integration
         And I login as administrator
         And I go to System/Integrations/Manage Integrations
         And I click "Create Integration"
-        And I select "Stripe" from "Type"
+        And I select "Stripe (Legacy)" from "Type"
         # Public Key and Secret Key were taken for testing from https://stripe.com/docs/
         And I fill "Stripe Form" with:
             | Name                   | Stripe   |

@@ -1,0 +1,19 @@
+services:
+
+    oro_stripe_payment.stripe_customer.executor:
+        class: 'Oro\Bundle\StripePaymentBundle\StripeCustomer\Executor\StripeCustomerActionExecutorComposite'
+        arguments:
+            - !tagged_iterator { tag: 'oro_stripe_payment.stripe_customer.executor' }
+
+    oro_stripe_payment.stripe_customer.executor.customer_find_or_create:
+        class: 'Oro\Bundle\StripePaymentBundle\StripeCustomer\Executor\FindOrCreateStripeActionExecutor'
+        arguments:
+            - '@oro_stripe_payment.stripe_client.factory'
+            - '@oro_payment.context.factory.transaction_payment_context'
+            - '@oro_entity.entity_name_resolver'
+            - '@event_dispatcher'
+        calls:
+            - ['setLogger', ['@logger']]
+        tags:
+            - { name: 'oro_stripe_payment.stripe_customer.executor' }
+            - { name: 'monolog.logger', channel: 'oro_stripe_payment' }

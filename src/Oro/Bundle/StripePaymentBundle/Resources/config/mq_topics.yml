@@ -1,0 +1,7 @@
+services:
+    _defaults:
+        tags:
+            - { name: 'oro_message_queue.topic' }
+
+    Oro\Bundle\StripePaymentBundle\Async\Topic\ReAuthorizePaymentTransactionsInitTopic: ~
+    Oro\Bundle\StripePaymentBundle\Async\Topic\ReAuthorizePaymentTransactionsChunkTopic: ~

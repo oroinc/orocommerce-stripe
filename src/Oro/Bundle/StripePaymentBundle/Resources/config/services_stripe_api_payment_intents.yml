@@ -1,0 +1,116 @@
+services:
+
+    oro_stripe_payment.stripe_payment_intent.executor:
+        class: 'Oro\Bundle\StripePaymentBundle\StripePaymentIntent\Executor\StripePaymentIntentActionExecutorComposite'
+        arguments:
+            - !tagged_iterator { tag: 'oro_stripe_payment.stripe_payment_intent.executor' }
+
+    oro_stripe_payment.stripe_payment_intent.executor.authorize:
+        class: 'Oro\Bundle\StripePaymentBundle\StripePaymentIntent\Executor\AuthorizeStripeActionExecutor'
+        arguments:
+            - '@oro_stripe_payment.stripe_client.factory'
+            - '@oro_stripe_payment.stripe_customer.executor'
+            - '@oro_stripe_payment.stripe_amount_converter'
+            - '@router'
+            - '@event_dispatcher'
+        tags:
+            - { name: 'oro_stripe_payment.stripe_payment_intent.executor' }
+
+    oro_stripe_payment.stripe_payment_intent.executor.charge:
+        class: 'Oro\Bundle\StripePaymentBundle\StripePaymentIntent\Executor\ChargeStripeActionExecutor'
+        arguments:
+            - '@oro_stripe_payment.stripe_client.factory'
+            - '@oro_stripe_payment.stripe_customer.executor'
+            - '@oro_stripe_payment.stripe_amount_converter'
+            - '@router'
+            - '@event_dispatcher'
+        tags:
+            - { name: 'oro_stripe_payment.stripe_payment_intent.executor' }
+
+    oro_stripe_payment.stripe_payment_intent.executor.re_authorize:
+        class: 'Oro\Bundle\StripePaymentBundle\StripePaymentIntent\Executor\ReAuthorizeStripeActionExecutor'
+        arguments:
+            - '@oro_stripe_payment.stripe_client.factory'
+            - '@oro_payment.provider.payment_transaction'
+            - '@oro_stripe_payment.stripe_payment_intent.executor.cancel'
+            - '@oro_stripe_payment.stripe_amount_converter'
+            - '@event_dispatcher'
+        tags:
+            - { name: 'oro_stripe_payment.stripe_payment_intent.executor' }
+
+    oro_stripe_payment.stripe_payment_intent.executor.capture:
+        class: 'Oro\Bundle\StripePaymentBundle\StripePaymentIntent\Executor\CaptureStripeActionExecutor'
+        arguments:
+            - '@oro_stripe_payment.stripe_client.factory'
+            - '@oro_stripe_payment.stripe_amount_converter'
+            - '@event_dispatcher'
+        tags:
+            - { name: 'oro_stripe_payment.stripe_payment_intent.executor' }
+
+    oro_stripe_payment.stripe_payment_intent.executor.cancel:
+        class: 'Oro\Bundle\StripePaymentBundle\StripePaymentIntent\Executor\CancelStripeActionExecutor'
+        arguments:
+            - '@oro_stripe_payment.stripe_client.factory'
+            - '@event_dispatcher'
+        tags:
+            - { name: 'oro_stripe_payment.stripe_payment_intent.executor' }
+
+    oro_stripe_payment.stripe_payment_intent.executor.refund:
+        class: 'Oro\Bundle\StripePaymentBundle\StripePaymentIntent\Executor\RefundStripeActionExecutor'
+        arguments:
+            - '@oro_stripe_payment.stripe_client.factory'
+            - '@oro_stripe_payment.stripe_amount_converter'
+            - '@event_dispatcher'
+        tags:
+            - { name: 'oro_stripe_payment.stripe_payment_intent.executor' }
+
+    oro_stripe_payment.stripe_payment_intent.executor.confirm:
+        class: 'Oro\Bundle\StripePaymentBundle\StripePaymentIntent\Executor\ConfirmStripeActionExecutor'
+        arguments:
+            - '@oro_stripe_payment.stripe_client.factory'
+            - '@oro_stripe_payment.stripe_amount_converter'
+            - '@event_dispatcher'
+        tags:
+            - { name: 'oro_stripe_payment.stripe_payment_intent.executor' }
+
+    oro_stripe_payment.stripe_payment_intent.executor.webhook.payment_intent_capture_succeeded:
+        class: 'Oro\Bundle\StripePaymentBundle\StripePaymentIntent\Executor\Webhook\PaymentIntentSucceededCaptureStripeActionExecutor'
+        arguments:
+            - '@oro_payment.provider.payment_transaction'
+            - '@oro_stripe_payment.stripe_amount_converter'
+        tags:
+            - { name: 'oro_stripe_payment.stripe_payment_intent.executor' }
+
+    oro_stripe_payment.stripe_payment_intent.executor.webhook.payment_intent_charge_succeeded:
+        class: 'Oro\Bundle\StripePaymentBundle\StripePaymentIntent\Executor\Webhook\PaymentIntentSucceededChargeStripeActionExecutor'
+        arguments:
+            - '@oro_stripe_payment.stripe_amount_converter'
+        tags:
+            - { name: 'oro_stripe_payment.stripe_payment_intent.executor' }
+
+    oro_stripe_payment.stripe_payment_intent.executor.webhook.payment_intent_capture_failed:
+        class: 'Oro\Bundle\StripePaymentBundle\StripePaymentIntent\Executor\Webhook\PaymentIntentFailedCaptureStripeActionExecutor'
+        arguments:
+            - '@oro_payment.provider.payment_transaction'
+        tags:
+            - { name: 'oro_stripe_payment.stripe_payment_intent.executor' }
+
+    oro_stripe_payment.stripe_payment_intent.executor.webhook.payment_intent_charge_failed:
+        class: 'Oro\Bundle\StripePaymentBundle\StripePaymentIntent\Executor\Webhook\PaymentIntentFailedChargeStripeActionExecutor'
+        tags:
+            - { name: 'oro_stripe_payment.stripe_payment_intent.executor' }
+
+    oro_stripe_payment.stripe_payment_intent.executor.webhook.payment_intent_canceled:
+        class: 'Oro\Bundle\StripePaymentBundle\StripePaymentIntent\Executor\Webhook\PaymentIntentCanceledStripeActionExecutor'
+        arguments:
+            - '@oro_payment.provider.payment_transaction'
+        tags:
+            - { name: 'oro_stripe_payment.stripe_payment_intent.executor' }
+
+    oro_stripe_payment.stripe_payment_intent.executor.webhook.refund_updated:
+        class: 'Oro\Bundle\StripePaymentBundle\StripePaymentIntent\Executor\Webhook\RefundUpdatedStripeActionExecutor'
+        arguments:
+            - '@oro_payment.provider.payment_transaction'
+            - '@oro_stripe_payment.stripe_amount_converter'
+        tags:
+            - { name: 'oro_stripe_payment.stripe_payment_intent.executor' }

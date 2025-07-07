@@ -1,0 +1,8 @@
+parameters:
+    oro_stripe_payment.placeholder.stripe_script.url: '/bundles/orostripe/js/stubs/stripe-stub.js'
+
+services:
+
+    oro_stripe_payment.stripe_client.factory.stub:
+        class: 'Oro\Bundle\StripePaymentBundle\Tests\Behat\Mock\StripeClient\StubStripeClientFactory'
+        decorates: 'oro_stripe_payment.stripe_client.factory'

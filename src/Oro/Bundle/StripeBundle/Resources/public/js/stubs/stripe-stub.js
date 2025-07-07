@@ -30,10 +30,12 @@
                     /**
                      * Mount card element into DOM structure.
                      *
-                     * @param {String} domIdentifier
+                     * @param {string|object} selectorOrElement
                      */
-                    mount: function(domIdentifier) {
-                        this.container = document.querySelector(domIdentifier);
+                    mount: function(selectorOrElement) {
+                        this.container = typeof selectorOrElement === 'string'
+                            ? document.querySelector(selectorOrElement)
+                            : selectorOrElement;
 
                         const form = this._buildCardForm();
                         this.container.appendChild(form);
@@ -143,6 +145,14 @@
                 getElement: function(type) {
                     const item = this.registeredElements.find(item => item.type === type);
                     return item ? item.element : null;
+                },
+
+                submit: function() {
+                    return new Promise(function(resolve, reject) {
+                        resolve({
+                            selectedPaymentMethod: 'card'
+                        });
+                    });
                 }
             },
 
@@ -209,6 +219,21 @@
                         });
                     }
                 };
+            },
+
+            createConfirmationToken: function(params) {
+                const cardValue = this.elements().getElement('payment').getCardValue();
+
+                return new Promise(function(resolve, reject) {
+                    resolve({
+                        confirmationToken: {
+                            id: 'tok_' + cardValue,
+                            payment_method_preview: {
+                                type: 'card'
+                            }
+                        }
+                    });
+                });
             }
         };
     };
