@@ -30,7 +30,7 @@ Feature: Stripe Payment Element - Declined Invoice Payment
     And I click on "FrontendGridColumnManagerButton"
     Then I should see following grid:
       | Invoice Number | Total Amount | Payment Method | Payment Status  |
-      | INV-001        | $12,345.67   |                | PENDING PAYMENT |
+      | INV-001        | $12,345.67   |                | Pending payment |
     And I should see following actions for INV-001 in grid:
       | View |
       | Pay  |
@@ -54,7 +54,7 @@ Feature: Stripe Payment Element - Declined Invoice Payment
     When I click "Back to Payment Page"
     And I click "Back to Invoice Page"
     Then I should see "Stripe Payment Element"
-    And I should see "PAYMENT DECLINED" in the "Invoice Payment Status Label" element
+    And I should see "Payment declined" in the "Invoice Payment Status Label" element
     And I should see a "Invoice Pay Button" element
 
   Scenario: Check Payment Method and Payment Status column on invoices storefront page
@@ -64,7 +64,7 @@ Feature: Stripe Payment Element - Declined Invoice Payment
     And I click on "FrontendGridColumnManagerButton"
     Then I should see following grid:
       | Invoice Number | Total Amount | Payment Method         | Payment Status   |
-      | INV-001        | $12,345.67   | Stripe Payment Element | PAYMENT DECLINED |
+      | INV-001        | $12,345.67   | Stripe Payment Element | Payment declined |
     And I should see following actions for INV-001 in grid:
       | View |
 
