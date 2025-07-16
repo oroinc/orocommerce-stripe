@@ -1,0 +1,4 @@
+oro_asset:
+    external_resources:
+        stripe_js_library:
+            link: 'https://js.stripe.com/v3/'

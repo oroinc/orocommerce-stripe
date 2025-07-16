@@ -6,5 +6,8 @@ use Oro\Bundle\StripeBundle\Twig\StripeUrlExtension;
 
 class StripeUrlExtensionMock extends StripeUrlExtension
 {
-    public const STRIPE_LIBRARY_URL = '/bundles/orostripe/js/stubs/stripe-stub.js';
+    public function getStripeLibraryUrl(): string
+    {
+        return '/bundles/orostripe/js/stubs/stripe-stub.js';
+    }
 }
