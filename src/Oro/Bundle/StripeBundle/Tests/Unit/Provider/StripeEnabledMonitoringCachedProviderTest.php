@@ -16,9 +16,9 @@ use Psr\Cache\CacheItemPoolInterface;
 
 class StripeEnabledMonitoringCachedProviderTest extends TestCase
 {
-    private FrontendHelper|MockObject $frontendHelper;
-    private CacheItemPoolInterface|MockObject $cache;
-    private ManagerRegistry|MockObject $manager;
+    private FrontendHelper&MockObject $frontendHelper;
+    private CacheItemPoolInterface&MockObject $cache;
+    private ManagerRegistry&MockObject $manager;
     private TokenAccessorInterface $tokenAccessor;
     private StripeEnabledMonitoringCachedProvider $provider;
 
@@ -29,8 +29,7 @@ class StripeEnabledMonitoringCachedProviderTest extends TestCase
         $this->cache = $this->createMock(CacheItemPoolInterface::class);
         $this->manager = $this->createMock(ManagerRegistry::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
-        $this->tokenAccessor
-            ->expects($this->any())
+        $this->tokenAccessor->expects($this->any())
             ->method('getOrganizationId')
             ->willReturn(3);
 

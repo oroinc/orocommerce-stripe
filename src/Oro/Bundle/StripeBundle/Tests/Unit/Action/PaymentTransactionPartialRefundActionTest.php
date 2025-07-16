@@ -8,34 +8,23 @@ use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\StripeBundle\Action\PaymentTransactionPartialRefundAction;
 use Oro\Component\ConfigExpression\ContextAccessor;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException;
 use Symfony\Component\PropertyAccess\PropertyPath;
 use Symfony\Component\Routing\RouterInterface;
 
-class PaymentTransactionPartialRefundActionTest extends \PHPUnit\Framework\TestCase
+class PaymentTransactionPartialRefundActionTest extends TestCase
 {
-    /** @var ContextAccessor|\PHPUnit\Framework\MockObject\MockObject */
-    private $contextAccessor;
-
-    /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $paymentMethodProvider;
-
-    /** @var PaymentTransactionProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $paymentTransactionProvider;
-
-    /** @var RouterInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $router;
-
-    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $dispatcher;
-
-    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $logger;
-
-    /** @var PaymentTransactionPartialRefundAction */
-    private $action;
+    private ContextAccessor&MockObject $contextAccessor;
+    private PaymentMethodProviderInterface&MockObject $paymentMethodProvider;
+    private PaymentTransactionProvider&MockObject $paymentTransactionProvider;
+    private RouterInterface&MockObject $router;
+    private EventDispatcherInterface&MockObject $dispatcher;
+    private LoggerInterface&MockObject $logger;
+    private PaymentTransactionPartialRefundAction $action;
 
     #[\Override]
     protected function setUp(): void
@@ -60,7 +49,7 @@ class PaymentTransactionPartialRefundActionTest extends \PHPUnit\Framework\TestC
     /**
      * @dataProvider executeDataProvider
      */
-    public function testExecute(array $data, array $expected)
+    public function testExecute(array $data, array $expected): void
     {
         /** @var PaymentTransaction $capturePaymentTransaction */
         $capturePaymentTransaction = $data['options']['paymentTransaction'];
@@ -165,7 +154,7 @@ class PaymentTransactionPartialRefundActionTest extends \PHPUnit\Framework\TestC
     /**
      * @dataProvider executeWrongOptionsDataProvider
      */
-    public function testExecuteWrongOptions(array $options)
+    public function testExecuteWrongOptions(array $options): void
     {
         $this->expectException(UndefinedOptionsException::class);
         $paymentTransaction = new PaymentTransaction();
@@ -185,7 +174,7 @@ class PaymentTransactionPartialRefundActionTest extends \PHPUnit\Framework\TestC
         ];
     }
 
-    public function testExecuteFailedWhenPaymentMethodNotExists()
+    public function testExecuteFailedWhenPaymentMethodNotExists(): void
     {
         $context = [];
         $options = [

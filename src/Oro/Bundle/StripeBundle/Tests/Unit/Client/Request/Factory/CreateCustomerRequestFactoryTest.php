@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 class CreateCustomerRequestFactoryTest extends TestCase
 {
-    public function testCreate()
+    public function testCreate(): void
     {
         $doctrineHelper = $this->createMock(DoctrineHelper::class);
         $entityNameResolver = $this->createMock(EntityNameResolver::class);

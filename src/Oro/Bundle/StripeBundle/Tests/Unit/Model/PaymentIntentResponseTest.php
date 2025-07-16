@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class PaymentIntentResponseTest extends TestCase
 {
-    public function testPaymentIntentResponseObject()
+    public function testPaymentIntentResponseObject(): void
     {
         $data = $this->getResponseTestData();
         $paymentIntentResponse = new PaymentIntentResponse($data);
@@ -50,7 +50,7 @@ class PaymentIntentResponseTest extends TestCase
         ], $responseData);
     }
 
-    public function testNextActionTypeNotNull()
+    public function testNextActionTypeNotNull(): void
     {
         $data = $this->getResponseTestData();
         $data['next_action'] = [

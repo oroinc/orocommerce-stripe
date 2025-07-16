@@ -104,7 +104,7 @@ class MultiplePurchasePaymentActionTest extends MultiPaymentTestCase
             ->willReturn($setupIntentResponse);
     }
 
-    public function testMultiPurchaseWithErrors()
+    public function testMultiPurchaseWithErrors(): void
     {
         $config = new StripePaymentConfig();
         $config->set(StripePaymentConfig::PAYMENT_ACTION, StripePaymentActionMapper::MANUAL);

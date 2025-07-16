@@ -18,12 +18,12 @@ use Stripe\PaymentIntent;
 
 abstract class MultiPaymentTestCase extends TestCase
 {
-    protected StripeGatewayFactoryInterface|MockObject $factory;
-    protected StripeGatewayInterface|MockObject $client;
-    protected EntitiesTransactionsProvider|MockObject $entitiesTransactionsProvider;
-    protected PaymentTransactionProvider|MockObject $paymentTransactionProvider;
-    protected CreateCustomerRequestFactory|MockObject $createCustomerRequestFactory;
-    protected LoggerInterface|MockObject $logger;
+    protected StripeGatewayFactoryInterface&MockObject $factory;
+    protected StripeGatewayInterface&MockObject $client;
+    protected EntitiesTransactionsProvider&MockObject $entitiesTransactionsProvider;
+    protected PaymentTransactionProvider&MockObject $paymentTransactionProvider;
+    protected CreateCustomerRequestFactory&MockObject $createCustomerRequestFactory;
+    protected LoggerInterface&MockObject $logger;
     protected PurchasePaymentActionAbstract $action;
 
     #[\Override]

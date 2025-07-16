@@ -27,16 +27,17 @@ use Symfony\Component\PropertyAccess\PropertyPath;
 
 class HandleStripePaymentSubresourceTest extends ChangeSubresourceProcessorTestCase
 {
-    private SplitOrderActionsInterface|MockObject $splitOrderActions;
-    private CheckoutActionsInterface|MockObject $checkoutActions;
-    private AddressActionsInterface|MockObject $addressActions;
-    private ActionExecutor|MockObject $actionExecutor;
-    private PaymentStatusProviderInterface|MockObject $paymentStatusProvider;
-    private GroupedCheckoutLineItemsProvider|MockObject $groupedCheckoutLineItemsProvider;
-    private DoctrineHelper|MockObject $doctrineHelper;
-    private FlushDataHandlerInterface|MockObject $flushDataHandler;
+    private SplitOrderActionsInterface&MockObject $splitOrderActions;
+    private CheckoutActionsInterface&MockObject $checkoutActions;
+    private AddressActionsInterface&MockObject $addressActions;
+    private ActionExecutor&MockObject $actionExecutor;
+    private PaymentStatusProviderInterface&MockObject $paymentStatusProvider;
+    private GroupedCheckoutLineItemsProvider&MockObject $groupedCheckoutLineItemsProvider;
+    private DoctrineHelper&MockObject $doctrineHelper;
+    private FlushDataHandlerInterface&MockObject $flushDataHandler;
     private HandleStripePaymentSubresource $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

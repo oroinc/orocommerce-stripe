@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class RefundsCollectionResponseTest extends TestCase
 {
-    public function testCollectionIterable()
+    public function testCollectionIterable(): void
     {
         $responseData = [
             'data' => [

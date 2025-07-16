@@ -17,7 +17,7 @@ class StripePaymentMethodsViewProviderTest extends TestCase
     private const IDENTIFIER2 = 'test2';
     private const WRONG_IDENTIFIER = 'wrong';
 
-    protected StripePaymentConfigsProvider|MockObject $configProvider;
+    protected StripePaymentConfigsProvider&MockObject $configProvider;
     protected StripePaymentMethodsViewProvider $provider;
     protected string $paymentConfigClass;
 

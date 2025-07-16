@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class MultiPurchaseResponseTest extends TestCase
 {
-    public function testResponse()
+    public function testResponse(): void
     {
         $response = new MultiPurchaseResponse();
         $this->assertTrue($response->isSuccessful());

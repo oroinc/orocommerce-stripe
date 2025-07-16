@@ -13,9 +13,9 @@ use Psr\Log\LoggerInterface;
 
 class StripeNotificationManagerTest extends TestCase
 {
-    private MessageProducerInterface|MockObject $messageProducer;
-    private NotificationSettings|MockObject $notificationSettings;
-    private LoggerInterface|MockObject $logger;
+    private MessageProducerInterface&MockObject $messageProducer;
+    private NotificationSettings&MockObject $notificationSettings;
+    private LoggerInterface&MockObject $logger;
     private StripeNotificationManager $notificationManager;
 
     #[\Override]
@@ -32,7 +32,7 @@ class StripeNotificationManagerTest extends TestCase
         );
     }
 
-    public function testSendNotification()
+    public function testSendNotification(): void
     {
         $this->notificationSettings->expects($this->once())
             ->method('getSender')
@@ -54,7 +54,7 @@ class StripeNotificationManagerTest extends TestCase
         $this->notificationManager->sendNotification('test_recipient@test.com', 'Test subject', 'Test message');
     }
 
-    public function testSendNotificationFailed()
+    public function testSendNotificationFailed(): void
     {
         $exception = new Exception('Failed to send message');
 

@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class CustomerResponseTest extends TestCase
 {
-    public function testResponseObject()
+    public function testResponseObject(): void
     {
         $data = $this->getResponseTestData();
         $response = new CustomerResponse($data);

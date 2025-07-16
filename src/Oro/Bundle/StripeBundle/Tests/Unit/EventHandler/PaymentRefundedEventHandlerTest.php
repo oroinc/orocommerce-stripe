@@ -25,11 +25,10 @@ use PHPUnit\Framework\TestCase;
 
 class PaymentRefundedEventHandlerTest extends TestCase
 {
-    private ManagerRegistry|MockObject $managerRegistry;
-    private PaymentTransactionProvider|MockObject $paymentTransactionProvider;
-    private PaymentTransactionRepository|MockObject $repositoryMock;
-    private StripeGatewayFactoryInterface|MockObject $stripeClientFactory;
-
+    private ManagerRegistry&MockObject $managerRegistry;
+    private PaymentTransactionProvider&MockObject $paymentTransactionProvider;
+    private PaymentTransactionRepository&MockObject $repositoryMock;
+    private StripeGatewayFactoryInterface&MockObject $stripeClientFactory;
     private PaymentRefundedEventHandler $handler;
 
     #[\Override]
@@ -51,19 +50,19 @@ class PaymentRefundedEventHandlerTest extends TestCase
         );
     }
 
-    public function testIsSupportedSuccess()
+    public function testIsSupportedSuccess(): void
     {
         $event = new StripeEvent('charge.refunded', new StripePaymentConfig(), new PaymentIntentResponse());
         $this->assertTrue($this->handler->isSupported($event));
     }
 
-    public function testEventNotSupported()
+    public function testEventNotSupported(): void
     {
         $event = new StripeEvent('payment_intent.canceled', new StripePaymentConfig(), new PaymentIntentResponse());
         $this->assertFalse($this->handler->isSupported($event));
     }
 
-    public function testEventContainsUnsupportedResponseObject()
+    public function testEventContainsUnsupportedResponseObject(): void
     {
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage(
@@ -81,7 +80,7 @@ class PaymentRefundedEventHandlerTest extends TestCase
         $this->handler->handle($event);
     }
 
-    public function testHandleSuccess()
+    public function testHandleSuccess(): void
     {
         $sourceTransaction = new PaymentTransaction();
         $sourceTransaction->setActive(true)
@@ -127,7 +126,7 @@ class PaymentRefundedEventHandlerTest extends TestCase
         $this->assertEquals(ResponseObjectInterface::ACTION_SOURCE_MANUALLY, $transactionResponse['source']);
     }
 
-    public function testSuccessRefundWithRefundTransactionsExists()
+    public function testSuccessRefundWithRefundTransactionsExists(): void
     {
         $sourceTransaction = new PaymentTransaction();
         $sourceTransaction->setActive(true)
@@ -178,7 +177,7 @@ class PaymentRefundedEventHandlerTest extends TestCase
         $this->assertEquals(ResponseObjectInterface::ACTION_SOURCE_MANUALLY, $transactionResponse['source']);
     }
 
-    public function testRefundPaymentTransactionAlreadyExists()
+    public function testRefundPaymentTransactionAlreadyExists(): void
     {
         $sourceTransaction = new PaymentTransaction();
         $sourceTransaction->setActive(true)
@@ -216,7 +215,7 @@ class PaymentRefundedEventHandlerTest extends TestCase
         $this->handler->handle($event);
     }
 
-    public function testRefundPaymentTransactionInProcess()
+    public function testRefundPaymentTransactionInProcess(): void
     {
         $sourceTransaction = new PaymentTransaction();
         $sourceTransaction->setActive(true)
@@ -252,7 +251,7 @@ class PaymentRefundedEventHandlerTest extends TestCase
         $this->handler->handle($event);
     }
 
-    public function testSourceTransactionNotExists()
+    public function testSourceTransactionNotExists(): void
     {
         $this->expectException(StripeEventHandleException::class);
         $this->expectExceptionMessage(
@@ -274,7 +273,7 @@ class PaymentRefundedEventHandlerTest extends TestCase
         $this->handler->handle($event);
     }
 
-    public function testSourceAuthorizeTransactionsExists()
+    public function testSourceAuthorizeTransactionsExists(): void
     {
         $sourceTransaction = new PaymentTransaction();
         $sourceTransaction->setActive(true)

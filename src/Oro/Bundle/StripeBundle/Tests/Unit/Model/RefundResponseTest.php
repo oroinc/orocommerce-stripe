@@ -16,7 +16,7 @@ class RefundResponseTest extends TestCase
         ?string $paymentIntentId,
         string $status,
         string $identifier
-    ) {
+    ): void {
         $response = new RefundResponse($data);
 
         $this->assertEquals($paymentIntentId, $response->getPaymentIntentId());
@@ -96,7 +96,7 @@ class RefundResponseTest extends TestCase
         ];
     }
 
-    public function testGetRefundedAmount()
+    public function testGetRefundedAmount(): void
     {
         $response = new RefundResponse([
             'id' => 're_1',
@@ -118,7 +118,7 @@ class RefundResponseTest extends TestCase
         $this->assertEquals(10.01, $response->getRefundedAmount());
     }
 
-    public function testGetRefundedAmountThrowsException()
+    public function testGetRefundedAmountThrowsException(): void
     {
         $response = new RefundResponse([
             'id' => 're_1',
@@ -142,7 +142,7 @@ class RefundResponseTest extends TestCase
         $response->getRefundedAmount();
     }
 
-    public function testGetRefundedCurrencyThrowsException()
+    public function testGetRefundedCurrencyThrowsException(): void
     {
         $response = new RefundResponse([
             'id' => 're_1',

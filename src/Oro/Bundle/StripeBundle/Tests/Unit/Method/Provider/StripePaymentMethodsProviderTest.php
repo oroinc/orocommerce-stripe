@@ -18,8 +18,8 @@ class StripePaymentMethodsProviderTest extends TestCase
     private const IDENTIFIER2 = 'test2';
     private const WRONG_IDENTIFIER = 'wrong';
 
-    private StripePaymentConfigsProvider|MockObject $configProvider;
-    private StripePaymentMethodFactory|MockObject $factory;
+    private StripePaymentConfigsProvider&MockObject $configProvider;
+    private StripePaymentMethodFactory&MockObject $factory;
     private StripePaymentMethodsProvider $methodProvider;
     private string $paymentConfigClass;
 
@@ -61,7 +61,7 @@ class StripePaymentMethodsProviderTest extends TestCase
     /**
      * @dataProvider hasPaymentMethodDataProvider
      */
-    public function testHasPaymentMethod(string $identifier, bool $expectedResult)
+    public function testHasPaymentMethod(string $identifier, bool $expectedResult): void
     {
         $config = $this->buildPaymentConfig(self::IDENTIFIER1);
 
@@ -72,7 +72,7 @@ class StripePaymentMethodsProviderTest extends TestCase
         $this->assertEquals($expectedResult, $this->methodProvider->hasPaymentMethod($identifier));
     }
 
-    public function testGetPaymentMethodForWrongIdentifier()
+    public function testGetPaymentMethodForWrongIdentifier(): void
     {
         $config = $this->buildPaymentConfig(self::IDENTIFIER1);
 

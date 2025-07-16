@@ -11,8 +11,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class StripeFilterTest extends TestCase
 {
-    private RequestStack|MockObject $requestStack;
-    private StripeEnabledMonitoringCachedProvider|MockObject $provider;
+    private RequestStack&MockObject $requestStack;
+    private StripeEnabledMonitoringCachedProvider&MockObject $provider;
     private StripeFilter $filter;
 
     #[\Override]
@@ -36,8 +36,7 @@ class StripeFilterTest extends TestCase
             ->method('getMainRequest')
             ->willReturn($request);
 
-        $this->provider
-            ->expects($this->once())
+        $this->provider->expects($this->once())
             ->method('isStripeEnabled')
             ->willReturn(true);
 
@@ -56,8 +55,7 @@ class StripeFilterTest extends TestCase
             ->method('getMainRequest')
             ->willReturn($request);
 
-        $this->provider
-            ->expects($this->once())
+        $this->provider->expects($this->once())
             ->method('isStripeEnabled')
             ->willReturn(true);
 
@@ -77,8 +75,7 @@ class StripeFilterTest extends TestCase
             ->method('getMainRequest')
             ->willReturn($request);
 
-        $this->provider
-            ->expects($this->once())
+        $this->provider->expects($this->once())
             ->method('isStripeEnabled')
             ->willReturn(true);
 
@@ -98,8 +95,7 @@ class StripeFilterTest extends TestCase
             ->method('getMainRequest')
             ->willReturn($request);
 
-        $this->provider
-            ->expects($this->once())
+        $this->provider->expects($this->once())
             ->method('isStripeEnabled')
             ->willReturn(true);
 
@@ -115,8 +111,7 @@ class StripeFilterTest extends TestCase
         $this->requestStack->expects($this->never())
             ->method('getMainRequest');
 
-        $this->provider
-            ->expects($this->once())
+        $this->provider->expects($this->once())
             ->method('isStripeEnabled')
             ->willReturn(false);
 

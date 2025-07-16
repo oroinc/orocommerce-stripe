@@ -26,12 +26,11 @@ use Stripe\SetupIntent;
 
 class PurchasePaymentActionTest extends TestCase
 {
-    private StripeGatewayInterface|MockObject $client;
-    private EntitiesTransactionsProvider|MockObject $entitiesTransactionsProvider;
-    private PaymentTransactionProvider|MockObject $paymentTransactionProvider;
-    private CreateCustomerRequestFactory|MockObject $createCustomerRequestFactory;
-    private LoggerInterface|MockObject $logger;
-
+    private StripeGatewayInterface&MockObject $client;
+    private EntitiesTransactionsProvider&MockObject $entitiesTransactionsProvider;
+    private PaymentTransactionProvider&MockObject $paymentTransactionProvider;
+    private CreateCustomerRequestFactory&MockObject $createCustomerRequestFactory;
+    private LoggerInterface&MockObject $logger;
     private PurchasePaymentAction $action;
 
     #[\Override]
@@ -72,8 +71,7 @@ class PurchasePaymentActionTest extends TestCase
 
         $response = $this->createPaymentIntentResponse();
 
-        $this->client
-            ->expects($this->once())
+        $this->client->expects($this->once())
             ->method('purchase')
             ->willReturn($response);
 
@@ -154,8 +152,7 @@ class PurchasePaymentActionTest extends TestCase
         $this->assertCustomerCreationCalled();
         $this->assertSetupIntentCreationCalled($transaction);
 
-        $this->client
-            ->expects($this->once())
+        $this->client->expects($this->once())
             ->method('purchase')
             ->willReturn($response);
 

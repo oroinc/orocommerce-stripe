@@ -16,7 +16,7 @@ use Stripe\PaymentIntent;
 
 class AuthorizePaymentActionTest extends TestCase
 {
-    private StripeGatewayInterface|MockObject $client;
+    private StripeGatewayInterface&MockObject $client;
     private AuthorizePaymentAction $action;
 
     #[\Override]
@@ -55,8 +55,7 @@ class AuthorizePaymentActionTest extends TestCase
 
         $response = new PaymentIntentResponse($paymentIntent->toArray());
 
-        $this->client
-            ->expects($this->once())
+        $this->client->expects($this->once())
             ->method('purchase')
             ->willReturn($response);
 

@@ -17,9 +17,8 @@ use Stripe\PaymentIntent;
 
 class RefundPaymentActionTest extends TestCase
 {
-    private StripeGatewayInterface|MockObject $client;
+    private StripeGatewayInterface&MockObject $client;
     private PaymentTransactionProvider $paymentTransactionProvider;
-
     private RefundPaymentAction $action;
 
     #[\Override]

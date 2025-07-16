@@ -19,12 +19,12 @@ class ReAuthorizeMessageNotificationsTest extends TestCase
 {
     use EntityTrait;
 
-    private StripeNotificationManager|MockObject $notificationManager;
-    private DateTimeFormatterInterface|MockObject $dateTimeFormatter;
-    private NumberFormatter|MockObject $numberFormatter;
-    private TranslatorInterface|MockObject $translator;
-    private DoctrineHelper|MockObject $doctrineHelper;
-    private LocaleSettings|MockObject $localeSettings;
+    private StripeNotificationManager&MockObject $notificationManager;
+    private DateTimeFormatterInterface&MockObject $dateTimeFormatter;
+    private NumberFormatter&MockObject $numberFormatter;
+    private TranslatorInterface&MockObject $translator;
+    private DoctrineHelper&MockObject $doctrineHelper;
+    private LocaleSettings&MockObject $localeSettings;
     private ReAuthorizeMessageNotifications $messageNotifications;
 
     #[\Override]
@@ -47,7 +47,7 @@ class ReAuthorizeMessageNotificationsTest extends TestCase
         );
     }
 
-    public function testSendAuthorizationFailed()
+    public function testSendAuthorizationFailed(): void
     {
         $paymentTransaction = $this->getEntity(PaymentTransaction::class, [
             'action' => 'authorize',
@@ -122,7 +122,7 @@ class ReAuthorizeMessageNotificationsTest extends TestCase
         );
     }
 
-    public function testSendAuthorizationFailedWhenEntityIsNotOrder()
+    public function testSendAuthorizationFailedWhenEntityIsNotOrder(): void
     {
         $paymentTransaction = $this->getEntity(PaymentTransaction::class, [
             'action' => 'authorize',

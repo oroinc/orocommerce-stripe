@@ -13,8 +13,8 @@ use PHPUnit\Framework\TestCase;
 
 class StripePaymentMethodFactoryTest extends TestCase
 {
-    private PaymentActionRegistry|MockObject $registry;
-    private Logger|MockObject $logger;
+    private PaymentActionRegistry&MockObject $registry;
+    private Logger&MockObject $logger;
     private StripePaymentMethodFactory $factory;
 
     #[\Override]

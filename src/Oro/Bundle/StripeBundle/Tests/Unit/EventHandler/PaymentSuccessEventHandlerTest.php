@@ -22,10 +22,9 @@ class PaymentSuccessEventHandlerTest extends TestCase
 {
     use EntityTrait;
 
-    private ManagerRegistry|MockObject $managerRegistry;
-    private PaymentTransactionProvider|MockObject $paymentTransactionProvider;
-    private PaymentTransactionRepository|MockObject $repositoryMock;
-
+    private ManagerRegistry&MockObject $managerRegistry;
+    private PaymentTransactionProvider&MockObject $paymentTransactionProvider;
+    private PaymentTransactionRepository&MockObject $repositoryMock;
     private PaymentSuccessEventHandler $handler;
 
     #[\Override]
@@ -44,19 +43,19 @@ class PaymentSuccessEventHandlerTest extends TestCase
         );
     }
 
-    public function testIsSupportedSuccess()
+    public function testIsSupportedSuccess(): void
     {
         $event = new StripeEvent('payment_intent.succeeded', new StripePaymentConfig(), new PaymentIntentResponse());
         $this->assertTrue($this->handler->isSupported($event));
     }
 
-    public function testEventNotSupported()
+    public function testEventNotSupported(): void
     {
         $event = new StripeEvent('charge.refunded', new StripePaymentConfig(), new PaymentIntentResponse());
         $this->assertFalse($this->handler->isSupported($event));
     }
 
-    public function testHandleSuccess()
+    public function testHandleSuccess(): void
     {
         $sourceTransaction = new PaymentTransaction();
         $sourceTransaction->setActive(true)
@@ -104,7 +103,7 @@ class PaymentSuccessEventHandlerTest extends TestCase
     /**
      * @dataProvider getAlreadyCapturedPaymentData
      */
-    public function testPaymentAlreadyCaptured($captureTransactions)
+    public function testPaymentAlreadyCaptured($captureTransactions): void
     {
         $sourceTransaction = new PaymentTransaction();
         $sourceTransaction->setActive(true)
@@ -166,7 +165,7 @@ class PaymentSuccessEventHandlerTest extends TestCase
         ];
     }
 
-    public function testSourceTransactionNotExists()
+    public function testSourceTransactionNotExists(): void
     {
         $this->repositoryMock->expects($this->once())
             ->method('findOneBy')
