@@ -10,20 +10,15 @@ use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentBundle\Provider\MethodsConfigsRule\Context\MethodsConfigsRulesByContextProviderInterface;
 use Oro\Bundle\StripeBundle\Method\Provider\SortedApplicablePaymentMethodsProvider;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class SortedApplicablePaymentMethodsProviderTest extends \PHPUnit\Framework\TestCase
+class SortedApplicablePaymentMethodsProviderTest extends TestCase
 {
-    /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $paymentMethodProvider;
-
-    /** @var MethodsConfigsRulesByContextProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $paymentMethodsConfigsRulesProvider;
-
-    /** @var MemoryCacheProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $memoryCacheProvider;
-
-    /** @var SortedApplicablePaymentMethodsProvider */
-    private $provider;
+    private PaymentMethodProviderInterface&MockObject $paymentMethodProvider;
+    private MethodsConfigsRulesByContextProviderInterface&MockObject $paymentMethodsConfigsRulesProvider;
+    private MemoryCacheProviderInterface&MockObject $memoryCacheProvider;
+    private SortedApplicablePaymentMethodsProvider $provider;
 
     #[\Override]
     protected function setUp(): void

@@ -26,7 +26,7 @@ class CreateSetupIntentRequestTest extends TestCase
         );
     }
 
-    public function testGetRequestData()
+    public function testGetRequestData(): void
     {
         $this->paymentTransaction->setEntityClass(Order::class);
         $this->paymentTransaction->setEntityIdentifier(100);

@@ -16,9 +16,9 @@ use PHPUnit\Framework\TestCase;
 
 class OrderPaymentTransactionsGridListenerTest extends TestCase
 {
-    private ManagerRegistry|MockObject $managerRegistryMock;
-    private StripePaymentConfigsProvider|MockObject $paymentConfigProviderMock;
-    private PaymentTransactionRepository|MockObject $paymentTransactionRepositoryMock;
+    private ManagerRegistry&MockObject $managerRegistryMock;
+    private StripePaymentConfigsProvider&MockObject $paymentConfigProviderMock;
+    private PaymentTransactionRepository&MockObject $paymentTransactionRepositoryMock;
     private OrderPaymentTransactionsGridListener $listener;
 
     #[\Override]
@@ -37,7 +37,7 @@ class OrderPaymentTransactionsGridListenerTest extends TestCase
         );
     }
 
-    public function testReferenceColumnAdded()
+    public function testReferenceColumnAdded(): void
     {
         $config = $this->createMock(DatagridConfiguration::class);
         $event = $this->createEvent($config, ['order_id' => 1]);
@@ -60,7 +60,7 @@ class OrderPaymentTransactionsGridListenerTest extends TestCase
         $this->listener->onBuildBefore($event);
     }
 
-    public function testOrderHasAnotherPaymentMethod()
+    public function testOrderHasAnotherPaymentMethod(): void
     {
         $config = $this->createMock(DatagridConfiguration::class);
         $event = $this->createEvent($config, ['order_id' => 1]);
@@ -83,7 +83,7 @@ class OrderPaymentTransactionsGridListenerTest extends TestCase
         $this->listener->onBuildBefore($event);
     }
 
-    public function testWithNotConfiguredStripeMethods()
+    public function testWithNotConfiguredStripeMethods(): void
     {
         $config = $this->createMock(DatagridConfiguration::class);
         $event = $this->createEvent($config, ['order_id' => 1]);
@@ -104,7 +104,7 @@ class OrderPaymentTransactionsGridListenerTest extends TestCase
         $this->listener->onBuildBefore($event);
     }
 
-    public function testOrderIdParameterEmpty()
+    public function testOrderIdParameterEmpty(): void
     {
         $config = $this->createMock(DatagridConfiguration::class);
         $event = $this->createEvent($config, []);

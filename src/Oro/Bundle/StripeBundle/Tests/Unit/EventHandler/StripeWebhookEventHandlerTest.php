@@ -13,9 +13,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class StripeWebhookEventHandlerTest extends TestCase
 {
-    private StripeEventFactoryInterface|MockObject $eventFactoryMock;
-    private StripeEventHandlerRegistry|MockObject $handlerRegistryMock;
-
+    private StripeEventFactoryInterface&MockObject $eventFactoryMock;
+    private StripeEventHandlerRegistry&MockObject $handlerRegistryMock;
     private StripeWebhookEventHandler $eventHandler;
 
     #[\Override]
@@ -30,7 +29,7 @@ class StripeWebhookEventHandlerTest extends TestCase
         );
     }
 
-    public function testHandleEventSuccess()
+    public function testHandleEventSuccess(): void
     {
         $event = $this->createMock(StripeEventInterface::class);
 
@@ -50,7 +49,7 @@ class StripeWebhookEventHandlerTest extends TestCase
         $this->eventHandler->handleEvent(new Request());
     }
 
-    public function testHandleEventWithFailedEventObjectCreation()
+    public function testHandleEventWithFailedEventObjectCreation(): void
     {
         $this->expectException(\LogicException::class);
 

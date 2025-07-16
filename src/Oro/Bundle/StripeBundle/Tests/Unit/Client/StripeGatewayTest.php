@@ -49,12 +49,11 @@ class StripeGatewayTest extends TestCase
     use SetReflectionPropertyTrait;
     use EntityTrait;
 
-    private PaymentIntentService|MockObject $paymentService;
-    private SetupIntentService|MockObject $setupIntentService;
-    private CustomerService|MockObject $customerService;
-    private RefundService|MockObject $refundService;
-    private StripeClient|MockObject $client;
-
+    private PaymentIntentService&MockObject $paymentService;
+    private SetupIntentService&MockObject $setupIntentService;
+    private CustomerService&MockObject $customerService;
+    private RefundService&MockObject $refundService;
+    private StripeClient&MockObject $client;
     private StripeGateway $gateway;
 
     #[\Override]
@@ -592,7 +591,7 @@ class StripeGatewayTest extends TestCase
         $this->gateway->refund($request);
     }
 
-    public function testGetAllRefundsSuccess()
+    public function testGetAllRefundsSuccess(): void
     {
         $criteria = ['charge' => 'ch_1'];
         $stripeResponse = new Collection();
@@ -606,7 +605,7 @@ class StripeGatewayTest extends TestCase
         $this->assertEquals($expected, $this->gateway->getAllRefunds($criteria));
     }
 
-    public function testGetAllRefundsFailed()
+    public function testGetAllRefundsFailed(): void
     {
         $criteria = ['charge' => 'ch_1'];
         $exception = new ApiConnectionException('Unable to connect to Stripe service');

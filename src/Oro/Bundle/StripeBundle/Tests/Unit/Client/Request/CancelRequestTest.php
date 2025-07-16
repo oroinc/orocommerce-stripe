@@ -49,7 +49,7 @@ class CancelRequestTest extends TestCase
     /**
      * @dataProvider paymentTransactionDataProvider
      */
-    public function testGetRequestData(PaymentTransaction $paymentTransaction, array $expected)
+    public function testGetRequestData(PaymentTransaction $paymentTransaction, array $expected): void
     {
         $request = new CancelRequest($paymentTransaction);
         $this->assertEquals($expected, $request->getRequestData());

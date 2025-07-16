@@ -17,9 +17,8 @@ use Stripe\PaymentIntent;
 
 class CancelPaymentActionTest extends TestCase
 {
-    private StripeGatewayInterface|MockObject $client;
+    private StripeGatewayInterface&MockObject $client;
     private PaymentTransactionProvider $paymentTransactionProvider;
-
     private CancelPaymentAction $action;
 
     #[\Override]

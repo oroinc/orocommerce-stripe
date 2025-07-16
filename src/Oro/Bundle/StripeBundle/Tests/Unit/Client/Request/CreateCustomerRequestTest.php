@@ -18,8 +18,8 @@ class CreateCustomerRequestTest extends TestCase
 {
     use EntityTrait;
 
-    private DoctrineHelper|MockObject $doctrineHelper;
-    private EntityNameResolver|MockObject $entityNameResolver;
+    private DoctrineHelper&MockObject $doctrineHelper;
+    private EntityNameResolver&MockObject $entityNameResolver;
     private PaymentTransaction $paymentTransaction;
     private CreateCustomerRequest $request;
 
@@ -37,7 +37,7 @@ class CreateCustomerRequestTest extends TestCase
         );
     }
 
-    public function testGetRequestData()
+    public function testGetRequestData(): void
     {
         $user = $this->getEntity(CustomerUser::class, ['id' => 10]);
         $country = new Country('US');

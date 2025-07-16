@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 class PaymentTransactionDataProviderTest extends TestCase
 {
-    private PaymentTransactionRepository|MockObject $transactionRepository;
+    private PaymentTransactionRepository&MockObject $transactionRepository;
     private PaymentTransactionDataProvider $provider;
 
     #[\Override]
@@ -24,7 +24,7 @@ class PaymentTransactionDataProviderTest extends TestCase
     /**
      * @dataProvider getDataForTestGetAvailableAmountToRefund
      */
-    public function testGetAvailableAmountToRefund(array $transactions, float $expected)
+    public function testGetAvailableAmountToRefund(array $transactions, float $expected): void
     {
         $sourceTransaction = $this->getTransaction(100.00, PaymentMethodInterface::CAPTURE);
         $this->transactionRepository->expects($this->once())

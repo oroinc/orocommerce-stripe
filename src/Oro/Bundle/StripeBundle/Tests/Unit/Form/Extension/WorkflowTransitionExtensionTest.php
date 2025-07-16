@@ -5,9 +5,10 @@ namespace Oro\Bundle\StripeBundle\Tests\Unit\Form\Extension;
 use Oro\Bundle\StripeBundle\Form\Extension\WorkflowTransitionExtension;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\Test\FormBuilderInterface;
 
-class WorkflowTransitionExtensionTest extends \PHPUnit\Framework\TestCase
+class WorkflowTransitionExtensionTest extends TestCase
 {
     private FormBuilderInterface $builder;
     private WorkflowTransitionExtension $formExtension;
@@ -28,7 +29,7 @@ class WorkflowTransitionExtensionTest extends \PHPUnit\Framework\TestCase
         ?string $step,
         bool $hasField,
         bool $expectedFieldAdded
-    ) {
+    ): void {
         $workflowStep = null;
         if ($step) {
             $workflowStep = (new WorkflowStep())

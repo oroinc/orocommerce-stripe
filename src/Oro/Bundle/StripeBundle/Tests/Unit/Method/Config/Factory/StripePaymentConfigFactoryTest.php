@@ -18,9 +18,8 @@ class StripePaymentConfigFactoryTest extends TestCase
     use EntityTrait;
 
     private StripePaymentConfigFactory $factory;
-
-    private LocalizationHelper|MockObject $localizationHelper;
-    private IntegrationIdentifierGeneratorInterface|MockObject $identifierGenerator;
+    private LocalizationHelper&MockObject $localizationHelper;
+    private IntegrationIdentifierGeneratorInterface&MockObject $identifierGenerator;
 
     #[\Override]
     protected function setUp(): void
@@ -54,18 +53,15 @@ class StripePaymentConfigFactoryTest extends TestCase
             'enable_re_authorize' => true
         ];
 
-        /** @var StripeTransportSettings $settings */
         $settings = $this->getEntity(StripeTransportSettings::class, $settingsBag);
 
         $this->localizationHelper->expects($this->any())
             ->method('getLocalizedValue')
-            ->willReturnMap(
-                [
-                    [$settings->getLabels(), null, 'test label'],
-                    [$settings->getShortLabels(), null, 'test short label'],
-                    [$settings->getAppleGooglePayLabels(), null, 'test apple google pay label'],
-                ]
-            );
+            ->willReturnMap([
+                [$settings->getLabels(), null, 'test label'],
+                [$settings->getShortLabels(), null, 'test short label'],
+                [$settings->getAppleGooglePayLabels(), null, 'test apple google pay label'],
+            ]);
 
         $config = $this->factory->createConfig($settings);
         $this->assertEquals(new StripePaymentConfig([

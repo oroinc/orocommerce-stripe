@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 
 class PaymentTransactionFullyRefundedTest extends TestCase
 {
-    private PaymentTransactionDataProvider|MockObject $transactionDataProvider;
+    private PaymentTransactionDataProvider&MockObject $transactionDataProvider;
     private PaymentTransactionFullyRefunded $condition;
 
     #[\Override]
@@ -22,19 +22,19 @@ class PaymentTransactionFullyRefundedTest extends TestCase
         $this->condition = new PaymentTransactionFullyRefunded($this->transactionDataProvider);
     }
 
-    public function testGetName()
+    public function testGetName(): void
     {
         $this->assertEquals('payment_transaction_was_fully_refunded', $this->condition->getName());
     }
 
-    public function testInitializeException()
+    public function testInitializeException(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Missing "transaction" option');
         $this->condition->initialize([]);
     }
 
-    public function testInitialize()
+    public function testInitialize(): void
     {
         $this->assertInstanceOf(
             PaymentTransactionFullyRefunded::class,
@@ -47,7 +47,7 @@ class PaymentTransactionFullyRefundedTest extends TestCase
     /**
      * @dataProvider availableRefundAmountDataProvider
      */
-    public function testEvaluate(float $availableRefundAmount, bool $expected)
+    public function testEvaluate(float $availableRefundAmount, bool $expected): void
     {
         $transaction = new PaymentTransaction();
         $context = $this->createMock(PaymentContextInterface::class);

@@ -18,8 +18,8 @@ use Stripe\PaymentIntent;
 
 class CapturePaymentActionTest extends TestCase
 {
-    private StripeGatewayInterface|MockObject $client;
-    private PaymentTransactionProvider|MockObject $transactionProvider;
+    private StripeGatewayInterface&MockObject $client;
+    private PaymentTransactionProvider&MockObject $transactionProvider;
     private CapturePaymentAction $action;
 
     #[\Override]
@@ -68,8 +68,7 @@ class CapturePaymentActionTest extends TestCase
 
         $responseObject = new PaymentIntentResponse($paymentIntent->toArray());
 
-        $this->client
-            ->expects($this->once())
+        $this->client->expects($this->once())
             ->method('capture')
             ->willReturn($responseObject);
 

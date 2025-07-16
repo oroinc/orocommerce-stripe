@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class ChargeResponseTest extends TestCase
 {
-    public function testChargeResponseObject()
+    public function testChargeResponseObject(): void
     {
         $data = $this->getResponseTestData();
         $chargeResponse = new ChargeResponse($data);

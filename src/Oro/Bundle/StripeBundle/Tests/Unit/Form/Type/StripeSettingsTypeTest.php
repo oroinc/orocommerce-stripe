@@ -33,7 +33,7 @@ class StripeSettingsTypeTest extends FormIntegrationTestCase
 
     public const LOCALIZATION_ID = 998;
 
-    private Translator|MockObject $translator;
+    private Translator&MockObject $translator;
 
     #[\Override]
     protected function setUp(): void

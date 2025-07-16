@@ -21,13 +21,12 @@ class ReAuthorizationHandlerTest extends TestCase
 {
     use EntityTrait;
 
-    private EntitiesTransactionsProvider|MockObject $transactionsProvider;
-    private PaymentMethodProviderInterface|MockObject $paymentMethodProvider;
-    private PaymentTransactionProvider|MockObject $paymentTransactionProvider;
-    private StripePaymentConfigsProvider|MockObject $paymentConfigsProvider;
-    private ReAuthorizeMessageNotifications|MockObject $messageNotifications;
-    private LoggerInterface|MockObject $logger;
-
+    private EntitiesTransactionsProvider&MockObject $transactionsProvider;
+    private PaymentMethodProviderInterface&MockObject $paymentMethodProvider;
+    private PaymentTransactionProvider&MockObject $paymentTransactionProvider;
+    private StripePaymentConfigsProvider&MockObject $paymentConfigsProvider;
+    private ReAuthorizeMessageNotifications&MockObject $messageNotifications;
+    private LoggerInterface&MockObject $logger;
     private ReAuthorizationHandler $handler;
 
     #[\Override]
@@ -50,7 +49,7 @@ class ReAuthorizationHandlerTest extends TestCase
         $this->handler->setLogger($this->logger);
     }
 
-    public function testSetCancellationReasonException()
+    public function testSetCancellationReasonException(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Unsupported cancellation reason passed');
@@ -58,7 +57,7 @@ class ReAuthorizationHandlerTest extends TestCase
         $this->handler->setCancellationReason('unsupported_reason');
     }
 
-    public function testReAuthorizeReAuthorizationNotAllowed()
+    public function testReAuthorizeReAuthorizationNotAllowed(): void
     {
         $config = $this->createMock(StripePaymentConfig::class);
         $config->expects($this->any())
@@ -74,7 +73,7 @@ class ReAuthorizationHandlerTest extends TestCase
         $this->handler->reAuthorize();
     }
 
-    public function testReAuthorizeReAuthorizationAllowedAndAutomaticPaymentAction()
+    public function testReAuthorizeReAuthorizationAllowedAndAutomaticPaymentAction(): void
     {
         $config = $this->createMock(StripePaymentConfig::class);
         $config->expects($this->any())
@@ -94,7 +93,7 @@ class ReAuthorizationHandlerTest extends TestCase
         $this->handler->reAuthorize();
     }
 
-    public function testReAuthorizeUnableToCancelWithPaymentMethodException()
+    public function testReAuthorizeUnableToCancelWithPaymentMethodException(): void
     {
         $paymentMethod = $this->createMock(PaymentMethodInterface::class);
         $config = $this->createMock(StripePaymentConfig::class);
@@ -159,7 +158,7 @@ class ReAuthorizationHandlerTest extends TestCase
         $this->handler->reAuthorize();
     }
 
-    public function testReAuthorizeUnableToCancel()
+    public function testReAuthorizeUnableToCancel(): void
     {
         $paymentMethod = $this->createMock(PaymentMethodInterface::class);
         $config = $this->createMock(StripePaymentConfig::class);
@@ -244,7 +243,7 @@ class ReAuthorizationHandlerTest extends TestCase
         $this->handler->reAuthorize();
     }
 
-    public function testReAuthorizeUnableToCreateNewAuthorization()
+    public function testReAuthorizeUnableToCreateNewAuthorization(): void
     {
         $paymentMethod = $this->createMock(PaymentMethodInterface::class);
         $config = $this->createMock(StripePaymentConfig::class);
@@ -338,7 +337,7 @@ class ReAuthorizationHandlerTest extends TestCase
         $this->handler->reAuthorize();
     }
 
-    public function testReAuthorize()
+    public function testReAuthorize(): void
     {
         $paymentMethod = $this->createMock(PaymentMethodInterface::class);
         $config = $this->createMock(StripePaymentConfig::class);

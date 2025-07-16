@@ -12,7 +12,7 @@ class StripeApiResponseTest extends TestCase
     /**
      * @dataProvider successfulDataProvider
      */
-    public function testApiResponseSuccessfulTrue(array $responseData)
+    public function testApiResponseSuccessfulTrue(array $responseData): void
     {
         $result = $this->createApeResponse($responseData);
 
@@ -58,7 +58,7 @@ class StripeApiResponseTest extends TestCase
         ];
     }
 
-    public function testApiResponseSuccessfulFalse()
+    public function testApiResponseSuccessfulFalse(): void
     {
         $responseData = [
             'id' => 'pi_5',

@@ -17,7 +17,7 @@ class SetupIntentResponseTest extends TestCase
         string $status,
         string $identifier,
         string $clientSecret
-    ) {
+    ): void {
         $response = new SetupIntentResponse($data);
 
         $this->assertEquals($nextActionType, $response->getNextActionType());

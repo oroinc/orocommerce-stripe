@@ -19,9 +19,9 @@ use Symfony\Component\HttpFoundation\Request;
 
 class StripeSDKEventFactoryTest extends TestCase
 {
-    private MockObject|StripePaymentConfigsProvider $paymentConfigsProvider;
-    private MockObject|ManagerRegistry $managerRegistry;
-    private MockObject|StripeSDKEventFactory $eventFactory;
+    private StripePaymentConfigsProvider&MockObject $paymentConfigsProvider;
+    private ManagerRegistry&MockObject $managerRegistry;
+    private StripeSDKEventFactory&MockObject $eventFactory;
 
     #[\Override]
     protected function setUp(): void
@@ -40,7 +40,7 @@ class StripeSDKEventFactoryTest extends TestCase
             ->getMock();
     }
 
-    public function testInvalidStripeEventException()
+    public function testInvalidStripeEventException(): void
     {
         $request = Request::createFromGlobals();
         $config = $this->createMock(StripePaymentConfig::class);
@@ -59,7 +59,7 @@ class StripeSDKEventFactoryTest extends TestCase
         $this->eventFactory->createEventFromRequest($request);
     }
 
-    public function testNoStripePaymentConfigsException()
+    public function testNoStripePaymentConfigsException(): void
     {
         $request = Request::createFromGlobals();
         $this->paymentConfigsProvider->expects(self::once())
@@ -75,7 +75,7 @@ class StripeSDKEventFactoryTest extends TestCase
         $this->eventFactory->createEventFromRequest($request);
     }
 
-    public function testSupportedEvent()
+    public function testSupportedEvent(): void
     {
         $request = Request::createFromGlobals();
         $config1 = new StripePaymentConfig([
@@ -123,7 +123,7 @@ class StripeSDKEventFactoryTest extends TestCase
 
         self::assertInstanceOf(PaymentIntentResponse::class, $event->getData());
     }
-    public function testUnsupportedEvent()
+    public function testUnsupportedEvent(): void
     {
         $request = Request::createFromGlobals();
         $config = $this->createMock(StripePaymentConfig::class);

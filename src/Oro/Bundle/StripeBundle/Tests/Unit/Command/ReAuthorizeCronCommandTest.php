@@ -12,9 +12,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ReAuthorizeCronCommandTest extends TestCase
 {
-    private EntitiesTransactionsProvider|MockObject $transactionsProvider;
-    private ReAuthorizationHandler|MockObject $reAuthorizationHandler;
-
+    private EntitiesTransactionsProvider&MockObject $transactionsProvider;
+    private ReAuthorizationHandler&MockObject $reAuthorizationHandler;
     private ReAuthorizeCronCommand $command;
 
     #[\Override]
@@ -29,7 +28,7 @@ class ReAuthorizeCronCommandTest extends TestCase
         );
     }
 
-    public function testIsActive()
+    public function testIsActive(): void
     {
         $this->transactionsProvider->expects($this->once())
             ->method('hasExpiringAuthorizationTransactions')
@@ -38,7 +37,7 @@ class ReAuthorizeCronCommandTest extends TestCase
         $this->assertTrue($this->command->isActive());
     }
 
-    public function testExecute()
+    public function testExecute(): void
     {
         $input = $this->createMock(InputInterface::class);
         $output = $this->createMock(OutputInterface::class);

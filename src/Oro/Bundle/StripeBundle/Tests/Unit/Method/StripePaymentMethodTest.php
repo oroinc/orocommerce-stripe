@@ -21,8 +21,7 @@ use PHPUnit\Framework\TestCase;
 class StripePaymentMethodTest extends TestCase
 {
     protected StripePaymentMethod $method;
-
-    protected PaymentActionRegistry|MockObject $registry;
+    protected PaymentActionRegistry&MockObject $registry;
 
     #[\Override]
     protected function setUp(): void
@@ -106,14 +105,12 @@ class StripePaymentMethodTest extends TestCase
         $response = new PurchaseResponse($responseObject);
 
         $action = $this->createMock(PurchasePaymentAction::class);
-        $action
-            ->expects($this->once())
+        $action->expects($this->once())
             ->method('execute')
             ->with($config, $transaction)
             ->willReturn($response);
 
-        $this->registry
-            ->expects($this->once())
+        $this->registry->expects($this->once())
             ->method('getPaymentAction')
             ->with('test', $transaction)
             ->willReturn($action);
@@ -137,14 +134,12 @@ class StripePaymentMethodTest extends TestCase
         ]);
 
         $action = $this->createMock(PurchasePaymentAction::class);
-        $action
-            ->expects($this->once())
+        $action->expects($this->once())
             ->method('execute')
             ->with($config, $transaction)
             ->willThrowException(new StripeApiException('message', 'code', 'decline'));
 
-        $this->registry
-            ->expects($this->once())
+        $this->registry->expects($this->once())
             ->method('getPaymentAction')
             ->with('test', $transaction)
             ->willReturn($action);

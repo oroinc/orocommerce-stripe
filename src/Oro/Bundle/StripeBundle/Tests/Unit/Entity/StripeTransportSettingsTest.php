@@ -58,7 +58,6 @@ class StripeTransportSettingsTest extends TestCase
             (new LocalizedFallbackValue())->setString(StripeTransportSettings::DEFAULT_APPLE_GOOGLE_PAY_LABEL)
         ]);
 
-        /** @var StripeTransportSettings $entity */
         $entity = $this->getEntity(
             StripeTransportSettings::class,
             [

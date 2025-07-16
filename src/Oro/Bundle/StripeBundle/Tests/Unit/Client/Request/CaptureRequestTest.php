@@ -25,7 +25,7 @@ class CaptureRequestTest extends TestCase
         $this->assertEquals(['amount_to_capture' => $expected], $request->getRequestData());
     }
 
-    public function testPartialCapture()
+    public function testPartialCapture(): void
     {
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction->setAmount(100);

@@ -20,10 +20,9 @@ use PHPUnit\Framework\TestCase;
 
 class PaymentCanceledEventHandlerTest extends TestCase
 {
-    private ManagerRegistry|MockObject $managerRegistry;
-    private PaymentTransactionProvider|MockObject $paymentTransactionProvider;
-    private PaymentTransactionRepository|MockObject $repositoryMock;
-
+    private ManagerRegistry&MockObject $managerRegistry;
+    private PaymentTransactionProvider&MockObject $paymentTransactionProvider;
+    private PaymentTransactionRepository&MockObject $repositoryMock;
     private PaymentCanceledEventHandler $handler;
 
     #[\Override]
@@ -42,19 +41,19 @@ class PaymentCanceledEventHandlerTest extends TestCase
         );
     }
 
-    public function testIsSupportedSuccess()
+    public function testIsSupportedSuccess(): void
     {
         $event = new StripeEvent('payment_intent.canceled', new StripePaymentConfig(), new PaymentIntentResponse());
         $this->assertTrue($this->handler->isSupported($event));
     }
 
-    public function testEventNotSupported()
+    public function testEventNotSupported(): void
     {
         $event = new StripeEvent('charge.refunded', new StripePaymentConfig(), new PaymentIntentResponse());
         $this->assertFalse($this->handler->isSupported($event));
     }
 
-    public function testHandleSuccess()
+    public function testHandleSuccess(): void
     {
         $sourceTransaction = new PaymentTransaction();
         $sourceTransaction->setActive(true)
@@ -103,7 +102,7 @@ class PaymentCanceledEventHandlerTest extends TestCase
         $this->assertFalse($sourceTransaction->isActive());
     }
 
-    public function testPaymentAlreadyCanceled()
+    public function testPaymentAlreadyCanceled(): void
     {
         $sourceTransaction = new PaymentTransaction();
         $sourceTransaction->setActive(true)
@@ -135,7 +134,7 @@ class PaymentCanceledEventHandlerTest extends TestCase
         $this->handler->handle($event);
     }
 
-    public function testSourceTransactionNotExists()
+    public function testSourceTransactionNotExists(): void
     {
         $this->expectException(StripeEventHandleException::class);
         $this->expectExceptionMessage(

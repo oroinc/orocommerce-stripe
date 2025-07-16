@@ -11,6 +11,7 @@ class HandleStripePaymentInfoSubresourceTest extends ChangeSubresourceProcessorT
 {
     private HandleStripePaymentInfoSubresource $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

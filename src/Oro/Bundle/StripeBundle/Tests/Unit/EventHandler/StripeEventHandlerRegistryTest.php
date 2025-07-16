@@ -24,7 +24,7 @@ class StripeEventHandlerRegistryTest extends TestCase
         $this->handlerRegistry = new StripeEventHandlerRegistry($handlers);
     }
 
-    public function testGetHandlerSuccess()
+    public function testGetHandlerSuccess(): void
     {
         $responseObject = $this->createMock(ResponseObjectInterface::class);
         $event = new StripeEvent('test_payment.succeeded', new StripePaymentConfig(), $responseObject, 'stripe_1');
@@ -32,7 +32,7 @@ class StripeEventHandlerRegistryTest extends TestCase
         $this->assertSame($this->handler, $this->handlerRegistry->getHandler($event));
     }
 
-    public function testEventIsNotSupported()
+    public function testEventIsNotSupported(): void
     {
         $this->expectException(NotSupportedEventException::class);
         $this->expectExceptionMessage('Event "test_payment.failed" is not supported');

@@ -18,7 +18,7 @@ class StripeIntegrationListenerTest extends TestCase
 {
     private const ORGANIZATION_ID = 8;
 
-    private MockObject|CacheItemPoolInterface $cache;
+    private CacheItemPoolInterface&MockObject $cache;
     private StripeIntegrationListener $listener;
 
     #[\Override]
@@ -135,8 +135,7 @@ class StripeIntegrationListenerTest extends TestCase
 
     private function assertRemoveCache(): void
     {
-        $this->cache
-            ->expects($this->exactly(2))
+        $this->cache->expects($this->exactly(2))
             ->method('deleteItem')
             ->withConsecutive(
                 [sprintf('%s|%d', CachedProvider::STRIPE_PAYMENT, self::ORGANIZATION_ID)],

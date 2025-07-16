@@ -17,8 +17,8 @@ use Stripe\PaymentIntent;
 
 class ConfirmPaymentActionTest extends TestCase
 {
-    private StripeGatewayInterface|MockObject $client;
-    private EntitiesTransactionsProvider|MockObject $entitiesTransactionsProvider;
+    private StripeGatewayInterface&MockObject $client;
+    private EntitiesTransactionsProvider&MockObject $entitiesTransactionsProvider;
     private ConfirmPaymentAction $action;
 
     #[\Override]
@@ -60,8 +60,7 @@ class ConfirmPaymentActionTest extends TestCase
 
         $response = new PaymentIntentResponse($paymentIntent->toArray());
 
-        $this->client
-            ->expects($this->once())
+        $this->client->expects($this->once())
             ->method('confirm')
             ->willReturn($response);
 
