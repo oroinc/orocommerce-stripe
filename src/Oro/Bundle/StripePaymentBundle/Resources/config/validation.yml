@@ -1,0 +1,42 @@
+Oro\Bundle\StripePaymentBundle\Entity\StripePaymentElementSettings:
+    properties:
+        apiPublicKey:
+            -   NotBlank: ~
+            -   Length:
+                    max: 255
+        apiSecretKey:
+            -   NotBlank: ~
+            -   Length:
+                    max: 255
+        paymentMethodName:
+            -   NotBlank: ~
+            -   Length:
+                    max: 255
+        webhookAccessId:
+            -   NotBlank: ~
+            -   Length:
+                    max: 255
+            -   Uuid:
+                    versions: [ 4 ]
+        webhookStripeId:
+            -   Length:
+                    max: 255
+        webhookSecret:
+            -   NotBlank: ~
+            -   Length:
+                    max: 255
+        captureMethod:
+            -   NotBlank: ~
+            -   Length:
+                    max: 255
+        reAuthorizationEnabled:
+            -   Type: bool
+        reAuthorizationEmail:
+            -   Length:
+                    max: 255
+            -   When:
+                    expression: 'this.getCaptureMethod() == "manual" && this.isReAuthorizationEnabled()'
+                    constraints:
+                        -   NotBlank: ~
+        userMonitoringEnabled:
+            -   Type: bool

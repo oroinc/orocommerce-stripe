@@ -1,0 +1,3 @@
+dynamic-imports:
+    oropayment:
+        - orostripepayment/js/app/components/invoice-payment/stripe-payment-element-invoice-payment-component

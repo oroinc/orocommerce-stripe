@@ -1,0 +1,8 @@
+services:
+
+    oro_stripe_payment.command.cron.re_authorize:
+        class: 'Oro\Bundle\StripePaymentBundle\Command\Cron\ReAuthorizeCronCommand'
+        arguments:
+            - '@oro_message_queue.message_producer'
+        tags:
+            - { name: 'console.command' }

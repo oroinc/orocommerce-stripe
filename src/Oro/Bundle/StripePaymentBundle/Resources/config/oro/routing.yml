@@ -1,0 +1,5 @@
+# This route is additionally enabled for public access in security firewall, {@see Resources/config/app.yml}
+oro_stripe_payment_webhook_payment_element:
+    controller: 'oro_stripe_payment.controller.stripe_payment_webhook.stripe_payment_element'
+    path: '/payment/webhook/stripe/payment-element/{webhookAccessId}'
+    methods: ['POST', 'GET']

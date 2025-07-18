@@ -1,0 +1,107 @@
+{% block oro_stripe_payment_element_settings_widget %}
+    <div data-role="stripe-settings-container" class="stripe-settings-container">
+        {% import '@OroUI/macros.html.twig' as UI %}
+        <fieldset class="form-horizontal">
+            <h5 class="user-fieldset">
+                <span>{{ 'oro.stripe_payment.payment_element.groups.integration.title'|trans }}</span>
+            </h5>
+            {{ form_row(form.apiPublicKey) }}
+            {{ form_row(form.apiSecretKey) }}
+        </fieldset>
+        <fieldset class="form-horizontal">
+            <h5 class="user-fieldset">
+                <span>{{ 'oro.stripe_payment.payment_element.groups.payment_element.title'|trans }}</span>
+            </h5>
+            {{ form_row(form.paymentMethodName) }}
+            {{ form_row(form.paymentMethodLabels) }}
+            {{ form_row(form.paymentMethodShortLabels) }}
+            <div class="control-group-container control-group-wrapper">
+                {%- if form.webhookCreate is defined -%}
+                    {{ form_row(form.webhookCreate, { 'attr': { 'data-page-component-module': 'orosale/js/app/components/dependent-field-component', 'data-dependee-id': form.webhookCreate.vars.name } }) }}
+                    {%- set webhook_secret_row_attr = { 'attr': { 'data-page-component-module': 'orosale/js/app/components/dependent-field-component', 'data-depend-on': form.webhookCreate.vars.name, 'data-show-if': 'unchecked', 'data-clear-if': 'unchecked' } } -%}
+                {%- endif -%}
+                {{ form_row(form.webhookAccessId) }}
+                {{ form_row(form.webhookSecret, webhook_secret_row_attr|default({})) }}
+            </div>
+            <div class="control-group-container control-group-wrapper">
+                {{ form_row(form.captureMethod, { 'attr': { 'data-page-component-module': 'orosale/js/app/components/dependent-field-component', 'data-dependee-id': form.captureMethod.vars.name } }) }}
+                <div class="control-group-container"
+                     data-page-component-module="orosale/js/app/components/dependent-field-component"
+                     data-page-component-options="{{ { selectors: { rowContainer: '.control-group-container' } }|json_encode }}"
+                     data-depend-on="{{ form.captureMethod.vars.name }}" data-show-if="manual">
+                    {{ form_row(form.reAuthorizationEnabled, { 'attr': { 'data-page-component-module': 'orosale/js/app/components/dependent-field-component', 'data-dependee-id': form.reAuthorizationEnabled.vars.name } }) }}
+                    {{ form_row(form.reAuthorizationEmail, { 'attr': { 'data-page-component-module': 'orosale/js/app/components/dependent-field-component', 'data-depend-on': form.reAuthorizationEnabled.vars.name, 'data-show-if': 'checked' } }) }}
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="alert alert-info alert--compact" role="alert">
+                    <i class="fa-info alert-icon" aria-hidden="true"></i>
+                    <span>{{ 'oro.stripe_payment.payment_element.apple_pay_domain_verification_advice.message'|trans }}</span>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset class="form-horizontal">
+            <h5 class="user-fieldset">
+                <span>{{ 'oro.stripe_payment.payment_element.groups.advanced.title'|trans }}</span>
+            </h5>
+            {{ form_row(form.userMonitoringEnabled) }}
+        </fieldset>
+        <fieldset class="form-horizontal">
+            <h5 class="user-fieldset">
+                <span>{{ 'oro.stripe_payment.payment_element.groups.other.title'|trans }}</span>
+            </h5>
+            {{ form_rest(form) }}
+        </fieldset>
+    </div>
+{% endblock %}
+
+{% block oro_stripe_payment_element_settings_capture_method_row %}
+    {%- set payment_methods_with_manual_capture -%}
+        {%- for payment_method_type in payment_method_types_with_manual_capture -%}
+            {{- ('oro.stripe_payment.stripe_payment_method_type.' ~ payment_method_type ~ '.label')|trans -}}
+            {% if not loop.last %}, {% endif %}
+        {%- endfor -%}
+    {%- endset -%}
+
+    {{ form_row(form, { tooltip_parameters: { '%payment_methods_with_manual_capture%': payment_methods_with_manual_capture } }) }}
+{% endblock %}
+
+{% block oro_stripe_payment_element_settings_webhook_create_row %}
+    {# Unchecks the webhookCreate checkbox if the form is not valid #}
+    {{ form_row(form, { 'checked': data and valid }) }}
+{% endblock %}
+
+{% block oro_stripe_payment_element_settings_webhook_secret_row %}
+    {%- import '@OroUI/macros.html.twig' as UI -%}
+
+    <div class="control-group control-group-checkbox">
+        <div class="control-label wrap">
+            {{ UI.tooltip('oro.stripe_payment.payment_element.webhook_create.webhook_endpoint_url.tooltip'|trans) }}
+            {{- 'oro.stripe_payment.payment_element.webhook_create.webhook_endpoint_url.label'|trans -}}
+        </div>
+        <div class="controls grid">
+            <div class="text-nowrap text-truncate grid-col-11">
+                {%- set webhook_endpoint_url_span_id = form.vars.id ~ '--webhook-endpoint-url' -%}
+                {%- set webhook_endpoint_url = webhook_endpoint_url|default('oro.ui.empty'|trans) -%}
+                <span id="{{ webhook_endpoint_url_span_id }}"
+                      title="{{ webhook_endpoint_url }}">{{ webhook_endpoint_url }}</span>
+            </div>
+            <div class="grid-col-1">
+                {{- UI.clientLink({
+                    aCss: 'btn btn-icon btn-icon-sm',
+                    iCss: 'fa-copy',
+                    title: 'oro.ui.button.copy_to_clipboard.label'|trans,
+                    labelInIcon: false,
+                    pageComponent: {
+                        view: {
+                            view: 'oroui/js/app/views/element-value-copy-to-clipboard-view',
+                            elementSelector: '#' ~ webhook_endpoint_url_span_id
+                        }
+                    }
+                }) -}}
+            </div>
+        </div>
+    </div>
+
+    {{ form_row(form) }}
+{% endblock %}

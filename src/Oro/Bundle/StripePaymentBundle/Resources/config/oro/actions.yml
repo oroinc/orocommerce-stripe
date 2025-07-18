@@ -1,0 +1,3 @@
+imports:
+    - { resource: 'actions/actions_base_payment_transactions.yml' }
+    - { resource: 'actions/actions_invoice_payment_transactions.yml' }

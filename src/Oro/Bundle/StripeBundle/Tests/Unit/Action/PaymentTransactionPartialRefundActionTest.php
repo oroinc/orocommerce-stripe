@@ -170,7 +170,6 @@ class PaymentTransactionPartialRefundActionTest extends TestCase
             [['someOption' => 'someValue']],
             [['object' => 'someValue']],
             [['currency' => 'someCurrency']],
-            [['paymentMethod' => 'somePaymentMethod']],
         ];
     }
 

@@ -9,12 +9,15 @@
     }
   ],
   "autoload": {
-    "psr-4": {"Oro\\Bundle\\StripeBundle\\": "src/Oro/Bundle/StripeBundle"},
+    "psr-4": {
+      "Oro\\Bundle\\StripeBundle\\": "src/Oro/Bundle/StripeBundle",
+      "Oro\\Bundle\\StripePaymentBundle\\": "src/Oro/Bundle/StripePaymentBundle"
+    },
     "exclude-from-classmap": ["**/Tests/"]
   },
   "require": {
     "oro/commerce": "6.1.*",
-    "stripe/stripe-php": "^7.108"
+    "stripe/stripe-php": "^16.6.0"
   },
   "repositories": {
     "oro": {

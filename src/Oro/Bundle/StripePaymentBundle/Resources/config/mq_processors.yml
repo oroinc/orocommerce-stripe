@@ -1,0 +1,24 @@
+services:
+    _instanceof:
+        Oro\Component\MessageQueue\Client\TopicSubscriberInterface:
+            tags:
+                - { name: 'oro_message_queue.client.message_processor' }
+
+    oro_stripe_payment.async.re_authorize_payment_transactions_init_processor:
+        class: 'Oro\Bundle\StripePaymentBundle\Async\ReAuthorizePaymentTransactionsInitProcessor'
+        arguments:
+            - '@oro_message_queue.job.runner'
+            - '@oro_message_queue.message_producer'
+            - '@oro_stripe_payment.re_authorization.payment_transactions_provider'
+
+    oro_stripe_payment.async.re_authorize_payment_transactions_chunk_processor:
+        class: 'Oro\Bundle\StripePaymentBundle\Async\ReAuthorizePaymentTransactionsChunkProcessor'
+        arguments:
+            - '@oro_message_queue.job.runner'
+            - '@oro_payment.repository.payment_transaction'
+            - '@oro_stripe_payment.re_authorization.executor'
+            - '@event_dispatcher'
+        calls:
+            - ['setLogger', ['@logger']]
+        tags:
+            - { name: 'monolog.logger', channel: 'oro_stripe_payment' }

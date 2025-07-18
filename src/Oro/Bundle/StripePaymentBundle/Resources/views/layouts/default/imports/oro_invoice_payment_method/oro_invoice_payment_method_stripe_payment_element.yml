@@ -1,0 +1,5 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes:
+                - 'oro_invoice_payment_method_stripe_payment_element.html.twig'

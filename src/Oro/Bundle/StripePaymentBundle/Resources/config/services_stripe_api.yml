@@ -1,0 +1,51 @@
+services:
+
+    oro_stripe_payment.configuration:
+        class: 'Oro\Bundle\StripePaymentBundle\Configuration\StripePaymentConfiguration'
+        arguments:
+            - '%oro_stripe_payment.bundle_config%'
+
+    oro_stripe_payment.stripe_client.factory:
+        class: 'Oro\Bundle\StripePaymentBundle\StripeClient\StripeClientFactory'
+
+    oro_stripe_payment.stripe_amount_converter:
+        class: 'Oro\Bundle\StripePaymentBundle\StripeAmountConverter\StripeAmountConverterComposite'
+        arguments:
+            - !tagged_iterator { tag: 'oro_stripe_payment.stripe_amount_converter' }
+
+    oro_stripe_payment.stripe_amount_converter.generic:
+        class: 'Oro\Bundle\StripePaymentBundle\StripeAmountConverter\GenericStripeAmountConverter'
+        tags:
+            - {
+                name: 'oro_stripe_payment.stripe_amount_converter',
+                # Generic converter must be the last one in a chain.
+                priority: -100
+            }
+
+    oro_stripe_payment.stripe_amount_converter.zero_decimal:
+        class: 'Oro\Bundle\StripePaymentBundle\StripeAmountConverter\ConfigurableDecimalPlacesStripeAmountConverter'
+        arguments:
+            - '@=service("oro_stripe_payment.configuration").getCurrenciesByDecimalPlaces(0)'
+            - 0
+        tags:
+            - { name: 'oro_stripe_payment.stripe_amount_converter' }
+
+    oro_stripe_payment.stripe_amount_converter.two_decimal:
+        class: 'Oro\Bundle\StripePaymentBundle\StripeAmountConverter\ConfigurableDecimalPlacesStripeAmountConverter'
+        arguments:
+            - '@=service("oro_stripe_payment.configuration").getCurrenciesByDecimalPlaces(2)'
+            - 2
+        tags:
+            - { name: 'oro_stripe_payment.stripe_amount_converter' }
+
+    oro_stripe_payment.stripe_amount_converter.fraction_less_two_decimal:
+        class: 'Oro\Bundle\StripePaymentBundle\StripeAmountConverter\FractionLessTwoDecimalStripeAmountConverter'
+        arguments:
+            - '@=service("oro_stripe_payment.configuration").getCurrenciesByDecimalPlaces(2, true)'
+        tags:
+            - { name: 'oro_stripe_payment.stripe_amount_converter' }
+
+    oro_stripe_payment.stripe_amount_validator:
+        class: 'Oro\Bundle\StripePaymentBundle\StripeAmountValidator\GenericStripeAmountValidator'
+        arguments:
+            - '@oro_stripe_payment.configuration'
