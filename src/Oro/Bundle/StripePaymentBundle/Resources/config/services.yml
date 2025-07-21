@@ -1,0 +1,84 @@
+parameters:
+    oro_stripe_payment.placeholder.stripe_script.url: 'https://js.stripe.com/%s/stripe.js'
+
+services:
+    oro_stripe_payment.stripe_script.provider.composite:
+        class: 'Oro\Bundle\StripePaymentBundle\StripeScript\Provider\StripeScriptProviderComposite'
+        arguments:
+            - !tagged_iterator { tag: 'oro_stripe_payment.stripe_script.provider' }
+
+    oro_stripe_payment.stripe_script.provider.stripe_card_element:
+        class: 'Oro\Bundle\StripePaymentBundle\StripeScript\Provider\StripeCardElementStripeScriptProvider'
+        arguments:
+            - '@oro_stripe.placeholder.filter'
+        tags:
+            - { name: 'oro_stripe_payment.stripe_script.provider' }
+
+    oro_stripe_payment.stripe_script.provider.stripe_script_enabled:
+        class: 'Oro\Bundle\StripePaymentBundle\StripeScript\Provider\StripeScriptEnabledProvider'
+        tags:
+            - { name: 'oro_stripe_payment.stripe_script.provider', priority: 100 }
+
+    oro_stripe_payment.placeholder.stripe_script:
+        class: 'Oro\Bundle\StripePaymentBundle\Placeholder\StripeScriptPlaceholder'
+        public: true
+        arguments:
+            - '@oro_stripe_payment.stripe_script.provider.composite'
+            - '%oro_stripe_payment.placeholder.stripe_script.url%'
+
+    oro_stripe_payment.operation.payment_transaction_re_authorize:
+        class: 'Oro\Bundle\StripePaymentBundle\Operation\PaymentTransactionReAuthorizeOperation'
+        arguments:
+            - '@oro_stripe_payment.re_authorization.executor'
+            - '@oro_locale.formatter.number'
+            - '@oro_ui.flash_message_helper'
+        tags:
+            - { name: 'oro_operation_service' }
+
+    oro_stripe_payment.re_authorization.executor:
+        class: 'Oro\Bundle\StripePaymentBundle\ReAuthorization\ReAuthorizationExecutor'
+        arguments:
+            - '@oro_payment.payment_method.composite_provider'
+            - '@oro_payment.provider.payment_transaction'
+            - '@oro_payment.repository.payment_transaction'
+
+    oro_stripe_payment.re_authorization.payment_transactions_provider:
+        class: 'Oro\Bundle\StripePaymentBundle\ReAuthorization\Provider\ReAuthorizePaymentTransactionsProviderComposite'
+        arguments:
+            - !tagged_iterator { tag: 'oro_stripe_payment.re_authorization.payment_transactions_provider' }
+
+    oro_stripe_payment.re_authorization.failure_email_sender:
+        class: 'Oro\Bundle\StripePaymentBundle\ReAuthorization\EmailSender\ReAuthorizationFailureEmailSender'
+        arguments:
+            - '@oro_notification.model.notification_settings'
+            - '@oro_email.sender.email_template_sender'
+            - '@doctrine'
+
+    oro_stripe_payment.stripe_webhook_event.factory:
+        class: 'Oro\Bundle\StripePaymentBundle\StripeWebhookEvent\Factory\StripeCallbackWebhookEventFactory'
+        arguments:
+            - '@oro_stripe_payment.stripe_webhook_event.provider.payment_transaction'
+        calls:
+            - ['setLogger', ['@logger']]
+        lazy: true
+        tags:
+            - { name: 'monolog.logger', channel: 'oro_stripe_payment' }
+
+    oro_stripe_payment.stripe_webhook_event.provider.payment_transaction:
+        class: 'Oro\Bundle\StripePaymentBundle\StripeWebhookEvent\Provider\PaymentTransactionByStripeEventProvider'
+        arguments:
+            - !tagged_iterator { tag: 'oro_stripe_payment.stripe_webhook_event.provider.payment_transaction' }
+
+    oro_stripe_payment.stripe_webhook_event.provider.payment_transaction.payment_intent:
+        class: 'Oro\Bundle\StripePaymentBundle\StripeWebhookEvent\Provider\PaymentIntentPaymentTransactionByStripeEventProvider'
+        arguments:
+            - '@oro_payment.repository.payment_transaction'
+        tags:
+            - { name: 'oro_stripe_payment.stripe_webhook_event.provider.payment_transaction' }
+
+    oro_stripe_payment.stripe_webhook_event.provider.payment_transaction.refund:
+        class: 'Oro\Bundle\StripePaymentBundle\StripeWebhookEvent\Provider\RefundPaymentTransactionByStripeEventProvider'
+        arguments:
+            - '@oro_payment.repository.payment_transaction'
+        tags:
+            - { name: 'oro_stripe_payment.stripe_webhook_event.provider.payment_transaction' }

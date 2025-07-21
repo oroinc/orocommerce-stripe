@@ -1,0 +1,9 @@
+{# @name = stripe_payment_element_re_authorization_failure #}
+{# @entityName = Oro\Bundle\PaymentBundle\Entity\PaymentTransaction #}
+{# @subject = Automatic Payment Re-Authorization Failed #}
+{# @isSystem = 1 #}
+{# @isEditable = 0 #}
+
+<p>We have not been able to renew the authorization hold of {{ subjectAmount|oro_format_price}} for {{ subjectEntity|oro_format_name(null, 'full') }} at {{ errorDateTime|oro_format_datetime }}.</p>
+<p></p>
+<p>Reason: {{ errorMessage|default('N/A') }}</p>

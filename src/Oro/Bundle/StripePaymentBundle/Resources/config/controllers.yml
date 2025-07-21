@@ -1,0 +1,20 @@
+services:
+    _defaults:
+        public: true
+
+    oro_stripe_payment.controller.stripe_payment_webhook.stripe_payment_element:
+        class: 'Oro\Bundle\StripePaymentBundle\Controller\StripePaymentWebhookController'
+        calls:
+            - ['setContainer', ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: 'container.service_subscriber' }
+            - {
+                name: 'container.service_subscriber',
+                id: 'oro_stripe_payment.payment_method.stripe_payment_element.config.provider',
+                key: 'Oro\Bundle\StripePaymentBundle\StripeWebhookEvent\Config\StripeWebhookEndpointConfigProviderInterface'
+            }
+            - {
+                name: 'container.service_subscriber',
+                id: 'oro_stripe_payment.stripe_webhook_event.factory',
+                key: 'Oro\Bundle\StripePaymentBundle\StripeWebhookEvent\Factory\StripeCallbackWebhookEventFactoryInterface'
+            }

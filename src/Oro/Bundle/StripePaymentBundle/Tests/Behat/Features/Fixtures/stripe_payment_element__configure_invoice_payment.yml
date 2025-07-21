@@ -1,0 +1,33 @@
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    company_a:
+        name: 'Company A'
+        organization: '@organization'
+        owner: '@admin'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+    amanda:
+        email: 'AmandaRCole@example.org'
+        username: 'AmandaRCole@example.org'
+        password: <userPassword(@amanda->username)>
+        firstName: 'Amanda'
+        lastName: 'Cole'
+        enabled: '1'
+        confirmed: '1'
+        customer: '@company_a'
+        organization: '@organization'
+        userRoles: ['@front_admin']
+        owner: '@admin'
+        website: '@website1'
+
+Oro\Bundle\InvoiceBundle\Entity\Invoice:
+    invoice_1:
+        invoiceNumber: 'INV-001'
+        invoiceDate: '<(new \DateTime("2022-01-01", new \DateTimeZone("UTC")))>'
+        currency: 'USD'
+        totalAmount: '12345.67'
+        customerName: '@company_a->name'
+        customer: '@company_a'
+        customerUser: '@amanda'
+        organization: '@organization'
+        owner: '@admin'
+        internal_status: '@invoiceInternalStatusPosted'

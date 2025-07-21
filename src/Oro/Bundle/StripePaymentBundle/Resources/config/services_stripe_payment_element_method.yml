@@ -1,0 +1,204 @@
+parameters:
+    oro_stripe_payment.payment_method.stripe_payment_element.integration_channel_type: !php/const 'Oro\Bundle\StripePaymentBundle\Integration\StripePaymentElement\StripePaymentElementIntegrationChannelType::TYPE'
+    oro_stripe_payment.payment_method.stripe_payment_element.prefixed_identifier_generator.prefix: !php/const 'Oro\Bundle\StripePaymentBundle\Integration\StripePaymentElement\StripePaymentElementIntegrationChannelType::TYPE'
+    oro_stripe_payment.payment_method.stripe_payment_element.payment_method_groups: ['%oro_invoice_payment.payment_method_group.storefront%']
+
+    oro_stripe_payment.payment_method.stripe_payment_element.stripe_api_version: '2025-03-31.basil'
+    oro_stripe_payment.payment_method.stripe_payment_element.stripe_script_version: 'basil'
+    oro_stripe_payment.payment_method.stripe_payment_element.webhook_route: 'oro_stripe_payment_webhook_payment_element'
+
+    oro_stripe_payment.payment_method.stripe_payment_element.re_authorization_failure_email.template: 'stripe_payment_element_re_authorization_failure'
+
+services:
+    Oro\Bundle\StripePaymentBundle\Entity\Repository\StripePaymentElementSettingsRepository:
+        parent: 'oro_entity.abstract_repository'
+        arguments:
+            $entityClass: 'Oro\Bundle\StripePaymentBundle\Entity\StripePaymentElementSettings'
+            $aclHelper: '@oro_security.acl_helper'
+        tags:
+            - { name: 'doctrine.repository_service' }
+
+    oro_stripe_payment.entity.repository.stripe_payment_element_settings:
+        alias: 'Oro\Bundle\StripePaymentBundle\Entity\Repository\StripePaymentElementSettingsRepository'
+
+    oro_stripe_payment.integration.stripe_payment_element_integration_channel_type:
+        class: 'Oro\Bundle\StripePaymentBundle\Integration\StripePaymentElement\StripePaymentElementIntegrationChannelType'
+        tags:
+            - { name: 'oro_integration.channel', type: !php/const 'Oro\Bundle\StripePaymentBundle\Integration\StripePaymentElement\StripePaymentElementIntegrationChannelType::TYPE' }
+
+    oro_stripe_payment.integration.stripe_payment_element_integration_transport:
+        class: 'Oro\Bundle\StripePaymentBundle\Integration\StripePaymentElement\StripePaymentElementIntegrationTransport'
+        tags:
+            - { name: 'oro_integration.transport', type: !php/const 'Oro\Bundle\StripePaymentBundle\Integration\StripePaymentElement\StripePaymentElementIntegrationChannelType::TYPE', channel_type: !php/const 'Oro\Bundle\StripePaymentBundle\Integration\StripePaymentElement\StripePaymentElementIntegrationChannelType::TYPE' }
+
+    oro_stripe_payment.form.type.settings:
+        class: 'Oro\Bundle\StripePaymentBundle\Form\Type\StripePaymentElementSettingsType'
+        arguments:
+            - '@oro_stripe_payment.payment_method.stripe_payment_element.config.factory'
+            - '@oro_stripe_payment.configuration'
+            - '@oro_stripe_payment.form.event_subscriber.stripe_payment_element_labels'
+        tags:
+            - { name: form.type }
+
+    oro_stripe_payment.form.event_subscriber.stripe_webhook_endpoint:
+        class: 'Oro\Bundle\StripePaymentBundle\Form\EventSubscriber\StripeWebhookEndpointEventSubscriber'
+        arguments:
+            - '@oro_stripe_payment.payment_method.stripe_payment_element.config.factory'
+            - '@oro_stripe_payment.stripe_webhook_endpoint.executor'
+            - '@oro_ui.tools.url_helper'
+            - '@translator'
+            - '%oro_stripe_payment.payment_method.stripe_payment_element.integration_channel_type%'
+
+    oro_stripe_payment.form.extension.stripe_webhook_endpoint:
+        class: 'Oro\Bundle\StripePaymentBundle\Form\Extension\StripeWebhookEndpointExtension'
+        arguments:
+            - '@oro_stripe_payment.form.event_subscriber.stripe_webhook_endpoint'
+        tags:
+            - { name: form.type_extension }
+
+    oro_stripe_payment.form.event_subscriber.stripe_payment_element_labels:
+        class: 'Oro\Bundle\StripePaymentBundle\Form\EventSubscriber\StripePaymentElementLabelsEventSubscriber'
+        arguments:
+            - '@translator'
+
+    oro_stripe_payment.payment_method.stripe_payment_element.prefixed_identifier_generator:
+        parent: 'oro_integration.generator.prefixed_identifier_generator'
+        arguments:
+            - '%oro_stripe_payment.payment_method.stripe_payment_element.prefixed_identifier_generator.prefix%'
+
+    oro_stripe_payment.payment_method.stripe_payment_element.config.factory:
+        class: 'Oro\Bundle\StripePaymentBundle\PaymentMethod\StripePaymentElement\Config\StripePaymentElementConfigFactory'
+        arguments:
+            - '@oro_stripe_payment.payment_method.stripe_payment_element.prefixed_identifier_generator'
+            - '@oro_locale.helper.localization'
+            - '@oro_stripe_payment.configuration'
+            - '@router'
+            - '%oro_stripe_payment.payment_method.stripe_payment_element.stripe_api_version%'
+            - '%oro_stripe_payment.payment_method.stripe_payment_element.stripe_script_version%'
+            - '%oro_stripe_payment.payment_method.stripe_payment_element.webhook_route%'
+            - '%oro_stripe_payment.payment_method.stripe_payment_element.re_authorization_failure_email.template%'
+
+    oro_stripe_payment.payment_method.stripe_payment_element.config.provider:
+        class: 'Oro\Bundle\StripePaymentBundle\PaymentMethod\StripePaymentElement\Config\StripePaymentElementConfigProvider'
+        arguments:
+            - '@oro_stripe_payment.entity.repository.stripe_payment_element_settings'
+            - '@oro_stripe_payment.payment_method.stripe_payment_element.config.factory'
+
+    oro_stripe_payment.payment_method.stripe_payment_element.factory:
+        class: 'Oro\Bundle\StripePaymentBundle\PaymentMethod\StripePaymentElement\StripePaymentElementMethodFactory'
+        arguments:
+            - '@oro_stripe_payment.stripe_payment_intent.executor'
+            - '@oro_stripe_payment.stripe_amount_validator'
+            - '@oro_payment.provider.payment_transaction'
+        calls:
+            - [ 'setLogger', ['@logger'] ]
+        tags:
+            - { name: 'monolog.logger', channel: 'oro_stripe_payment' }
+
+    oro_stripe_payment.payment_method.stripe_payment_element.provider:
+        class: 'Oro\Bundle\StripePaymentBundle\PaymentMethod\StripePaymentElement\StripePaymentElementMethodProvider'
+        arguments:
+            - '@oro_stripe_payment.payment_method.stripe_payment_element.config.provider'
+            - '@oro_stripe_payment.payment_method.stripe_payment_element.factory'
+            - '%oro_stripe_payment.payment_method.stripe_payment_element.payment_method_groups%'
+        tags:
+            - { name: 'oro_payment.payment_method_provider' }
+
+    oro_stripe_payment.payment_method.stripe_payment_element.view.provider:
+        class: 'Oro\Bundle\StripePaymentBundle\PaymentMethod\StripePaymentElement\View\StripePaymentElementMethodViewProvider'
+        arguments:
+            - '@oro_stripe_payment.payment_method.stripe_payment_element.config.provider'
+            - '@oro_stripe_payment.stripe_script.provider.stripe_script_enabled'
+            - '@oro_stripe_payment.stripe_amount_converter'
+            - '@event_dispatcher'
+        tags:
+            - { name: 'oro_payment.payment_method_view_provider' }
+
+    oro_stripe_payment.event_listener.doctrine.delete_stripe_payment_element_webhook_endpoint:
+        class: 'Oro\Bundle\StripePaymentBundle\EventListener\Doctrine\DeleteStripePaymentElementWebhookEndpointDoctrineListener'
+        arguments:
+            - '@oro_stripe_payment.payment_method.stripe_payment_element.config.factory'
+            - '@oro_stripe_payment.stripe_webhook_endpoint.executor'
+        calls:
+            - ['setLogger', ['@logger']]
+        tags:
+            - { name: 'doctrine.event_listener', event: 'onFlush' }
+            - { name: 'doctrine.event_listener', event: 'postFlush' }
+            - { name: 'doctrine.event_listener', event: 'onClear' }
+            - { name: 'monolog.logger', channel: 'oro_stripe_payment' }
+
+    oro_stripe_payment.event_listener.payment_callback.return.stripe_payment_element:
+        class: 'Oro\Bundle\StripePaymentBundle\EventListener\PaymentCallback\StripePaymentIntentsReturnCallbackListener'
+        arguments:
+            - '@oro_stripe_payment.payment_method.stripe_payment_element.provider'
+        calls:
+            - ['setLogger', ['@logger']]
+        lazy: true
+        tags:
+            - { name: 'kernel.event_listener', event: 'oro_payment.callback.return', method: 'onPaymentCallback' }
+            - { name: 'proxy', interface: 'Oro\Bundle\PaymentBundle\Event\PaymentCallbackListenerInterface' }
+            - { name: 'monolog.logger', channel: 'oro_stripe_payment' }
+
+    oro_stripe_payment.event_listener.payment_callback.webhook.stripe_payment_element:
+        class: 'Oro\Bundle\StripePaymentBundle\EventListener\PaymentCallback\StripePaymentIntentsWebhookCallbackListener'
+        arguments:
+            - '@oro_stripe_payment.payment_method.stripe_payment_element.provider'
+            - '@oro_payment.provider.payment_transaction'
+        calls:
+            - ['setLogger', ['@logger']]
+        lazy: true
+        tags:
+            - { name: 'kernel.event_listener', event: 'oro_payment.callback.stripe_webhook', method: 'onPaymentCallback' }
+            - { name: 'proxy', interface: 'Oro\Bundle\PaymentBundle\Event\PaymentCallbackListenerInterface' }
+            - { name: 'monolog.logger', channel: 'oro_stripe_payment' }
+
+    oro_stripe_payment.provider.stripe_script_provider.stripe_payment_element_user_monitoring_enabled.cache:
+        parent: 'oro.data.cache'
+        tags:
+            - { name: 'cache.pool', namespace: 'oro_stripe_payment_element_script' }
+
+    oro_stripe_payment.stripe_script.provider.stripe_payment_element:
+        class: 'Oro\Bundle\StripePaymentBundle\StripeScript\Provider\StripePaymentElementStripeScriptProvider'
+        arguments:
+            - '@oro_stripe_payment.payment_method.stripe_payment_element.config.provider'
+            - '@oro_frontend.request.frontend_helper'
+            - '@oro_security.token_accessor'
+            - '@oro_stripe_payment.provider.stripe_script_provider.stripe_payment_element_user_monitoring_enabled.cache'
+        tags:
+            - { name: 'oro_stripe_payment.stripe_script.provider' }
+
+    oro_stripe_payment.event_listener.doctrine.delete_stripe_payment_element_script_cache:
+        class: 'Oro\Bundle\StripePaymentBundle\EventListener\Doctrine\DeleteStripePaymentElementScriptCacheDoctrineListener'
+        arguments:
+            - '@oro_stripe_payment.provider.stripe_script_provider.stripe_payment_element_user_monitoring_enabled.cache'
+        tags:
+            - { name: 'doctrine.event_listener', event: 'onFlush' }
+            - { name: 'doctrine.event_listener', event: 'postFlush' }
+            - { name: 'doctrine.event_listener', event: 'onClear' }
+
+    oro_stripe_payment.re_authorization.payment_transactions_provider.stripe_payment_element:
+        class: 'Oro\Bundle\StripePaymentBundle\ReAuthorization\Provider\ReAuthorizePaymentTransactionsProvider'
+        arguments:
+            - '@oro_stripe_payment.payment_method.stripe_payment_element.provider'
+            - '@oro_payment.repository.payment_transaction'
+        tags:
+            - { name: 'oro_stripe_payment.re_authorization.payment_transactions_provider' }
+
+    oro_stripe_payment.event_listener.stripe_payment_element_re_authorization_failure_email:
+        class: 'Oro\Bundle\StripePaymentBundle\EventListener\SendReAuthorizationFailureEmailListener'
+        arguments:
+            - '@oro_stripe_payment.payment_method.stripe_payment_element.config.provider'
+            - '@oro_stripe_payment.re_authorization.failure_email_sender'
+        calls:
+            - ['setLogger', ['@logger']]
+        tags:
+            - { name: 'kernel.event_listener', event: 'Oro\Bundle\StripePaymentBundle\Event\ReAuthorizationFailureEvent', method: 'onReAuthorizationFailure' }
+            - { name: 'monolog.logger', channel: 'oro_stripe_payment' }
+
+    oro_stripe_payment.event_listener.add_billing_details_to_stripe_payment_element_view_options:
+        class: 'Oro\Bundle\StripePaymentBundle\EventListener\AddBillingDetailsToStripePaymentElementViewOptionsListener'
+        arguments:
+            - '@oro_security.token_accessor'
+            - '@oro_entity.entity_name_resolver'
+        tags:
+            - { name: 'kernel.event_listener', event: 'Oro\Bundle\StripePaymentBundle\Event\StripePaymentElementViewOptionsEvent', method: 'onStripePaymentElementViewOptions' }

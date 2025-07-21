@@ -1,9 +1,9 @@
 oro:
     stripe:
         channel_type:
-            label: Stripe
+            label: Stripe (Legacy)
         settings:
-            label: Stripe
+            label: Stripe (Legacy)
             labels:
                 label: Labels
                 tooltip: This label is used on the checkout screens.

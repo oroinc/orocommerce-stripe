@@ -1,0 +1,13 @@
+oro:
+    stripe_payment:
+        stripe_payment_element:
+            error:
+                general_error: Error occurred during payment.
+
+        operation:
+            re_authorize:
+                confirmation:
+                    title: Re-Authorize Payment
+                    message: The payment authorization of {{ amount }} will be renewed. Are you sure you want to continue?
+                    submit.label: Yes, Re-Authorize
+

@@ -1,0 +1,23 @@
+Oro\Bundle\PaymentBundle\Entity\PaymentTransaction:
+    payment_transaction_1:
+        owner: '@admin'
+        organization: '@organization'
+        frontendOwner: '@amanda'
+        entityClass: 'Oro\Bundle\InvoiceBundle\Entity\Invoice'
+        entityIdentifier: '@invoice_1->id'
+        accessIdentifier: '8c4fec37-cb0e-4e18-a106-f3de635d2c62'
+        accessToken: 'd96a5408-95bf-4110-abbb-715064d7c33a'
+        paymentMethod: '<("stripe_payment_element_".@stripe_payment_element_channel->getId())>'
+        action: 'charge'
+        amount: '12345.67'
+        currency: 'USD'
+        active: false
+        successful: true
+        transactionOptions:
+            stripePaymentIntentId: 'pi_123'
+
+Oro\Bundle\PaymentBundle\Entity\PaymentStatus:
+    payment_status_1:
+        entityClass: 'Oro\Bundle\InvoiceBundle\Entity\Invoice'
+        entityIdentifier: '@invoice_1->id'
+        paymentStatus: 'full'

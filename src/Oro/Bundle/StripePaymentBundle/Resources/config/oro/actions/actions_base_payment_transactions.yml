@@ -1,0 +1,18 @@
+operations:
+
+    # Base definition of the Stripe-specific payment transaction action to re-authorize an uncaptured payment.
+    oro_stripe_payment_transaction_re_authorize:
+        applications: [ default ]
+        label: oro.stripe_payment.operation.re_authorize.label
+        order: 25
+        button_options:
+            icon: fa-refresh
+        frontend_options:
+            confirmation:
+                title: oro.stripe_payment.operation.re_authorize.confirmation.title
+                message: oro.stripe_payment.operation.re_authorize.confirmation.message
+                message_parameters:
+                    amount: $.amountWithCurrency
+                okText: oro.stripe_payment.operation.re_authorize.confirmation.submit.label
+                component: oroui/js/standart-confirmation
+        service: oro_stripe_payment.operation.payment_transaction_re_authorize
