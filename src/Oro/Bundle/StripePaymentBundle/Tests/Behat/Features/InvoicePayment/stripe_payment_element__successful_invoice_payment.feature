@@ -30,7 +30,7 @@ Feature: Stripe Payment Element - Successful Invoice Payment
     And I click on "FrontendGridColumnManagerButton"
     Then I should see following grid:
       | Invoice Number | Total Amount | Payment Method | Payment Status  |
-      | INV-001        | $12,345.67   |                | PENDING PAYMENT |
+      | INV-001        | $12,345.67   |                | Pending payment |
     And I should see following actions for INV-001 in grid:
       | View |
       | Pay  |
@@ -52,7 +52,7 @@ Feature: Stripe Payment Element - Successful Invoice Payment
   Scenario: Check Payment Method and Payment Status on invoice storefront page
     When I click "Back to Invoice Page"
     Then I should see "Stripe Payment Element"
-    And I should see "PAID IN FULL" in the "Invoice Payment Status Label" element
+    And I should see "Paid in full" in the "Invoice Payment Status Label" element
     And I should not see a "Invoice Pay Button" element
 
   Scenario: Check Payment Method and Payment Status column on invoices storefront page
@@ -62,7 +62,7 @@ Feature: Stripe Payment Element - Successful Invoice Payment
     And I click on "FrontendGridColumnManagerButton"
     Then I should see following grid:
       | Invoice Number | Total Amount | Payment Method         | Payment Status |
-      | INV-001        | $12,345.67   | Stripe Payment Element | PAID IN FULL   |
+      | INV-001        | $12,345.67   | Stripe Payment Element | Paid in full   |
     And I should see following actions for INV-001 in grid:
       | View |
 
