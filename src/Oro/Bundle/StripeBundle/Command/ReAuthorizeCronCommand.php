@@ -6,6 +6,7 @@ use Oro\Bundle\CronBundle\Command\CronCommandActivationInterface;
 use Oro\Bundle\CronBundle\Command\CronCommandScheduleDefinitionInterface;
 use Oro\Bundle\StripeBundle\Handler\ReAuthorizationHandler;
 use Oro\Bundle\StripeBundle\Provider\EntitiesTransactionsProvider;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -14,12 +15,14 @@ use Symfony\Component\Console\Output\OutputInterface;
  * According to STRIPE rules authorized amounts should be unblocked after 7 days.
  * To handle this case we need to re-authorize almost expired authorize transactions.
  */
+#[AsCommand(
+    name: 'oro:cron:stripe:re-authorize',
+    description: 'Cancels expiring Stripe authorization holds and places new ones instead.'
+)]
 class ReAuthorizeCronCommand extends Command implements
     CronCommandScheduleDefinitionInterface,
     CronCommandActivationInterface
 {
-    protected static $defaultName = 'oro:cron:stripe:re-authorize';
-
     private EntitiesTransactionsProvider $transactionsProvider;
     private ReAuthorizationHandler $reAuthorizationHandler;
 
@@ -49,7 +52,7 @@ class ReAuthorizeCronCommand extends Command implements
     #[\Override]
     protected function configure()
     {
-        $this->setDescription('Cancels expiring Stripe authorization holds and places new ones instead.')
+        $this
             ->setHelp(
                 <<<'HELP'
 The <info>%command.name%</info> command cancels expiring Stripe authorization holds and places new ones instead 

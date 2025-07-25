@@ -7,7 +7,7 @@ use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * Serves the Apple Pay domain verification file data from system config
