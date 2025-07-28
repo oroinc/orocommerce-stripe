@@ -1,13 +1,13 @@
 oro_stripe_callback_frontend:
     resource: "@OroStripeBundle/Controller/Frontend/StripeCallbackController.php"
-    type: annotation
+    type: attribute
     prefix: /stripe
     options:
         frontend: true
 
 oro_stripe_apple_pay_verification_frontend:
     resource: "@OroStripeBundle/Controller/Frontend/ApplePayVerificationController.php"
-    type: annotation
+    type: attribute
     prefix: /
     options:
         frontend: true
