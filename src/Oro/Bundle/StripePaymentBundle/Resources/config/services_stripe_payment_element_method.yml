@@ -153,7 +153,7 @@ services:
             - { name: 'monolog.logger', channel: 'oro_stripe_payment' }
 
     oro_stripe_payment.provider.stripe_script_provider.stripe_payment_element_user_monitoring_enabled.cache:
-        parent: 'oro.data.cache'
+        parent: oro.data.cache
         tags:
             - { name: 'cache.pool', namespace: 'oro_stripe_payment_element_script' }
 
