@@ -77,7 +77,7 @@ services:
     oro_stripe.integration.cache:
         parent: oro.data.cache
         tags:
-            - { name: 'cache.pool', namespace: 'stripe_integration_cache' }
+            - { name: 'cache.pool', namespace: 'oro_stripe_integration' }
 
     # Provider
     oro_stripe.provider.stripe_enabled_monitoring_cached:
