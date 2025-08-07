@@ -36,14 +36,9 @@ final class StripePaymentElementSettingsTypeTest extends WebTestCase
     private const string INTEGRATION_CHANNEL_TYPE = 'stripe_payment_element';
 
     private StripePaymentConfiguration $stripePaymentConfiguration;
-
     private LocalizationHelper $localizationHelper;
-
     private UrlGeneratorInterface $urlGenerator;
-
     private RequestStack $requestStack;
-
-    private string $originalHost;
 
     #[\Override]
     protected function setUp(): void

@@ -18,29 +18,25 @@ class ApplePayVerificationControllerTest extends WebTestCase
 
     public function testApplePayDomainVerificationAction()
     {
-        $configManager = self::getConfigManager('global');
-
+        $configManager = self::getConfigManager();
         $configManager->set(
             'oro_stripe.apple_pay_domain_verification',
             'Apple Pay domain verification file content'
         );
         $configManager->flush();
-
-        $this->client->request(
-            'GET',
-            '/.well-known/apple-developer-merchantid-domain-association'
-        );
-
-        $response = $this->client->getResponse();
+        try {
+            $this->client->request(
+                'GET',
+                '/.well-known/apple-developer-merchantid-domain-association'
+            );
+            $response = $this->client->getResponse();
+        } finally {
+            $configManager->set('oro_stripe.apple_pay_domain_verification', null);
+            $configManager->flush();
+        }
 
         self::assertResponseStatusCodeEquals($response, 200);
         self::assertEquals('Apple Pay domain verification file content', $response->getContent());
-
-        $configManager->set(
-            'oro_stripe.apple_pay_domain_verification',
-            null
-        );
-        $configManager->flush();
     }
 
     public function testApplePayDomainVerificationActionWithoutConfiguration()
