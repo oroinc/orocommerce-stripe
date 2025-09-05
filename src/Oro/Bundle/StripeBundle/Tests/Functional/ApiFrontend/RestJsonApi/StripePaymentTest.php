@@ -7,7 +7,6 @@ use Oro\Bundle\CheckoutBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadChec
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\StripeBundle\Tests\Functional\DataFixtures\LoadStripePaymentMethodData;
@@ -119,11 +118,7 @@ class StripePaymentTest extends FrontendRestJsonApiTestCase
         $paymentTransaction->setActive(true);
         $paymentTransaction->setReference('test');
 
-        $em = $this->getEntityManager(PaymentTransaction::class);
-        $em->persist($paymentTransaction);
-        $em->flush($paymentTransaction);
-
-        self::getContainer()->get('oro_payment.manager.payment_status')->updateStatus($paymentTransaction);
+        $paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
     }
 
     public function testTryToPayPalExpressPaymentWhenSuccessUrlIsNotProvided(): void
