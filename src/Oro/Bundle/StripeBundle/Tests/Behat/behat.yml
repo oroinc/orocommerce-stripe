@@ -60,6 +60,9 @@ oro_behat_extension:
             selector:
                 type: xpath
                 locator: '//*[@data-content="payment_method_form"]//*[contains(@class, "checkout-form__radio")][1]//input[@type="radio" and @checked="checked"]/..//*[text()="Google Pay"]'
+        Order Payment Transactions Grid:
+            selector: 'div[data-page-component-name="order-payment-transactions-grid"]'
+            class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
     suites:
         OroStripeBundle:
             contexts:
