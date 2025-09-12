@@ -18,8 +18,9 @@ use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\AddressActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\CheckoutActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\SplitOrderActionsInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
-use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProviderInterface;
+use Oro\Bundle\PaymentBundle\Entity\PaymentStatus;
+use Oro\Bundle\PaymentBundle\Manager\PaymentStatusManager;
+use Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses;
 use Oro\Bundle\StripeBundle\Api\Model\StripePaymentRequest;
 use Oro\Bundle\StripeBundle\Api\Processor\HandleStripePaymentSubresource;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -31,7 +32,7 @@ class HandleStripePaymentSubresourceTest extends ChangeSubresourceProcessorTestC
     private CheckoutActionsInterface&MockObject $checkoutActions;
     private AddressActionsInterface&MockObject $addressActions;
     private ActionExecutor&MockObject $actionExecutor;
-    private PaymentStatusProviderInterface&MockObject $paymentStatusProvider;
+    private PaymentStatusManager&MockObject $paymentStatusManager;
     private GroupedCheckoutLineItemsProvider&MockObject $groupedCheckoutLineItemsProvider;
     private DoctrineHelper&MockObject $doctrineHelper;
     private FlushDataHandlerInterface&MockObject $flushDataHandler;
@@ -46,7 +47,7 @@ class HandleStripePaymentSubresourceTest extends ChangeSubresourceProcessorTestC
         $this->checkoutActions = $this->createMock(CheckoutActionsInterface::class);
         $this->addressActions = $this->createMock(AddressActionsInterface::class);
         $this->actionExecutor = $this->createMock(ActionExecutor::class);
-        $this->paymentStatusProvider = $this->createMock(PaymentStatusProviderInterface::class);
+        $this->paymentStatusManager = $this->createMock(PaymentStatusManager::class);
         $this->groupedCheckoutLineItemsProvider = $this->createMock(GroupedCheckoutLineItemsProvider::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->flushDataHandler = $this->createMock(FlushDataHandlerInterface::class);
@@ -56,7 +57,7 @@ class HandleStripePaymentSubresourceTest extends ChangeSubresourceProcessorTestC
             $this->checkoutActions,
             $this->addressActions,
             $this->actionExecutor,
-            $this->paymentStatusProvider,
+            $this->paymentStatusManager,
             $this->groupedCheckoutLineItemsProvider,
             $this->doctrineHelper,
             $this->flushDataHandler
@@ -112,7 +113,7 @@ class HandleStripePaymentSubresourceTest extends ChangeSubresourceProcessorTestC
         $this->groupedCheckoutLineItemsProvider->expects(self::never())
             ->method('getGroupedLineItemsIds');
 
-        $this->paymentStatusProvider->expects(self::never())
+        $this->paymentStatusManager->expects(self::never())
             ->method('getPaymentStatus');
 
         $this->context->setParentEntity($checkout);
@@ -146,10 +147,10 @@ class HandleStripePaymentSubresourceTest extends ChangeSubresourceProcessorTestC
         $this->groupedCheckoutLineItemsProvider->expects(self::never())
             ->method('getGroupedLineItemsIds');
 
-        $this->paymentStatusProvider->expects(self::once())
+        $this->paymentStatusManager->expects(self::once())
             ->method('getPaymentStatus')
             ->with($order)
-            ->willReturn(PaymentStatusProvider::CANCELED);
+            ->willReturn((new PaymentStatus())->setPaymentStatus(PaymentStatuses::CANCELED));
 
         $this->expectSaveChangesAndRemoveOrder($order);
 
@@ -184,10 +185,10 @@ class HandleStripePaymentSubresourceTest extends ChangeSubresourceProcessorTestC
         $this->groupedCheckoutLineItemsProvider->expects(self::never())
             ->method('getGroupedLineItemsIds');
 
-        $this->paymentStatusProvider->expects(self::once())
+        $this->paymentStatusManager->expects(self::once())
             ->method('getPaymentStatus')
             ->with($order)
-            ->willReturn(PaymentStatusProvider::FULL);
+            ->willReturn((new PaymentStatus())->setPaymentStatus(PaymentStatuses::PAID_IN_FULL));
 
         $this->addressActions->expects(self::once())
             ->method('actualizeAddresses')

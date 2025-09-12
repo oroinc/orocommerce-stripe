@@ -9,7 +9,7 @@ use Oro\Bundle\ApiBundle\Processor\Subresource\ChangeSubresourceContext;
 use Oro\Bundle\CheckoutBundle\Api\Processor\AbstractHandlePaymentSubresource;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
+use Oro\Bundle\PaymentBundle\PaymentStatus\PaymentStatuses;
 use Oro\Bundle\StripeBundle\Api\Model\StripePaymentRequest;
 
 /**
@@ -21,8 +21,8 @@ class HandleStripePaymentSubresource extends AbstractHandlePaymentSubresource
     protected function getInProgressStatuses(): array
     {
         return [
-            PaymentStatusProvider::PENDING,
-            PaymentStatusProvider::DECLINED
+            PaymentStatuses::PENDING,
+            PaymentStatuses::DECLINED
         ];
     }
 
@@ -30,7 +30,7 @@ class HandleStripePaymentSubresource extends AbstractHandlePaymentSubresource
     protected function getErrorStatuses(): array
     {
         return [
-            PaymentStatusProvider::CANCELED
+            PaymentStatuses::CANCELED
         ];
     }
 
