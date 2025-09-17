@@ -97,6 +97,14 @@ services:
         decorates: oro_payment.method.provider.applicable_methods_provider
 
     # Listener
+    oro_stripe.event_listener.payment_transaction_operation_announce_event_listener:
+        class: Oro\Bundle\StripeBundle\EventListener\PaymentTransactionOperationAnnounceEventListener
+        arguments:
+            - '%oro_stripe.payment_method.id%'
+        tags:
+            - { name: kernel.event_listener, event: oro_operation.oro_order_payment_transaction_cancel.announce, method: onOperationAnnounce }
+            - { name: kernel.event_listener, event: oro_operation.oro_order_payment_transaction_refund.announce, method: onOperationAnnounce }
+
     oro_stripe.entity_listener.stripe_integration:
         class: Oro\Bundle\StripeBundle\EventListener\StripeIntegrationListener
         arguments:
