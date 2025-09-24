@@ -1,0 +1,57 @@
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    company_a:
+        name: 'Company A'
+        organization: '@organization'
+        owner: '@admin'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+    amanda:
+        email: 'AmandaRCole@example.org'
+        username: 'AmandaRCole@example.org'
+        password: <userPassword(@amanda->username)>
+        firstName: 'Amanda'
+        lastName: 'Cole'
+        enabled: '1'
+        confirmed: '1'
+        customer: '@company_a'
+        organization: '@organization'
+        userRoles: ['@front_admin']
+        owner: '@admin'
+        website: '@website1'
+
+Oro\Bundle\InvoiceBundle\Entity\Invoice:
+    invoice_1:
+        invoiceNumber: 'INV-001'
+        invoiceDate: '<(new \DateTime("2022-01-01", new \DateTimeZone("UTC")))>'
+        currency: 'USD'
+        totalAmount: '0.05'
+        customerName: '@company_a->name'
+        customer: '@company_a'
+        customerUser: '@amanda'
+        organization: '@organization'
+        owner: '@admin'
+        internal_status: '@invoiceInternalStatusPosted'
+
+Oro\Bundle\IntegrationBundle\Entity\Channel:
+    stripe_payment_element_channel:
+        type: 'stripe_payment_element'
+        name: 'Stripe Payment Element'
+        enabled: true
+        organization: '@organization'
+        transport: '@stripe_payment_element_settings'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    stripe_payment_element_label:
+        string: 'Stripe Payment Element'
+
+Oro\Bundle\StripePaymentBundle\Entity\StripePaymentElementSettings:
+    stripe_payment_element_settings:
+        __calls:
+            - addPaymentMethodLabel: ['@stripe_payment_element_label']
+            - addPaymentMethodShortLabel: ['@stripe_payment_element_label']
+        paymentMethodName: 'Stripe Payment Element'
+        captureMethod: 'automatic'
+        apiPublicKey: 'pk_test'
+        apiSecretKey: 'sk_test'
+        webhookSecret: 'w_secret'
+        channel: '@stripe_payment_element_channel'
