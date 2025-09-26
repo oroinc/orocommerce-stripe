@@ -6,6 +6,9 @@ Feature: Stripe Payment Element - Configure Invoice Payment
     Given sessions active:
       | Admin | first_session  |
       | Buyer | second_session |
+    And I change configuration options:
+      | oro_invoice.invoice_feature_enabled                   | true |
+      | oro_commerce_invoice.commerce_invoice_feature_enabled | true |
 
   Scenario: Create new Stripe Payment Element integration
     Given I proceed as the Admin

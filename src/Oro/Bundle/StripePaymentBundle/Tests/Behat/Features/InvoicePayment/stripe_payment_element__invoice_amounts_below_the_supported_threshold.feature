@@ -8,6 +8,9 @@ Feature: Stripe Payment Element - invoice amounts below the supported threshold
     Given sessions active:
       | Admin | first_session  |
       | Buyer | second_session |
+    And I change configuration options:
+      | oro_invoice.invoice_feature_enabled                   | true |
+      | oro_commerce_invoice.commerce_invoice_feature_enabled | true |
 
   Scenario: Select the payment method for invoices
     Given I proceed as the Admin

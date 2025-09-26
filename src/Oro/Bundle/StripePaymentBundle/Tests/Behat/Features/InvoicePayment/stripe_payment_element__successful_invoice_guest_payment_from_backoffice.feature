@@ -4,6 +4,10 @@
 
 Feature: Stripe Payment Element - Successful Invoice Guest Payment from back-office
 
+  Scenario: Enable Invoices feature via configuration
+    Given I change configuration options:
+      | oro_invoice.invoice_feature_enabled | true |
+
   Scenario: Select the payment method for invoices
     Given  I login as administrator
     When I go to System/Configuration
