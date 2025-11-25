@@ -82,7 +82,7 @@ Feature: Stripe integration with suborders
         When I click "Payments"
         Then I should see following "Order Payment Transaction Grid" grid:
             | Payment Method | Type     | Amount | Successful |
-            | Stripe         | Purchase | $59.00 | Yes        |
+            | Stripe         | Purchase | $62.00 | Yes        |
         When I click "Payments"
         Then I should see following "First Sub Order Payment Transaction Grid" grid:
             | Payment Method | Type      | Amount | Successful |
@@ -90,7 +90,7 @@ Feature: Stripe integration with suborders
         When I click "Sub-Order #1-2"
         Then I should see following "Second Sub Order Payment Transaction Grid" grid:
             | Payment Method | Type      | Amount | Successful |
-            | Stripe         | Authorize | $46.00 | Yes        |
+            | Stripe         | Authorize | $49.00 | Yes        |
         When I click "Sub-Order #1-1"
         When I click "Capture" on row "Authorize" in grid "First Sub Order Payment Transaction Grid"
         Then I should see "Charge The Customer" in the "UiWindow Title" element
@@ -141,14 +141,14 @@ Feature: Stripe integration with suborders
         And I click "Sub-Order #1-2"
         When I click "Cancel Authorization" on row "Authorize" in grid "Second Sub Order Payment Transaction Grid"
         Then I should see "Cancel Authorization" in the "UiDialog Title" element
-        And I should see "The $46.00 payment will be canceled. Are you sure you want to continue?"
+        And I should see "The $49.00 payment will be canceled. Are you sure you want to continue?"
         And I fill form with:
             | Notes | Cancel Authorization Note |
         And I click "Yes, Cancel Authorization" in modal window
-        Then I should see "The payment of $46.00 has been canceled successfully." flash message
+        Then I should see "The payment of $49.00 has been canceled successfully." flash message
         And I should see following "SubOrders Grid" grid:
             | Order Number | Total  | Payment Status   |
-            | 1-2          | $46.00 | Payment canceled |
+            | 1-2          | $49.00 | Payment canceled |
             | 1-1          | $13.00 | Refunded         |
         When I click on Payment canceled in grid "SubOrders Grid"
         And I click "Activity"
@@ -156,5 +156,5 @@ Feature: Stripe integration with suborders
         When I click "Payments"
         Then I should see following "Order Payment Transaction Grid" grid:
             | Payment Method | Type      | Amount | Successful |
-            | Stripe         | Cancel    | $46.00 | Yes        |
-            | Stripe         | Authorize | $46.00 | Yes        |
+            | Stripe         | Cancel    | $49.00 | Yes        |
+            | Stripe         | Authorize | $49.00 | Yes        |
