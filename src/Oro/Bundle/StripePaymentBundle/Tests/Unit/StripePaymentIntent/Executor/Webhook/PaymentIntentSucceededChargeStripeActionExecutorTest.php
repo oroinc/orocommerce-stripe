@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Oro\Bundle\StripePaymentBundle\Tests\Unit\StripePaymentIntent\Executor\Webhook;
 
-// @codingStandardsIgnoreStart
+// phpcs:disable
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
@@ -22,7 +22,7 @@ use PHPUnit\Framework\TestCase;
 use Stripe\Event as StripeEvent;
 use Stripe\PaymentIntent as StripePaymentIntent;
 
-// @codingStandardsIgnoreEnd
+// phpcs:enable
 
 final class PaymentIntentSucceededChargeStripeActionExecutorTest extends TestCase
 {
