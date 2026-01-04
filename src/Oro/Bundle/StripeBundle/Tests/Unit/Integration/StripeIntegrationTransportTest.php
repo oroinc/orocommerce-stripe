@@ -15,7 +15,7 @@ class StripeIntegrationTransportTest extends TestCase
     #[\Override]
     protected function setUp(): void
     {
-        $this->transport = new class() extends StripeIntegrationTransport {
+        $this->transport = new class () extends StripeIntegrationTransport {
             public function getSettings(): ParameterBag
             {
                 return $this->settings;

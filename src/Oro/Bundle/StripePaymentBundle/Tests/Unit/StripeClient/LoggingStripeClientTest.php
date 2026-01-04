@@ -24,7 +24,7 @@ final class LoggingStripeClientTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->client = new class(['api_key' => 'test_key']) extends LoggingStripeClient {
+        $this->client = new class (['api_key' => 'test_key']) extends LoggingStripeClient {
             public ?StripeObject $mockResponse = null;
             public ?\Exception $mockException = null;
 

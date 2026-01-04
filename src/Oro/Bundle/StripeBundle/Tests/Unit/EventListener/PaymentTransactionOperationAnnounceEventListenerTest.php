@@ -49,7 +49,7 @@ class PaymentTransactionOperationAnnounceEventListenerTest extends TestCase
 
     private function getEntityClass(string $paymentMethod): object
     {
-        return new class($paymentMethod) {
+        return new class ($paymentMethod) {
             public function __construct(
                 private string $paymentMethod
             ) {

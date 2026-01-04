@@ -12,15 +12,15 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class LoadPaymentTransactions extends AbstractFixture implements ContainerAwareInterface
 {
-    const STRIPE_PAYMENT_METHOD = 'stripe_1';
-    const TEST_PAYMENT_METHOD = 'test_payment_2';
+    public const STRIPE_PAYMENT_METHOD = 'stripe_1';
+    public const TEST_PAYMENT_METHOD = 'test_payment_2';
 
-    const EXPIRED_AUTHORIZATION_TRANSACTION_1 = 'expired_authorization_transaction_1';
-    const EXPIRED_AUTHORIZATION_TRANSACTION_2 = 'expired_authorization_transaction_2';
-    const EXPIRED_AUTHORIZATION_FAILED_TRANSACTION = 'expired_authorization_failed_transaction';
-    const EXPIRED_AUTHORIZATION_NOT_ACTIVE_TRANSACTION = 'expired_authorization_not_active_transaction';
-    const ACTUAL_AUTHORIZATION_TRANSACTION = 'actual_authorization_transaction';
-    const CAPTURE_TRANSACTION = 'capture_transaction';
+    public const EXPIRED_AUTHORIZATION_TRANSACTION_1 = 'expired_authorization_transaction_1';
+    public const EXPIRED_AUTHORIZATION_TRANSACTION_2 = 'expired_authorization_transaction_2';
+    public const EXPIRED_AUTHORIZATION_FAILED_TRANSACTION = 'expired_authorization_failed_transaction';
+    public const EXPIRED_AUTHORIZATION_NOT_ACTIVE_TRANSACTION = 'expired_authorization_not_active_transaction';
+    public const ACTUAL_AUTHORIZATION_TRANSACTION = 'actual_authorization_transaction';
+    public const CAPTURE_TRANSACTION = 'capture_transaction';
 
     private ?ContainerInterface $container;
     private static array $paymentTransactionsData = [

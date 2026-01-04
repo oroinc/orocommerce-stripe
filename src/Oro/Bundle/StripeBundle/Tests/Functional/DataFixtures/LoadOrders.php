@@ -9,10 +9,10 @@ use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 
 class LoadOrders extends BaseLoadOrders
 {
-    const MAIN_ORDER = 'main_order';
-    const SUB_ORDER_1 = 'sub_order1';
-    const SUB_ORDER_2 = 'sub_order2';
-    const SUB_ORDER_3 = 'sub_order3';
+    public const MAIN_ORDER = 'main_order';
+    public const SUB_ORDER_1 = 'sub_order1';
+    public const SUB_ORDER_2 = 'sub_order2';
+    public const SUB_ORDER_3 = 'sub_order3';
 
     /**
      * @var array

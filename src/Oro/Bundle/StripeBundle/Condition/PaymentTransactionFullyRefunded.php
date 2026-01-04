@@ -17,7 +17,7 @@ class PaymentTransactionFullyRefunded extends AbstractCondition implements Conte
 {
     use ContextAccessorAwareTrait;
 
-    const NAME = 'payment_transaction_was_fully_refunded';
+    public const NAME = 'payment_transaction_was_fully_refunded';
 
     /** @var PaymentTransaction|PropertyPathInterface */
     protected $transaction;
