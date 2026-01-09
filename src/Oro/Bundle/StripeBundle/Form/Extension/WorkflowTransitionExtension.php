@@ -26,7 +26,7 @@ class WorkflowTransitionExtension extends AbstractTypeExtension
     }
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if (!$this->isApplicable($options)) {
             return;

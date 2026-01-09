@@ -19,7 +19,7 @@ class ChangeDefaultValuesForStripeSettings implements Migration
         $table = $schema->getTable('oro_integration_transport');
 
         if ($table->hasColumn('stripe_user_monitoring')) {
-            $table->changeColumn('stripe_user_monitoring', [
+            $table->modifyColumn('stripe_user_monitoring', [
                 'default' => false,
             ]);
         }

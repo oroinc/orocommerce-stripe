@@ -17,7 +17,7 @@ class ModifySigningSecretColumn implements Migration
         $table = $schema->getTable('oro_integration_transport');
 
         if ($table->hasColumn('stripe_signing_secret')) {
-            $table->changeColumn('stripe_signing_secret', [
+            $table->modifyColumn('stripe_signing_secret', [
                 'comment' => '(DC2Type:crypted_string)'
             ]);
         }

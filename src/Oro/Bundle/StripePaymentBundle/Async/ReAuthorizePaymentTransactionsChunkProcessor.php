@@ -61,6 +61,9 @@ class ReAuthorizePaymentTransactionsChunkProcessor implements
      */
     private function doJob(array $paymentTransactionIds): bool
     {
+        if (empty($paymentTransactionIds)) {
+            return true;
+        }
         foreach ($this->paymentTransactionRepository->findBy(['id' => $paymentTransactionIds]) as $paymentTransaction) {
             try {
                 if (!$this->reAuthorizationExecutor->isApplicable($paymentTransaction)) {
