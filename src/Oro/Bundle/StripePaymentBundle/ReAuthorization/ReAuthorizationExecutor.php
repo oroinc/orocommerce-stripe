@@ -41,8 +41,10 @@ class ReAuthorizationExecutor implements ReAuthorizationExecutorInterface
             return false;
         }
 
-        if ($this->paymentTransactionRepository
-            ->hasSuccessfulRelatedTransactionsByAction($paymentTransaction, PaymentMethodInterface::CANCEL)) {
+        if (
+            $this->paymentTransactionRepository
+            ->hasSuccessfulRelatedTransactionsByAction($paymentTransaction, PaymentMethodInterface::CANCEL)
+        ) {
             return false;
         }
 

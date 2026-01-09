@@ -100,7 +100,8 @@ class StripeSDKEventFactory implements StripeEventFactoryInterface
 
     protected function getTransactionPaymentMethod(?ResponseObjectInterface $responseObject): ?string
     {
-        if (!$responseObject instanceof PaymentIntentAwareInterface
+        if (
+            !$responseObject instanceof PaymentIntentAwareInterface
             || empty($responseObject->getPaymentIntentId())
         ) {
             return null;

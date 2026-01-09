@@ -19,8 +19,10 @@ class SortedApplicablePaymentMethodsProvider extends ApplicablePaymentMethodsPro
 
         uksort($applicablePaymentMethods, function ($a, $b) {
             // Google/Apple Pay should be the first in the payments methods list.
-            if (str_ends_with($a, StripeAppleGooglePaymentMethod::METHOD_SUFFIX)
-                || str_ends_with($b, StripeAppleGooglePaymentMethod::METHOD_SUFFIX)) {
+            if (
+                str_ends_with($a, StripeAppleGooglePaymentMethod::METHOD_SUFFIX)
+                || str_ends_with($b, StripeAppleGooglePaymentMethod::METHOD_SUFFIX)
+            ) {
                 return 1;
             }
 

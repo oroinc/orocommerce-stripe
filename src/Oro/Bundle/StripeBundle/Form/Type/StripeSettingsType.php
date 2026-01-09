@@ -111,7 +111,8 @@ class StripeSettingsType extends AbstractType
                 /** @var StripeTransportSettings $data */
                 $data = $form->getData();
 
-                if ($data->getPaymentAction() === StripePaymentActionMapper::MANUAL
+                if (
+                    $data->getPaymentAction() === StripePaymentActionMapper::MANUAL
                     && $data->getEnableReAuthorize()
                 ) {
                     $groups[] = self::PAYMENT_ACTION_MANUAL_VALIDATION_GROUP;

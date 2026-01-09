@@ -69,8 +69,10 @@ class ChargeStripeActionExecutor implements
         }
 
         $stripePaymentIntentConfig = $stripeAction->getPaymentIntentConfig();
-        if ($stripeAction->getActionName() === PaymentMethodInterface::CHARGE ||
-            $stripePaymentIntentConfig->getCaptureMethod() === 'automatic') {
+        if (
+            $stripeAction->getActionName() === PaymentMethodInterface::CHARGE ||
+            $stripePaymentIntentConfig->getCaptureMethod() === 'automatic'
+        ) {
             return true;
         }
 

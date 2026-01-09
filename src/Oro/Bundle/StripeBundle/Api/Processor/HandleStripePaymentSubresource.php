@@ -89,7 +89,8 @@ class HandleStripePaymentSubresource extends AbstractHandlePaymentSubresource
             'The payment requires additional actions.'
         );
         if ($paymentResult) {
-            if (\array_key_exists('additionalData', $paymentResult)
+            if (
+                \array_key_exists('additionalData', $paymentResult)
                 && \is_string($paymentResult['additionalData'])
             ) {
                 $paymentResult['additionalData'] = json_decode(

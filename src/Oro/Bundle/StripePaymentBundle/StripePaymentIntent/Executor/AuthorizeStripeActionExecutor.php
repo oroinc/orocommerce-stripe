@@ -62,8 +62,10 @@ class AuthorizeStripeActionExecutor implements
         }
 
         $stripePaymentIntentConfig = $stripeAction->getPaymentIntentConfig();
-        if ($stripeAction->getActionName() === PaymentMethodInterface::PURCHASE &&
-            $stripePaymentIntentConfig->getCaptureMethod() !== 'manual') {
+        if (
+            $stripeAction->getActionName() === PaymentMethodInterface::PURCHASE &&
+            $stripePaymentIntentConfig->getCaptureMethod() !== 'manual'
+        ) {
             return false;
         }
 

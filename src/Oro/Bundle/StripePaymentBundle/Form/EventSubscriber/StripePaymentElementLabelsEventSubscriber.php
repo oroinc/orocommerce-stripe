@@ -65,8 +65,10 @@ class StripePaymentElementLabelsEventSubscriber implements EventSubscriberInterf
             $channelNameField->setData($defaultName);
         }
 
-        if ($stripePaymentElementSettings->getPaymentMethodName() === '' ||
-            $stripePaymentElementSettings->getPaymentMethodName() === null) {
+        if (
+            $stripePaymentElementSettings->getPaymentMethodName() === '' ||
+            $stripePaymentElementSettings->getPaymentMethodName() === null
+        ) {
             $stripePaymentElementSettings->setPaymentMethodName($defaultName);
         }
 

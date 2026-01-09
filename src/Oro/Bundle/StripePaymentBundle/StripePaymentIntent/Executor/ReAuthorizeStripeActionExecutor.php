@@ -63,10 +63,12 @@ class ReAuthorizeStripeActionExecutor implements
             return false;
         }
 
-        if ($sourceTransaction->getAction() !== PaymentMethodInterface::AUTHORIZE ||
+        if (
+            $sourceTransaction->getAction() !== PaymentMethodInterface::AUTHORIZE ||
             !$sourceTransaction->getTransactionOption(
                 ReAuthorizationExecutorInterface::RE_AUTHORIZATION_ENABLED
-            )) {
+            )
+        ) {
             return false;
         }
 
