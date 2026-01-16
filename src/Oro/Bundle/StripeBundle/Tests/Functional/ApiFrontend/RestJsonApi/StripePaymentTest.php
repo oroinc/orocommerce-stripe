@@ -566,7 +566,7 @@ class StripePaymentTest extends FrontendRestJsonApiTestCase
         self::assertEquals($shippingMethodType, $responseData['data']['attributes']['shippingMethod']['type']);
         self::assertNotEmpty($responseData['data']['relationships']['billingAddress']['data']);
         self::assertNotEmpty($responseData['data']['relationships']['shippingAddress']['data']);
-        self::assertCount(1, $responseData['data']['relationships']['lineItems']['data']);
+        self::assertCount(2, $responseData['data']['relationships']['lineItems']['data']);
     }
 
     public function testStripePaymentWithAdditionalActionCancelled(): void
