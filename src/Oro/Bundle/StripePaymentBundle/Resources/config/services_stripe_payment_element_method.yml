@@ -1,4 +1,7 @@
 parameters:
+    # Default value for CE
+    oro_invoice_payment.payment_method_group.storefront: ~
+
     oro_stripe_payment.payment_method.stripe_payment_element.integration_channel_type: !php/const 'Oro\Bundle\StripePaymentBundle\Integration\StripePaymentElement\StripePaymentElementIntegrationChannelType::TYPE'
     oro_stripe_payment.payment_method.stripe_payment_element.prefixed_identifier_generator.prefix: !php/const 'Oro\Bundle\StripePaymentBundle\Integration\StripePaymentElement\StripePaymentElementIntegrationChannelType::TYPE'
     oro_stripe_payment.payment_method.stripe_payment_element.payment_method_groups: ['%oro_invoice_payment.payment_method_group.storefront%']
