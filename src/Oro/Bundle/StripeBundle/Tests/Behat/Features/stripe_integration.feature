@@ -72,7 +72,7 @@ Feature: Stripe integration
             | Stripe ZIP         | 12345               |
         And I click "Continue"
         And I click "Submit Order"
-        And I should see "Payment method"
+        And I should see "Payment method" flash message
         And I should see "We were unable to process your payment. Please verify your payment information and try again" flash message
 
     Scenario: Checkout with manual stripe payment
