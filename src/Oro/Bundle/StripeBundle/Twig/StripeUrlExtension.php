@@ -10,8 +10,9 @@ use Twig\TwigFunction;
  */
 class StripeUrlExtension extends AbstractExtension
 {
-    public function __construct(protected array $externalResources)
-    {
+    public function __construct(
+        protected array $externalResources
+    ) {
     }
 
     #[\Override]
