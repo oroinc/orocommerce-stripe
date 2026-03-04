@@ -9,6 +9,7 @@ use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Bundle\StripePaymentBundle\PaymentMethod\StripePaymentElement\StripePaymentElementMethod;
 
 /**
  * Handles payment re-authorization for payment transaction.
@@ -53,11 +54,8 @@ class ReAuthorizationExecutor implements ReAuthorizationExecutorInterface
         }
 
         $paymentMethod = $this->paymentMethodProvider->getPaymentMethod($paymentTransaction->getPaymentMethod());
-        if (!$paymentMethod->supports(PaymentMethodInterface::RE_AUTHORIZE)) {
-            return false;
-        }
 
-        return true;
+        return $paymentMethod instanceof StripePaymentElementMethod;
     }
 
     #[\Override]

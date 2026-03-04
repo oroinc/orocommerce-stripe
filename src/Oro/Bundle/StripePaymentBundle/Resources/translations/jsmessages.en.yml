@@ -11,3 +11,9 @@ oro:
                     message: The payment authorization of {{ amount }} will be renewed. Are you sure you want to continue?
                     submit.label: Yes, Re-Authorize
 
+        multi_step_checkout:
+            payment_dialog:
+                title: Payment
+        single_step_checkout:
+            payment_dialog:
+                title: Payment

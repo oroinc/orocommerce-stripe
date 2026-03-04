@@ -1,0 +1,35 @@
+operations:
+
+    # Enables the Stripe-specific action for the Stripe payment methods on the Order Payments datagrid.
+    oro_stripe_order_payment_transaction_cancel:
+        extends: oro_stripe_payment_transaction_cancel
+        datagrids:
+            - order-payment-transactions-grid
+        preactions:
+            -   '@assign_value':
+                    parameters: [ $.supportedPaymentMethodClasses, [
+                        'Oro\Bundle\StripePaymentBundle\PaymentMethod\StripePaymentElement\StripePaymentElementMethod'
+                    ] ]
+        preconditions:
+            '@and':
+                -   '@in': [ $.paymentMethodClass, $.supportedPaymentMethodClasses ]
+
+    # Enables the Stripe-specific action for the Stripe payment methods on the Order Payments datagrid.
+    oro_stripe_order_payment_transaction_refund:
+        extends: oro_stripe_payment_transaction_refund
+        datagrids:
+            - order-payment-transactions-grid
+        preactions:
+            -   '@assign_value':
+                    parameters: [ $.supportedPaymentMethodClasses, [
+                        'Oro\Bundle\StripePaymentBundle\PaymentMethod\StripePaymentElement\StripePaymentElementMethod'
+                    ] ]
+        preconditions:
+            '@and':
+                -   '@in': [ $.paymentMethodClass, $.supportedPaymentMethodClasses ]
+
+    # Enables the Stripe-specific action for the Stripe payment methods on the Order Payments datagrid.
+    oro_stripe_order_payment_transaction_re_authorize:
+        extends: oro_stripe_payment_transaction_re_authorize
+        datagrids:
+            - order-payment-transactions-grid

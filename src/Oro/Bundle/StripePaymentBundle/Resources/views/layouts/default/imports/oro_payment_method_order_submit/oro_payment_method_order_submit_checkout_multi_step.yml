@@ -1,0 +1,15 @@
+layout:
+    actions:
+        -   '@setBlockTheme':
+                themes:
+                    - 'oro_payment_method_order_submit_checkout_multi_step.html.twig'
+
+        -   '@add':
+                id: order_review_additional_data_field
+                parentId: checkout_form_fields
+                blockType: block
+                options:
+                    vars:
+                        form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
+
+    conditions: '!context["isSinglePageCheckout"]'

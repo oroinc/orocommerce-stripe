@@ -16,6 +16,8 @@ interface StripePaymentIntentActionInterface
     public const string PAYMENT_METHOD_ID = 'stripePaymentMethodId';
     public const string CUSTOMER_ID = 'stripeCustomerId';
     public const string REFUND_ID = 'stripeRefundId';
+    public const string SETUP_FUTURE_USAGE = 'stripeSetupFutureUsage';
+    public const string OFF_SESSION = 'stripeOffSession';
     public const string REFUND_REASON = 'refundReason';
     public const string CANCEL_REASON = 'cancelReason';
 

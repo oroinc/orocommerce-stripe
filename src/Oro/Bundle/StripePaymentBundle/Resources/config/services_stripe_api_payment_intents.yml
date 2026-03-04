@@ -13,8 +13,11 @@ services:
             - '@oro_stripe_payment.stripe_amount_converter'
             - '@router'
             - '@event_dispatcher'
+        calls:
+            - ['setLogger', ['@logger']]
         tags:
             - { name: 'oro_stripe_payment.stripe_payment_intent.executor' }
+            - { name: 'monolog.logger', channel: 'oro_stripe_payment_element' }
 
     oro_stripe_payment.stripe_payment_intent.executor.charge:
         class: 'Oro\Bundle\StripePaymentBundle\StripePaymentIntent\Executor\ChargeStripeActionExecutor'
@@ -24,8 +27,56 @@ services:
             - '@oro_stripe_payment.stripe_amount_converter'
             - '@router'
             - '@event_dispatcher'
+        calls:
+            - ['setLogger', ['@logger']]
         tags:
             - { name: 'oro_stripe_payment.stripe_payment_intent.executor' }
+            - { name: 'monolog.logger', channel: 'oro_stripe_payment_element' }
+
+    oro_stripe_payment.stripe_payment_intent.executor.purchase_suborders_aware:
+        class: 'Oro\Bundle\StripePaymentBundle\StripePaymentIntent\Executor\PurchaseSubOrdersAwareStripeActionExecutor'
+        arguments:
+            - '@oro_stripe_payment.stripe_payment_intent.executor'
+            - '@oro_stripe_payment.provider.sub_orders_by_payment_transaction'
+            - '@oro_stripe_payment.factory.sub_order_payment_transaction'
+            - '@oro_payment.provider.payment_transaction'
+        calls:
+            - ['setLogger', ['@logger']]
+        tags:
+            - name: 'oro_stripe_payment.stripe_payment_intent.executor'
+              # Must be executed before the oro_stripe_payment.stripe_payment_intent.executor.charge
+              priority: 100
+            - { name: 'monolog.logger', channel: 'oro_stripe_payment_element' }
+
+    oro_stripe_payment.stripe_payment_intent.executor.charge_off_session:
+        class: 'Oro\Bundle\StripePaymentBundle\StripePaymentIntent\Executor\ChargeOffSessionStripeActionExecutor'
+        arguments:
+            - '@oro_stripe_payment.stripe_client.factory'
+            - '@oro_stripe_payment.stripe_customer.executor'
+            - '@oro_stripe_payment.stripe_amount_converter'
+            - '@event_dispatcher'
+        calls:
+            - ['setLogger', ['@logger']]
+        tags:
+            - name: 'oro_stripe_payment.stripe_payment_intent.executor'
+              # Must be executed before the oro_stripe_payment.stripe_payment_intent.executor.charge
+              priority: 100
+            - { name: 'monolog.logger', channel: 'oro_stripe_payment_element' }
+
+    oro_stripe_payment.stripe_payment_intent.executor.authorize_off_session:
+        class: 'Oro\Bundle\StripePaymentBundle\StripePaymentIntent\Executor\AuthorizeOffSessionStripeActionExecutor'
+        arguments:
+            - '@oro_stripe_payment.stripe_client.factory'
+            - '@oro_stripe_payment.stripe_customer.executor'
+            - '@oro_stripe_payment.stripe_amount_converter'
+            - '@event_dispatcher'
+        calls:
+            - ['setLogger', ['@logger']]
+        tags:
+            - name: 'oro_stripe_payment.stripe_payment_intent.executor'
+              # Must be executed before the oro_stripe_payment.stripe_payment_intent.executor.authorize
+              priority: 100
+            - { name: 'monolog.logger', channel: 'oro_stripe_payment_element' }
 
     oro_stripe_payment.stripe_payment_intent.executor.re_authorize:
         class: 'Oro\Bundle\StripePaymentBundle\StripePaymentIntent\Executor\ReAuthorizeStripeActionExecutor'
@@ -35,8 +86,11 @@ services:
             - '@oro_stripe_payment.stripe_payment_intent.executor.cancel'
             - '@oro_stripe_payment.stripe_amount_converter'
             - '@event_dispatcher'
+        calls:
+            - ['setLogger', ['@logger']]
         tags:
             - { name: 'oro_stripe_payment.stripe_payment_intent.executor' }
+            - { name: 'monolog.logger', channel: 'oro_stripe_payment_element' }
 
     oro_stripe_payment.stripe_payment_intent.executor.capture:
         class: 'Oro\Bundle\StripePaymentBundle\StripePaymentIntent\Executor\CaptureStripeActionExecutor'
@@ -44,16 +98,22 @@ services:
             - '@oro_stripe_payment.stripe_client.factory'
             - '@oro_stripe_payment.stripe_amount_converter'
             - '@event_dispatcher'
+        calls:
+            - ['setLogger', ['@logger']]
         tags:
             - { name: 'oro_stripe_payment.stripe_payment_intent.executor' }
+            - { name: 'monolog.logger', channel: 'oro_stripe_payment_element' }
 
     oro_stripe_payment.stripe_payment_intent.executor.cancel:
         class: 'Oro\Bundle\StripePaymentBundle\StripePaymentIntent\Executor\CancelStripeActionExecutor'
         arguments:
             - '@oro_stripe_payment.stripe_client.factory'
             - '@event_dispatcher'
+        calls:
+            - ['setLogger', ['@logger']]
         tags:
             - { name: 'oro_stripe_payment.stripe_payment_intent.executor' }
+            - { name: 'monolog.logger', channel: 'oro_stripe_payment_element' }
 
     oro_stripe_payment.stripe_payment_intent.executor.refund:
         class: 'Oro\Bundle\StripePaymentBundle\StripePaymentIntent\Executor\RefundStripeActionExecutor'
@@ -61,8 +121,11 @@ services:
             - '@oro_stripe_payment.stripe_client.factory'
             - '@oro_stripe_payment.stripe_amount_converter'
             - '@event_dispatcher'
+        calls:
+            - ['setLogger', ['@logger']]
         tags:
             - { name: 'oro_stripe_payment.stripe_payment_intent.executor' }
+            - { name: 'monolog.logger', channel: 'oro_stripe_payment_element' }
 
     oro_stripe_payment.stripe_payment_intent.executor.confirm:
         class: 'Oro\Bundle\StripePaymentBundle\StripePaymentIntent\Executor\ConfirmStripeActionExecutor'
@@ -70,47 +133,83 @@ services:
             - '@oro_stripe_payment.stripe_client.factory'
             - '@oro_stripe_payment.stripe_amount_converter'
             - '@event_dispatcher'
+        calls:
+            - ['setLogger', ['@logger']]
         tags:
             - { name: 'oro_stripe_payment.stripe_payment_intent.executor' }
+            - { name: 'monolog.logger', channel: 'oro_stripe_payment_element' }
+
+    oro_stripe_payment.stripe_payment_intent.executor.confirm_suborders_aware:
+        class: 'Oro\Bundle\StripePaymentBundle\StripePaymentIntent\Executor\ConfirmSubOrdersAwareStripeActionExecutor'
+        arguments:
+            - '@oro_stripe_payment.stripe_payment_intent.executor'
+            - '@oro_stripe_payment.provider.sub_orders_by_payment_transaction'
+            - '@oro_stripe_payment.factory.sub_order_payment_transaction'
+            - '@oro_payment.provider.payment_transaction'
+        calls:
+            - ['setLogger', ['@logger']]
+        tags:
+            -   name: 'oro_stripe_payment.stripe_payment_intent.executor'
+                # Must be executed before the oro_stripe_payment.stripe_payment_intent.executor.confirm
+                priority: 100
+            - { name: 'monolog.logger', channel: 'oro_stripe_payment_element' }
 
     oro_stripe_payment.stripe_payment_intent.executor.webhook.payment_intent_capture_succeeded:
         class: 'Oro\Bundle\StripePaymentBundle\StripePaymentIntent\Executor\Webhook\PaymentIntentSucceededCaptureStripeActionExecutor'
         arguments:
             - '@oro_payment.provider.payment_transaction'
             - '@oro_stripe_payment.stripe_amount_converter'
+        calls:
+            - ['setLogger', ['@logger']]
         tags:
             - { name: 'oro_stripe_payment.stripe_payment_intent.executor' }
+            - { name: 'monolog.logger', channel: 'oro_stripe_payment_element' }
 
     oro_stripe_payment.stripe_payment_intent.executor.webhook.payment_intent_charge_succeeded:
         class: 'Oro\Bundle\StripePaymentBundle\StripePaymentIntent\Executor\Webhook\PaymentIntentSucceededChargeStripeActionExecutor'
         arguments:
             - '@oro_stripe_payment.stripe_amount_converter'
+        calls:
+            - ['setLogger', ['@logger']]
         tags:
             - { name: 'oro_stripe_payment.stripe_payment_intent.executor' }
+            - { name: 'monolog.logger', channel: 'oro_stripe_payment_element' }
 
     oro_stripe_payment.stripe_payment_intent.executor.webhook.payment_intent_capture_failed:
         class: 'Oro\Bundle\StripePaymentBundle\StripePaymentIntent\Executor\Webhook\PaymentIntentFailedCaptureStripeActionExecutor'
         arguments:
             - '@oro_payment.provider.payment_transaction'
+        calls:
+            - ['setLogger', ['@logger']]
         tags:
             - { name: 'oro_stripe_payment.stripe_payment_intent.executor' }
+            - { name: 'monolog.logger', channel: 'oro_stripe_payment_element' }
 
     oro_stripe_payment.stripe_payment_intent.executor.webhook.payment_intent_charge_failed:
         class: 'Oro\Bundle\StripePaymentBundle\StripePaymentIntent\Executor\Webhook\PaymentIntentFailedChargeStripeActionExecutor'
+        calls:
+            - ['setLogger', ['@logger']]
         tags:
             - { name: 'oro_stripe_payment.stripe_payment_intent.executor' }
+            - { name: 'monolog.logger', channel: 'oro_stripe_payment_element' }
 
     oro_stripe_payment.stripe_payment_intent.executor.webhook.payment_intent_canceled:
         class: 'Oro\Bundle\StripePaymentBundle\StripePaymentIntent\Executor\Webhook\PaymentIntentCanceledStripeActionExecutor'
         arguments:
             - '@oro_payment.provider.payment_transaction'
+        calls:
+            - ['setLogger', ['@logger']]
         tags:
             - { name: 'oro_stripe_payment.stripe_payment_intent.executor' }
+            - { name: 'monolog.logger', channel: 'oro_stripe_payment_element' }
 
     oro_stripe_payment.stripe_payment_intent.executor.webhook.refund_updated:
         class: 'Oro\Bundle\StripePaymentBundle\StripePaymentIntent\Executor\Webhook\RefundUpdatedStripeActionExecutor'
         arguments:
             - '@oro_payment.provider.payment_transaction'
             - '@oro_stripe_payment.stripe_amount_converter'
+        calls:
+            - ['setLogger', ['@logger']]
         tags:
             - { name: 'oro_stripe_payment.stripe_payment_intent.executor' }
+            - { name: 'monolog.logger', channel: 'oro_stripe_payment_element' }

@@ -1,0 +1,23 @@
+Oro\Bundle\IntegrationBundle\Entity\Channel:
+    stripe_payment_element_channel:
+        type: 'stripe_payment_element'
+        name: 'Stripe Payment Element'
+        enabled: true
+        organization: '@organization'
+        transport: '@stripe_payment_element_settings'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    stripe_payment_element_label:
+        string: 'Stripe Payment Element'
+
+Oro\Bundle\StripePaymentBundle\Entity\StripePaymentElementSettings:
+    stripe_payment_element_settings:
+        __calls:
+            - addPaymentMethodLabel: ['@stripe_payment_element_label']
+            - addPaymentMethodShortLabel: ['@stripe_payment_element_label']
+        paymentMethodName: 'Stripe Payment Element'
+        captureMethod: 'manual'
+        apiPublicKey: 'pk_test'
+        apiSecretKey: 'sk_test'
+        webhookSecret: 'w_secret'
+        channel: '@stripe_payment_element_channel'

@@ -38,11 +38,10 @@ class StripePaymentElementStripeScriptProvider implements StripeScriptProviderIn
         }
 
         return $this->cache->get(
-            self::getStripeScriptEnabledCacheKey($this->tokenAccessor->getOrganizationId()),
+            self::getStripeScriptEnabledCacheKey((int) $this->tokenAccessor->getOrganizationId()),
             $this->doGetStripeScriptEnabled(...)
         );
     }
-
 
     private function doGetStripeScriptEnabled(): bool
     {
@@ -59,7 +58,7 @@ class StripePaymentElementStripeScriptProvider implements StripeScriptProviderIn
     public function getStripeScriptVersion(): string
     {
         return $this->cache->get(
-            self::getStripeScriptVersionCacheKey($this->tokenAccessor->getOrganizationId()),
+            self::getStripeScriptVersionCacheKey((int) $this->tokenAccessor->getOrganizationId()),
             $this->doGetStripeVersion(...)
         );
     }

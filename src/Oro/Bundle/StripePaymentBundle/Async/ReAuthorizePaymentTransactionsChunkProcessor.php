@@ -64,9 +64,16 @@ class ReAuthorizePaymentTransactionsChunkProcessor implements
         if (empty($paymentTransactionIds)) {
             return true;
         }
+
         foreach ($this->paymentTransactionRepository->findBy(['id' => $paymentTransactionIds]) as $paymentTransaction) {
             try {
                 if (!$this->reAuthorizationExecutor->isApplicable($paymentTransaction)) {
+                    $this->logger->info(
+                        'Cannot to renew the payment transaction #{paymentTransactionId}: '
+                        . 're-authorization is not applicable.',
+                        ['paymentTransactionId' => $paymentTransaction->getId()]
+                    );
+
                     continue;
                 }
 
@@ -83,6 +90,13 @@ class ReAuthorizePaymentTransactionsChunkProcessor implements
                             'paymentTransactionId' => $paymentTransaction->getId(),
                             'message' => $paymentMethodResult['error'] ?? 'N/A',
                             'paymentMethodResult' => $paymentMethodResult,
+                        ]
+                    );
+                } else {
+                    $this->logger->info(
+                        'Successfully renewed the payment transaction #{paymentTransactionId}.',
+                        [
+                            'paymentTransactionId' => $paymentTransaction->getId(),
                         ]
                     );
                 }

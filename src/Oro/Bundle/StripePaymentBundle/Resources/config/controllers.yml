@@ -18,3 +18,10 @@ services:
                 id: 'oro_stripe_payment.stripe_webhook_event.factory',
                 key: 'Oro\Bundle\StripePaymentBundle\StripeWebhookEvent\Factory\StripeCallbackWebhookEventFactoryInterface'
             }
+
+    oro_stripe_payment.controller.frontend.apple_pay_domain_verification:
+        class: 'Oro\Bundle\StripePaymentBundle\Controller\Frontend\ApplePayDomainVerificationController'
+        calls:
+            - [setContainer, ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }

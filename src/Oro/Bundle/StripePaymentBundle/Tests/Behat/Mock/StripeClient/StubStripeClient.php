@@ -25,6 +25,9 @@ class StubStripeClient extends LoggingStripeClient
 
     /**
      * @throws InvalidRequestException
+     *
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     #[\Override]
     protected function doRequest($method, $path, $params, $opts): StripeObject
@@ -41,14 +44,54 @@ class StubStripeClient extends LoggingStripeClient
 
             $paymentIntent = new StripePaymentIntent('pi_123');
             $paymentIntent->customer = 'cus_123';
-            $paymentIntent->payment_method = 'pm_123';
+            $paymentIntent->payment_method = 'pm_' . $cardNumber;
 
-            match ($cardNumber) {
-                '4242424242424242' => $paymentIntent->status = 'succeeded',
-                '4000002760003184' => $paymentIntent->status = 'requires_action',
-                '4000000000009235' => $paymentIntent->status = 'failed',
-                default => $paymentIntent->status = 'unknown',
-            };
+            if ($cardNumber === '4242424242424242') { // Successful charge
+                $paymentIntent->status = 'succeeded';
+            } elseif ($cardNumber === '4000056655665556') { // Successful authorization, requires capture
+                $paymentIntent->status = 'requires_capture';
+                if (isset($params['setup_future_usage'])) {
+                    $paymentIntent->setup_future_usage = $params['setup_future_usage'];
+                }
+            } elseif ($cardNumber === '4000000000009235') { // Declined card
+                $paymentIntent->status = 'requires_payment_method';
+                $paymentIntent->last_payment_error = StripeObject::constructFrom([
+                    'message' => 'Your card was declined.',
+                    'code' => 'card_declined',
+                    'decline_code' => 'insufficient_funds',
+                ]);
+            } elseif (!empty($params['payment_method']) && !empty($params['off_session'])) {
+                $paymentIntent->payment_method = $params['payment_method'];
+                if ($params['payment_method'] === 'pm_test_failing_card_visa') {  // Re-authorization
+                    $paymentIntent->status = 'requires_payment_method';
+                    $paymentIntent->last_payment_error = StripeObject::constructFrom([
+                        'message' => 'Your card was declined.',
+                        'code' => 'card_declined',
+                        'decline_code' => 'insufficient_funds',
+                    ]);
+                } elseif ($params['payment_method'] === 'pm_test_card_visa') {  // Re-authorization
+                    $paymentIntent->status = 'requires_capture';
+                } elseif ($params['payment_method'] === 'pm_4000056655665556') {  // Authorization
+                    $paymentIntent->status = 'requires_capture';
+                } else {
+                    $paymentIntent->status = 'succeeded';
+                }
+            }
+
+            return $paymentIntent;
+        }
+
+        if (str_starts_with($path, '/v1/payment_intents/') && str_ends_with($path, '/capture')) {
+            $paymentIntent = new StripePaymentIntent('pi_123');
+            $paymentIntent->status = 'succeeded';
+            $paymentIntent->amount_received = $params['amount_to_capture'] ?? 0;
+
+            return $paymentIntent;
+        }
+
+        if (str_starts_with($path, '/v1/payment_intents/') && str_ends_with($path, '/cancel')) {
+            $paymentIntent = new StripePaymentIntent('pi_123');
+            $paymentIntent->status = 'canceled';
 
             return $paymentIntent;
         }

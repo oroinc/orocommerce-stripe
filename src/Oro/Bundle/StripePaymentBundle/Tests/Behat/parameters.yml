@@ -1,5 +1,5 @@
 parameters:
-    oro_stripe_payment.placeholder.stripe_script.url: '/bundles/orostripe/js/stubs/stripe-stub.js'
+    oro_stripe_payment.placeholder.stripe_script.url: '/bundles/orostripepayment/js/stub/stripe-stub.js'
 
 services:
 

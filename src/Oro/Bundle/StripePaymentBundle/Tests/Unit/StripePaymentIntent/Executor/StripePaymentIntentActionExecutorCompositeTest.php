@@ -209,6 +209,8 @@ final class StripePaymentIntentActionExecutorCompositeTest extends TestCase
             [
                 'successful' => false,
                 'error' => $errorMessage,
+                'errorCode' => 0,
+                'stripeCode' => null,
             ],
             $result->toArray()
         );

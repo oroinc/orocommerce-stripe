@@ -7,13 +7,6 @@ services:
         arguments:
             - !tagged_iterator { tag: 'oro_stripe_payment.stripe_script.provider' }
 
-    oro_stripe_payment.stripe_script.provider.stripe_card_element:
-        class: 'Oro\Bundle\StripePaymentBundle\StripeScript\Provider\StripeCardElementStripeScriptProvider'
-        arguments:
-            - '@oro_stripe.placeholder.filter'
-        tags:
-            - { name: 'oro_stripe_payment.stripe_script.provider' }
-
     oro_stripe_payment.stripe_script.provider.stripe_script_enabled:
         class: 'Oro\Bundle\StripePaymentBundle\StripeScript\Provider\StripeScriptEnabledProvider'
         tags:
@@ -82,3 +75,21 @@ services:
             - '@oro_payment.repository.payment_transaction'
         tags:
             - { name: 'oro_stripe_payment.stripe_webhook_event.provider.payment_transaction' }
+
+    oro_stripe_payment.provider.sub_orders_by_payment_transaction:
+        class: 'Oro\Bundle\StripePaymentBundle\Provider\SubOrdersByPaymentTransactionProvider'
+        arguments:
+            - '@doctrine'
+
+    oro_stripe_payment.factory.sub_order_payment_transaction:
+        class: 'Oro\Bundle\StripePaymentBundle\Factory\SubOrderPaymentTransactionFactory'
+        arguments:
+            - '@oro_payment.provider.payment_transaction'
+
+    oro_stripe_payment.event_listener.payment_transaction_operation_announce_event_listener:
+        class: 'Oro\Bundle\StripePaymentBundle\EventListener\Operation\PaymentTransactionOperationAnnounceEventListener'
+        arguments:
+            - '%oro_stripe_payment.payment_method.stripe_payment_element.prefixed_identifier_generator.prefix%'
+        tags:
+            - { name: 'kernel.event_listener', event: 'oro_operation.oro_order_payment_transaction_cancel.announce', method: 'onOperationAnnounce' }
+            - { name: 'kernel.event_listener', event: 'oro_operation.oro_order_payment_transaction_refund.announce', method: 'onOperationAnnounce' }

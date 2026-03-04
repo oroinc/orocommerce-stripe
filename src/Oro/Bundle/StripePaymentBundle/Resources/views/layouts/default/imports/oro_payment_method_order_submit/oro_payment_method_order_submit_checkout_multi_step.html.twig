@@ -1,0 +1,51 @@
+{% block _order_review_oro_stripe_payment_element_widget -%}
+    {% if options.payment_method is defined %}
+        {%- import '@OroUI/macros.html.twig' as UI -%}
+        {%- set component = 'orostripepayment/js/app/components/checkout-multi-step/stripe-payment-element-checkout-multi-step-component' -%}
+        {%- set component_name = 'checkout-payment-method__' ~ options.payment_method -%}
+        {%- set component_options = {
+            'paymentMethodIdentifier': options.payment_method,
+            'stripeOptions': view.options.stripeOptions,
+            'stripeElementsObjectOptions': view.options.stripeElementsObjectOptions|merge({
+                'appearance': { 'labels': 'floating' },
+            }),
+            'stripePaymentElementOptions': view.options.stripePaymentElementOptions|merge({
+                'layout': {
+                    'type': 'tabs',
+                }
+            }),
+        } -%}
+
+        <div id="{{ component_name }}" data-role="checkout-payment-method"
+             class="checkout-payment-method checkout-payment-method__stripe-payment-element"
+                {{- UI.renderPageComponentAttributes({
+                    'name': component_name,
+                    'module': component,
+                    'options': component_options
+                }) -}}>
+            <script type="text/html" data-role="checkout-payment-method-form-template">
+                <div data-role="checkout-payment-method-form" class="checkout-payment-method-form">
+                    <div class="form-row">
+                        <div data-role="stripe-payment-element-container" class="stripe-payment-element-container">
+                            {# Stripe Payment Element placeholder #}
+                        </div>
+                        <div data-role="stripe-validation-container" class="stripe-validation-container">
+                        </div>
+                        <div class="widget-actions">
+                            <button type="reset" class="btn btn--flat pull-right">{{ 'oro.stripe_payment.multi_step_checkout.payment_dialog.cancel.label'|trans }}</button>
+                            <button type="submit" class="btn pull-right">{{ 'oro.stripe_payment.multi_step_checkout.payment_dialog.submit.label'|trans }}</button>
+                        </div>
+                    </div>
+                </div>
+            </script>
+        </div>
+    {% endif %}
+{%- endblock %}
+
+{% block _order_review_additional_data_field_widget %}
+    {% if form.additional_data is defined and not form.additional_data.rendered %}
+        <div data-page-component-module="orocheckout/js/app/components/payment-additional-data-component">
+            {{ form_row(form.additional_data) }}
+        </div>
+    {% endif %}
+{% endblock %}

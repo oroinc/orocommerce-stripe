@@ -4,13 +4,15 @@ parameters:
 
     oro_stripe_payment.payment_method.stripe_payment_element.integration_channel_type: !php/const 'Oro\Bundle\StripePaymentBundle\Integration\StripePaymentElement\StripePaymentElementIntegrationChannelType::TYPE'
     oro_stripe_payment.payment_method.stripe_payment_element.prefixed_identifier_generator.prefix: !php/const 'Oro\Bundle\StripePaymentBundle\Integration\StripePaymentElement\StripePaymentElementIntegrationChannelType::TYPE'
-    oro_stripe_payment.payment_method.stripe_payment_element.payment_method_groups: ['%oro_invoice_payment.payment_method_group.storefront%']
+    oro_stripe_payment.payment_method.stripe_payment_element.payment_method_groups: ['default', 'oro_invoice_payment_storefront']
 
     oro_stripe_payment.payment_method.stripe_payment_element.stripe_api_version: '2025-03-31.basil'
     oro_stripe_payment.payment_method.stripe_payment_element.stripe_script_version: 'basil'
     oro_stripe_payment.payment_method.stripe_payment_element.webhook_route: 'oro_stripe_payment_webhook_payment_element'
 
     oro_stripe_payment.payment_method.stripe_payment_element.re_authorization_failure_email.template: 'stripe_payment_element_re_authorization_failure'
+
+    oro_stripe_payment.stripe_script.provider.stripe_payment_element_route_aware.allowed_routes: ['oro_checkout_frontend_checkout']
 
 services:
     Oro\Bundle\StripePaymentBundle\Entity\Repository\StripePaymentElementSettingsRepository:
@@ -160,6 +162,27 @@ services:
         tags:
             - { name: 'cache.pool', namespace: 'oro_stripe_payment_element_script' }
 
+    oro_stripe_payment.stripe_script.provider.stripe_payment_element_route_aware:
+        class: 'Oro\Bundle\StripePaymentBundle\StripeScript\Provider\StripePaymentElementRouteAwareStripeScriptProvider'
+        arguments:
+            - '@oro_stripe_payment.payment_method.stripe_payment_element.config.provider'
+            - '@request_stack'
+            - '@oro_security.token_accessor'
+            - '@oro_stripe_payment.provider.stripe_script_provider.stripe_payment_element_user_monitoring_enabled.cache'
+        calls:
+            - [ 'setAllowedRoutes', ['%oro_stripe_payment.stripe_script.provider.stripe_payment_element_route_aware.allowed_routes%'] ]
+        tags:
+            - { name: 'oro_stripe_payment.stripe_script.provider' }
+
+    oro_stripe_payment.event_listener.doctrine.delete_stripe_payment_element_route_aware_script_cache:
+        class: 'Oro\Bundle\StripePaymentBundle\EventListener\Doctrine\DeleteStripePaymentElementRouteAwareScriptCacheDoctrineListener'
+        arguments:
+            - '@oro_stripe_payment.provider.stripe_script_provider.stripe_payment_element_user_monitoring_enabled.cache'
+        tags:
+            - { name: 'doctrine.event_listener', event: 'onFlush' }
+            - { name: 'doctrine.event_listener', event: 'postFlush' }
+            - { name: 'doctrine.event_listener', event: 'onClear' }
+
     oro_stripe_payment.stripe_script.provider.stripe_payment_element:
         class: 'Oro\Bundle\StripePaymentBundle\StripeScript\Provider\StripePaymentElementStripeScriptProvider'
         arguments:
@@ -205,3 +228,18 @@ services:
             - '@oro_entity.entity_name_resolver'
         tags:
             - { name: 'kernel.event_listener', event: 'Oro\Bundle\StripePaymentBundle\Event\StripePaymentElementViewOptionsEvent', method: 'onStripePaymentElementViewOptions' }
+    
+    oro_stripe_payment.event_listener.add_setup_future_usage_to_stripe_payment_element_view_options:
+        class: 'Oro\Bundle\StripePaymentBundle\EventListener\AddSetupFutureUsageToStripePaymentElementViewOptionsListener'
+        arguments:
+            - '@oro_checkout.provider.multi_shipping_config'
+        tags:
+            - { name: 'kernel.event_listener', event: 'Oro\Bundle\StripePaymentBundle\Event\StripePaymentElementViewOptionsEvent', method: 'onStripePaymentElementViewOptions' }
+
+    oro_stripe_payment.form.extension.additional_data_on_checkout_step:
+        class: 'Oro\Bundle\StripePaymentBundle\Form\Extension\AdditionalDataOnCheckoutStepExtension'
+        arguments:
+            $applicableWorkflow: 'b2b_flow_checkout'
+            $applicableStep: 'order_review'
+        tags:
+            - { name: 'form.type_extension', extended_type: 'Oro\Bundle\WorkflowBundle\Form\Type\WorkflowTransitionType' }

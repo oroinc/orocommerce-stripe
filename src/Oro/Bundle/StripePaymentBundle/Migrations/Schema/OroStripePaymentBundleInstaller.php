@@ -11,7 +11,7 @@ class OroStripePaymentBundleInstaller implements Installation
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v7_0_0_0';
+        return 'v7_0_0_1';
     }
 
     #[\Override]

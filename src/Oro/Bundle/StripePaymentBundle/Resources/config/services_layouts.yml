@@ -1,0 +1,6 @@
+services:
+
+    oro_stripe_payment.layout.data_provider.payment_methods:
+        class: 'Oro\Bundle\StripePaymentBundle\Layout\DataProvider\StripePaymentMethodsDataProvider'
+        tags:
+            - { name: 'layout.data_provider', alias: 'oro_stripe_payment_method' }

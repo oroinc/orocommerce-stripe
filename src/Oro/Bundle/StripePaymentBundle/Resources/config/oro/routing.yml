@@ -2,4 +2,27 @@
 oro_stripe_payment_webhook_payment_element:
     controller: 'oro_stripe_payment.controller.stripe_payment_webhook.stripe_payment_element'
     path: '/payment/webhook/stripe/payment-element/{webhookAccessId}'
-    methods: ['POST', 'GET']
+    methods: [ 'POST', 'GET' ]
+
+# Alias to comply with the old themes BC.
+oro_stripe_frontend_handle_events:
+    controller: 'oro_stripe_payment.controller.stripe_payment_webhook.stripe_payment_element'
+    path: '/payment/webhook/stripe/payment-element/{webhookAccessId?}'
+    methods: [ 'POST', 'GET' ]
+    options:
+        frontend: true
+
+oro_stripe_payment_frontend_apple_pay_domain_verification:
+    controller: 'oro_stripe_payment.controller.frontend.apple_pay_domain_verification'
+    path: '/.well-known/apple-developer-merchantid-domain-association'
+    methods: [ 'GET' ]
+    options:
+        frontend: true
+
+# Alias to comply with the old themes BC.
+oro_stripe_frontend_apple_pay_verification:
+    controller: 'oro_stripe_payment.controller.frontend.apple_pay_domain_verification'
+    path: '/.well-known/apple-developer-merchantid-domain-association'
+    methods: [ 'GET' ]
+    options:
+        frontend: true

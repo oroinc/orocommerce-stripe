@@ -63,8 +63,6 @@ class ChargeStripeActionExecutor implements
         $chargeTransaction = $stripeAction->getPaymentTransaction();
         $confirmationToken = $this->getAdditionalData($chargeTransaction, 'confirmationToken');
         if (empty($confirmationToken['id']) || empty($confirmationToken['paymentMethodPreview']['type'])) {
-            $this->logNoConfirmationToken($chargeTransaction);
-
             return false;
         }
 
@@ -122,6 +120,10 @@ class ChargeStripeActionExecutor implements
             $chargeTransaction->getCurrency()
         );
         $confirmationToken = $this->getAdditionalData($chargeTransaction, 'confirmationToken');
+        if (empty($confirmationToken['id'])) {
+            $this->logNoConfirmationToken($chargeTransaction);
+        }
+
         $stripeCustomerId = $this->findOrCreateStripeCustomerId($stripeClientConfig, $chargeTransaction);
 
         $requestArgs = [
@@ -143,6 +145,10 @@ class ChargeStripeActionExecutor implements
 
         if ($stripeCustomerId) {
             $requestArgs[0]['customer'] = $stripeCustomerId;
+        }
+
+        if ($chargeTransaction->getTransactionOption(StripePaymentIntentActionInterface::SETUP_FUTURE_USAGE)) {
+            $requestArgs[0]['setup_future_usage'] = 'off_session';
         }
 
         $beforeRequestEvent = new StripePaymentIntentActionBeforeRequestEvent(
@@ -176,7 +182,25 @@ class ChargeStripeActionExecutor implements
 
     private function getAdditionalData(PaymentTransaction $paymentTransaction, string $key): mixed
     {
-        return $paymentTransaction->getTransactionOptions()['additionalData'][$key] ?? null;
+        $additionalData = $paymentTransaction->getTransactionOptions()['additionalData'] ?? [];
+        if (is_string($additionalData)) {
+            try {
+                $additionalData = json_decode($additionalData, true, 512, JSON_THROW_ON_ERROR);
+            } catch (\JsonException $exception) {
+                $additionalData = [];
+
+                $this->logger->notice(
+                    'Failed to decode additionalData for the payment transaction #{paymentTransactionId}: {message}',
+                    [
+                        'paymentTransactionId' => $paymentTransaction->getId(),
+                        'message' => $exception->getMessage(),
+                        'exception' => $exception,
+                    ]
+                );
+            }
+        }
+
+        return $additionalData[$key] ?? null;
     }
 
     private function generateReturnUrl(PaymentTransaction $paymentTransaction): ?string

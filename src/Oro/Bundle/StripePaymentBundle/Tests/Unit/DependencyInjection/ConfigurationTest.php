@@ -45,6 +45,13 @@ final class ConfigurationTest extends TestCase
         self::assertEquals(
             [
                 'payment_method_types' => [],
+                'settings' => [
+                    'resolved' => true,
+                    'apple_pay_domain_verification' => [
+                        'value' => '',
+                        'scope' => 'app',
+                    ],
+                ],
             ],
             $config
         );
@@ -56,6 +63,13 @@ final class ConfigurationTest extends TestCase
             'payment_method_types' => [
                 'card' => ['manual_capture' => true],
                 'ideal' => ['manual_capture' => false],
+            ],
+            'settings' => [
+                'resolved' => true,
+                'apple_pay_domain_verification' => [
+                    'value' => '',
+                    'scope' => 'app',
+                ],
             ],
         ];
 
@@ -109,6 +123,13 @@ final class ConfigurationTest extends TestCase
                     'decimal_places' => [],
                 ],
                 'payment_method_types' => [],
+                'settings' => [
+                    'resolved' => true,
+                    'apple_pay_domain_verification' => [
+                        'value' => '',
+                        'scope' => 'app',
+                    ],
+                ],
             ],
             $processedConfig
         );
@@ -141,6 +162,13 @@ final class ConfigurationTest extends TestCase
                     'decimal_places' => [],
                 ],
                 'payment_method_types' => [],
+                'settings' => [
+                    'resolved' => true,
+                    'apple_pay_domain_verification' => [
+                        'value' => '',
+                        'scope' => 'app',
+                    ],
+                ],
             ],
             $processedConfig
         );
@@ -171,6 +199,13 @@ final class ConfigurationTest extends TestCase
                     ],
                 ],
                 'payment_method_types' => [],
+                'settings' => [
+                    'resolved' => true,
+                    'apple_pay_domain_verification' => [
+                        'value' => '',
+                        'scope' => 'app',
+                    ],
+                ],
             ],
             $processedConfig
         );
@@ -201,6 +236,13 @@ final class ConfigurationTest extends TestCase
                     'maximum' => [],
                 ],
                 'payment_method_types' => [],
+                'settings' => [
+                    'resolved' => true,
+                    'apple_pay_domain_verification' => [
+                        'value' => '',
+                        'scope' => 'app',
+                    ],
+                ],
             ],
             $processedConfig
         );
@@ -281,6 +323,23 @@ final class ConfigurationTest extends TestCase
                     'ISK' => ['decimal_places' => 2, 'fractionless' => true],
                 ],
             ],
+            'settings' => [
+                'resolved' => true,
+                'apple_pay_domain_verification' => [
+                    'value' => '',
+                    'scope' => 'app',
+                ],
+            ],
         ], $processedConfig);
+    }
+
+    public function testGetConfigKeyByName(): void
+    {
+        $configKey = Configuration::getConfigKeyByName('apple_pay_domain_verification');
+
+        self::assertEquals(
+            'oro_stripe_payment.apple_pay_domain_verification',
+            $configKey
+        );
     }
 }

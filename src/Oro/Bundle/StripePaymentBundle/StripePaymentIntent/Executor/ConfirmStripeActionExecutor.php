@@ -31,6 +31,7 @@ class ConfirmStripeActionExecutor implements
     use LoggerAwareTrait;
 
     public const string ACTION_NAME = 'confirm';
+    public const string ACTION_NAME_EXPLICIT = 'confirm_explicit';
 
     public function __construct(
         private readonly StripeClientFactoryInterface $stripeClientFactory,
@@ -43,7 +44,7 @@ class ConfirmStripeActionExecutor implements
     #[\Override]
     public function isSupportedByActionName(string $stripeActionName): bool
     {
-        return $stripeActionName === self::ACTION_NAME;
+        return in_array($stripeActionName, [self::ACTION_NAME, self::ACTION_NAME_EXPLICIT], true);
     }
 
     #[\Override]

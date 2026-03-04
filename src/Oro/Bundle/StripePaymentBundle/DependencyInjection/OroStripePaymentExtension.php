@@ -23,6 +23,8 @@ class OroStripePaymentExtension extends Extension
         $loader->load('mq_topics.yml');
         $loader->load('mq_processors.yml');
         $loader->load('services.yml');
+        $loader->load('services_api.yml');
+        $loader->load('services_layouts.yml');
         $loader->load('services_stripe_api.yml');
         $loader->load('services_stripe_api_customers.yml');
         $loader->load('services_stripe_api_payment_intents.yml');

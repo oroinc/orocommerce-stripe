@@ -10,7 +10,6 @@
   ],
   "autoload": {
     "psr-4": {
-      "Oro\\Bundle\\StripeBundle\\": "src/Oro/Bundle/StripeBundle",
       "Oro\\Bundle\\StripePaymentBundle\\": "src/Oro/Bundle/StripePaymentBundle"
     },
     "exclude-from-classmap": ["**/Tests/"]

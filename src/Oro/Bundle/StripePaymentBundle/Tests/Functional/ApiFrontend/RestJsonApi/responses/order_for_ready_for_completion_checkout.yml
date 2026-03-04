@@ -1,0 +1,32 @@
+data:
+    type: orders
+    attributes:
+        customerNotes: 'checkout.ready_for_completion'
+        shipUntil: null
+        currency: 'USD'
+        subtotalWithDiscounts: '121.4000'
+        subtotalValue: '121.4000'
+        totalValue: '131.4000'
+        shippingCostAmount: '10.0000'
+        totalIncludingTax: "131.4000"
+        totalExcludingTax: "131.4000"
+        totalTaxAmount: "0.0000"
+        paymentStatus:
+            code: 'full'
+            label: 'Paid in full'
+        discounts: []
+    relationships:
+        customerUser:
+            data:
+                type: customerusers
+                id: '<toString(@customer_user->id)>'
+        customer:
+            data:
+                type: customers
+                id: '<toString(@customer->id)>'
+        status:
+            data: ~
+        shippingStatus:
+            data:
+                type: ordershippingstatuses
+                id: not_shipped

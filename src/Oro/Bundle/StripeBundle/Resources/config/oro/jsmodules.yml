@@ -1,3 +1,0 @@
-dynamic-imports:
-    orostripe:
-        - orostripe/js/app/components/stripe-transport-settings-component

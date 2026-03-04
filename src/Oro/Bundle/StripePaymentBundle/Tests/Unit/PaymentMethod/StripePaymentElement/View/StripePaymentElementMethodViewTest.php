@@ -98,7 +98,7 @@ final class StripePaymentElementMethodViewTest extends TestCase
 
     public function testGetBlock(): void
     {
-        $expectedBlock = 'oro_stripe_payment_element_widget';
+        $expectedBlock = '_oro_stripe_payment_element_widget';
 
         self::assertSame($expectedBlock, $this->view->getBlock());
     }

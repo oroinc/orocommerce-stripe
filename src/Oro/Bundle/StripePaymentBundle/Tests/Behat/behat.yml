@@ -3,11 +3,18 @@ oro_behat_extension:
         OroStripePaymentBundle:
             contexts:
                 - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+                - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\BrowserTabContext
                 - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
                 - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
                 - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
                 - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
-                - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\BrowserTabContext
+                - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
+                - Oro\Bundle\CheckoutBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\CustomerBundle\Tests\Behat\Context\FrontendGridContext
+                - Oro\Bundle\WorkflowBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\ConsoleContext
+                - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
+                - Oro\Bundle\OrderBundle\Tests\Behat\Context\OrderContext
             paths:
                 - '@OroStripePaymentBundle/Tests/Behat/Features'
     elements:
@@ -36,3 +43,41 @@ oro_behat_extension:
                     Stripe Exp Date: 'exp-date'
                     Stripe CVC: 'cvc'
                     Stripe ZIP: 'postal'
+
+        MultiStep Checkout Stripe Payment Element Form:
+            selector:
+                locator: '(//div[@data-role="stripe-payment-element-container"])[1]'
+                type: xpath
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    Stripe Card Number: 'cardnumber'
+                    Stripe Exp Date: 'exp-date'
+                    Stripe CVC: 'cvc'
+                    Stripe ZIP: 'postal'
+
+        SingleStep Checkout Stripe Payment Element Form:
+            selector:
+                locator: '(//div[@data-role="stripe-payment-element-container"])[1]'
+                type: xpath
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    Stripe Card Number: 'cardnumber'
+                    Stripe Exp Date: 'exp-date'
+                    Stripe CVC: 'cvc'
+                    Stripe ZIP: 'postal'
+
+        Stripe Payment Element Method On MultiStep Checkout:
+            selector:
+                locator: '//*[@data-content="payment_method_form"]//label[contains(@class, "checkbox-label") and text() = "Stripe Payment Element"]/parent::div'
+                type: xpath
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+        Stripe Cancel Transaction Form:
+            selector: 'form[name="oro_action_operation"]'
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            options:
+                mapping:
+                    Notes: 'oro_action_operation[noteMessage]'
+                    Cancellation reason: 'oro_action_operation[cancelReason]'

@@ -1,2 +1,0 @@
-bundles:
-    - { name: Oro\Bundle\StripeBundle\OroStripeBundle, priority: 50 }

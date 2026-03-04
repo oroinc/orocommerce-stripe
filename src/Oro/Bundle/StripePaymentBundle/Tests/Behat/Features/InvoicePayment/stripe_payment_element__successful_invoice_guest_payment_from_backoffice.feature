@@ -1,6 +1,6 @@
 @regression
 @behat-test-env
-@fixture-OroStripePaymentBundle:stripe_payment_element__successful_invoice_guest_payment.yml
+@fixture-OroStripePaymentBundle:InvoicePayment/stripe_payment_element__successful_invoice_guest_payment.yml
 
 Feature: Stripe Payment Element - Successful Invoice Guest Payment from back-office
 

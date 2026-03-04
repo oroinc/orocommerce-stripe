@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace Oro\Bundle\StripePaymentBundle\DependencyInjection;
 
+use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
+use Oro\Bundle\ConfigBundle\Utils\TreeUtils;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
     public const string ROOT_NODE = 'oro_stripe_payment';
+    public const string APPLE_PAY_DOMAIN_VERIFICATION = 'apple_pay_domain_verification';
 
     #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
@@ -95,6 +98,19 @@ class Configuration implements ConfigurationInterface
                 ->end()
             ->end();
 
+        $rootNode = $treeBuilder->getRootNode();
+        SettingsBuilder::append(
+            $rootNode,
+            [
+                self::APPLE_PAY_DOMAIN_VERIFICATION => ['type' => 'text', 'value' => ''],
+            ]
+        );
+
         return $treeBuilder;
+    }
+
+    public static function getConfigKeyByName(string $name): string
+    {
+        return TreeUtils::getConfigKey(self::ROOT_NODE, $name);
     }
 }

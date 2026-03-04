@@ -71,11 +71,6 @@ const StripePaymentElementInvoicePaymentComponent = BaseComponent.extend({
      */
     stripeElementsInstance: null,
 
-    /**
-     * @property {Stripe.element}
-     */
-    stripeElement: null,
-
     messages: {
         handle_payment_action_failed: 'oro.stripe.error_messages.handle_payment_action_failed'
     },
@@ -121,12 +116,6 @@ const StripePaymentElementInvoicePaymentComponent = BaseComponent.extend({
             'change:state',
             this.onInvoicePaymentModelChangeState.bind(this)
         );
-
-        /**
-         * Set validation handler on 'change' event according to Stripe library recommendations.
-         * @see https://stripe.com/docs/js/element/input_validation
-         */
-        this.listenTo(this.stripeElement, 'change', this.handleValidation.bind(this));
     },
 
     /**
@@ -178,7 +167,8 @@ const StripePaymentElementInvoicePaymentComponent = BaseComponent.extend({
             this.stripePaymentElement = this.stripeElementsInstance
                 .create(this.stripeElementType, this.stripePaymentElementOptions);
 
-            this.stripePaymentElement.on('loaderror', event => {
+            this.listenTo(this.stripePaymentElement, 'change', this.handleValidation.bind(this));
+            this.listenTo(this.stripePaymentElement, 'loaderror', event => {
                 mediator.execute('showFlashMessage', 'error', event.error?.message || 'Stripe load error');
             });
 
@@ -214,30 +204,32 @@ const StripePaymentElementInvoicePaymentComponent = BaseComponent.extend({
         try {
             this.stripeElementsInstance.submit()
                 .then(stripeResult => {
-                    if (stripeResult.selectedPaymentMethod) {
-                        this.getStripeInstance()
-                            .createConfirmationToken({elements: this.stripeElementsInstance})
-                            .then(stripeResult => {
-                                if (stripeResult.confirmationToken) {
-                                    const confirmationToken = stripeResult.confirmationToken;
-                                    this.invoicePaymentModel
-                                        .setPaymentMethodData({
-                                            confirmationToken: {
-                                                id: confirmationToken.id,
-                                                paymentMethodPreview: {
-                                                    type: confirmationToken.payment_method_preview.type
-                                                }
-                                            }
-                                        });
-                                    this.invoicePaymentModel.resumeSubmit();
-                                } else {
-                                    this.handleStripeResultErrorOnSubmitStart(stripeResult);
-                                }
-                            })
-                            .catch(error => this.handleStripeResultErrorOnSubmitStart({error: {message: error}}));
-                    } else {
+                    if (!stripeResult.selectedPaymentMethod) {
                         this.handleStripeResultErrorOnSubmitStart(stripeResult);
+
+                        return;
                     }
+
+                    this.getStripeInstance()
+                        .createConfirmationToken({elements: this.stripeElementsInstance})
+                        .then(stripeResult => {
+                            if (stripeResult.confirmationToken) {
+                                const confirmationToken = stripeResult.confirmationToken;
+                                this.invoicePaymentModel
+                                    .setPaymentMethodData({
+                                        confirmationToken: {
+                                            id: confirmationToken.id,
+                                            paymentMethodPreview: {
+                                                type: confirmationToken.payment_method_preview.type
+                                            }
+                                        }
+                                    });
+                                this.invoicePaymentModel.resumeSubmit();
+                            } else {
+                                this.handleStripeResultErrorOnSubmitStart(stripeResult);
+                            }
+                        })
+                        .catch(error => this.handleStripeResultErrorOnSubmitStart({error: {message: error}}));
                 })
                 .catch(error => this.handleStripeResultErrorOnSubmitStart({error: {message: error}}));
         } catch (error) {

@@ -1,0 +1,16 @@
+Oro\Bundle\RuleBundle\Entity\Rule:
+    stripe_payment_element_rule:
+        name: 'Stripe Payment Element Rule'
+        enabled: true
+        sortOrder: 1
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig:
+    stripe_payment_element_payment_method_config:
+        type: '<("stripe_payment_element_".@stripe_payment_element_channel->getId())>'
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule:
+    stripe_payment_element_payment_methods_configs_rule:
+        rule: '@stripe_payment_element_rule'
+        methodConfigs: ['@stripe_payment_element_payment_method_config']
+        currency: 'USD'
+        organization: '@organization'
