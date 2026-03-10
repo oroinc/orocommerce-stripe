@@ -1,0 +1,10 @@
+oro_sanitize:
+    entity:
+        oro_integration_transport:
+            fields:
+                stripe_payment_element_api_public_key: md5
+                stripe_payment_element_api_secret_key: md5
+                stripe_payment_element_webhook_access_id: md5
+                stripe_payment_element_webhook_stripe_id: md5
+                stripe_payment_element_webhook_secret: md5
+                stripe_payment_element_re_authorization_email: email
