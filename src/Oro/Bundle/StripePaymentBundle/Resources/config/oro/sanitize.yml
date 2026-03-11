@@ -4,7 +4,9 @@ oro_sanitize:
             fields:
                 stripe_payment_element_api_public_key: md5
                 stripe_payment_element_api_secret_key: md5
-                stripe_payment_element_webhook_access_id: md5
+                stripe_payment_element_webhook_access_id:
+                    raw_sqls:
+                        - "UPDATE oro_integration_transport SET stripe_payment_element_webhook_access_id = gen_random_uuid() WHERE stripe_payment_element_webhook_access_id IS NOT NULL"
                 stripe_payment_element_webhook_stripe_id: md5
                 stripe_payment_element_webhook_secret: md5
                 stripe_payment_element_re_authorization_email: email
