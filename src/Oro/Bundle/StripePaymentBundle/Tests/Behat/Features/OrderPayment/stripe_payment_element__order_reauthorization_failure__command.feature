@@ -5,7 +5,7 @@
 @fixture-OroStripePaymentBundle:OrderPayment/stripe_payment_element__order_reauthorize_payment.yml
 @fixture-OroStripePaymentBundle:OrderPayment/stripe_payment_element__order_reauthorize_payment__old_failing_transactions.yml
 
-Feature: Stripe Payment Element - Order Re-Authorization Success - Command
+Feature: Stripe Payment Element - Order Re-Authorization Failure - Command
 
   Scenario: Check Payment Method and Payment Status column on orders back-office page
     Given I login as administrator
