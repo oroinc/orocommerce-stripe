@@ -46,7 +46,7 @@ Feature: Stripe Payment Element - Successful Invoice Payment
 
   Scenario: Check invoice payment success page
     When I click "Proceed with Payment"
-    Then Page title equals to "Payment Successful - Invoice #INV-001 - View - Invoices - My Account"
+    Then Page title equals to "Payment Successful - Invoice #INV-001 - View - Invoices - My Account - Home"
     And I should see "Payment Successful! Invoice #INV-001 was successfully processed."
 
   Scenario: Check Payment Method and Payment Status on invoice storefront page

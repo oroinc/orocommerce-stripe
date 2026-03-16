@@ -43,7 +43,7 @@ Feature: Stripe Payment Element - Configure Invoice Payment
     And I click "Invoices"
     And I click View INV-001 in grid
     And click on "Invoice Pay Button"
-    Then Page title equals to "Payment - Invoice #INV-001 - View - Invoices - My Account"
+    Then Page title equals to "Payment - Invoice #INV-001 - View - Invoices - My Account - Home"
     And I should see "Payment - Invoice #INV-001"
     And I should see "Total: $12,345.67"
     And I should see a "Invoice Stripe Payment Element Form" element

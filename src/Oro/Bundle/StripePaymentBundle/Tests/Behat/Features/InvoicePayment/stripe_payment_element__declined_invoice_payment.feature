@@ -46,7 +46,7 @@ Feature: Stripe Payment Element - Declined Invoice Payment
 
   Scenario: Check invoice payment error page
     When I click "Proceed with Payment"
-    Then Page title equals to "Payment Error - Invoice #INV-001 - View - Invoices - My Account"
+    Then Page title equals to "Payment Error - Invoice #INV-001 - View - Invoices - My Account - Home"
     And I should see "Payment Error! Invoice #INV-001"
     And I should see "We are sorry, but your payment could not be processed. Please check your payment details and try again."
 
