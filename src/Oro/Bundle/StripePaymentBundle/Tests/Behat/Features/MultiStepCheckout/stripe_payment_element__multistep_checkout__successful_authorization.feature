@@ -32,7 +32,8 @@ Feature: Stripe Payment Element - Multi-Step Checkout - Successful Authorization
     Then Page title equals to "Order Review - Checkout"
 
   Scenario: Submit order with successful Stripe authorization
-    Given I should see Checkout Totals with data:
+    When I click "Expand Checkout Footer"
+    Then I should see Checkout Totals with data:
       | Subtotal | $20.00 |
       | Shipping | $3.00  |
     And should see "Total: $23.00"
