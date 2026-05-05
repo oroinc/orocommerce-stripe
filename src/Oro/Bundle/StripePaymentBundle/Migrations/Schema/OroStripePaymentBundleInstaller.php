@@ -11,7 +11,7 @@ class OroStripePaymentBundleInstaller implements Installation
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v7_0_0_1';
+        return 'v7_0_0_2';
     }
 
     #[\Override]
@@ -35,10 +35,9 @@ class OroStripePaymentBundleInstaller implements Installation
     {
         $table = $schema->getTable('oro_integration_transport');
         $table->addColumn('stripe_payment_element_api_public_key', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('stripe_payment_element_api_secret_key', 'string', [
+        $table->addColumn('stripe_payment_element_api_secret_key', 'crypted_text', [
             'notnull' => false,
-            'length' => 255,
-            'comment' => '(DC2Type:crypted_string)',
+            'comment' => '(DC2Type:crypted_text)',
         ]);
         $table->addColumn('stripe_payment_element_payment_method_name', 'string', [
             'notnull' => false,
@@ -49,10 +48,9 @@ class OroStripePaymentBundleInstaller implements Installation
             'comment' => '(DC2Type:guid)',
         ]);
         $table->addColumn('stripe_payment_element_webhook_stripe_id', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('stripe_payment_element_webhook_secret', 'string', [
+        $table->addColumn('stripe_payment_element_webhook_secret', 'crypted_text', [
             'notnull' => false,
-            'length' => 255,
-            'comment' => '(DC2Type:crypted_string)',
+            'comment' => '(DC2Type:crypted_text)',
         ]);
         $table->addColumn('stripe_payment_element_capture_method', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('stripe_payment_element_re_authorization_enabled', 'boolean', [

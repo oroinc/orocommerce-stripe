@@ -24,6 +24,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
@@ -118,7 +119,7 @@ final class StripePaymentElementSettingsTypeTest extends WebTestCase
                 'label' => 'oro.stripe_payment.payment_element.payment_method_labels.label',
                 'tooltip' => 'oro.stripe_payment.payment_element.payment_method_labels.tooltip',
                 'required' => true,
-                'entry_options' => ['constraints' => [new NotBlank()]],
+                'entry_options' => ['constraints' => [new NotBlank(), new Length(['max' => 255])]],
             ]
         );
         self::assertFormHasField(
@@ -129,7 +130,7 @@ final class StripePaymentElementSettingsTypeTest extends WebTestCase
                 'label' => 'oro.stripe_payment.payment_element.payment_method_short_labels.label',
                 'tooltip' => 'oro.stripe_payment.payment_element.payment_method_short_labels.tooltip',
                 'required' => true,
-                'entry_options' => ['constraints' => [new NotBlank()]],
+                'entry_options' => ['constraints' => [new NotBlank(), new Length(['max' => 255])]],
             ]
         );
         self::assertFormHasField(
