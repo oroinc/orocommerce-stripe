@@ -8,7 +8,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\SecurityBundle\DoctrineExtension\Dbal\Types\CryptedStringType;
+use Oro\Bundle\SecurityBundle\DoctrineExtension\Dbal\Types\CryptedTextType;
 use Oro\Bundle\SecurityBundle\Tools\UUIDGenerator;
 use Oro\Bundle\StripePaymentBundle\Entity\Repository\StripePaymentElementSettingsRepository;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -26,8 +26,7 @@ class StripePaymentElementSettings extends Transport
 
     #[ORM\Column(
         name: 'stripe_payment_element_api_secret_key',
-        type: CryptedStringType::TYPE,
-        length: 255,
+        type: CryptedTextType::TYPE,
         nullable: true
     )]
     protected ?string $apiSecretKey = null;
@@ -58,8 +57,7 @@ class StripePaymentElementSettings extends Transport
 
     #[ORM\Column(
         name: 'stripe_payment_element_webhook_secret',
-        type: CryptedStringType::TYPE,
-        length: 255,
+        type: CryptedTextType::TYPE,
         nullable: true
     )]
     protected ?string $webhookSecret = null;

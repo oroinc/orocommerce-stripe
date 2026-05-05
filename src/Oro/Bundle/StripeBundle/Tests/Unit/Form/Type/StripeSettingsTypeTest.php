@@ -22,10 +22,8 @@ use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Validation;
 
 class StripeSettingsTypeTest extends FormIntegrationTestCase
 {
@@ -85,7 +83,7 @@ class StripeSettingsTypeTest extends FormIntegrationTestCase
                     ],
                 ]
             ),
-            new ValidatorExtension(Validation::createValidator()),
+            $this->getValidatorExtension(true),
         ];
     }
 
@@ -178,6 +176,54 @@ class StripeSettingsTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->isValid());
         $this->assertTrue($form->isSynchronized());
         $this->assertEquals($stripeSettings, $form->getData());
+    }
+
+    /**
+     * @dataProvider submitWithLongValuesProvider
+     */
+    public function testSubmitWithTooLongValues(array $override): void
+    {
+        $submitData = array_replace_recursive([
+            'apiPublicKey' => 'public key',
+            'apiSecretKey' => 'secret key',
+            'signingSecret' => 'secret',
+            'paymentAction' => 'manual',
+            'userMonitoring' => false,
+            'enableReAuthorize' => true,
+            'reAuthorizationErrorEmail' => 'test@test.com',
+            'labels' => [
+                'values' => ['default' => 'Label 1'],
+            ],
+            'shortLabels' => [
+                'values' => ['default' => 'Label 2'],
+            ],
+            'appleGooglePayLabels' => [
+                'values' => ['default' => 'Label 3'],
+            ],
+        ], $override);
+
+        $form = $this->factory->create(StripeSettingsType::class, new StripeTransportSettings());
+        $form->submit($submitData);
+
+        self::assertTrue($form->isSynchronized());
+        self::assertFalse($form->isValid());
+    }
+
+    public function submitWithLongValuesProvider(): array
+    {
+        return [
+            'apiPublicKey too long' => [['apiPublicKey' => str_repeat('a', 256)]],
+            'apiSecretKey too long' => [['apiSecretKey' => str_repeat('a', 256)]],
+            'signingSecret too long' => [['signingSecret' => str_repeat('a', 256)]],
+            'reAuthorizationErrorEmail too long' => [
+                ['reAuthorizationErrorEmail' => str_repeat('a', 250) . '@test.com'],
+            ],
+            'label too long' => [['labels' => ['values' => ['default' => str_repeat('a', 256)]]]],
+            'shortLabel too long' => [['shortLabels' => ['values' => ['default' => str_repeat('a', 256)]]]],
+            'appleGooglePayLabel too long' => [
+                ['appleGooglePayLabels' => ['values' => ['default' => str_repeat('a', 256)]]],
+            ],
+        ];
     }
 
     public function testConfigureOptions(): void

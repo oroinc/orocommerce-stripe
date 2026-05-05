@@ -1,0 +1,35 @@
+Oro\Bundle\StripeBundle\Entity\StripeTransportSettings:
+    properties:
+        labels:
+            -   NotBlank: ~
+            -   Valid: ~
+        shortLabels:
+            -   NotBlank: ~
+            -   Valid: ~
+        appleGooglePayLabels:
+            -   Valid: ~
+        apiPublicKey:
+            -   NotBlank: ~
+            -   Length:
+                    max: 255
+        apiSecretKey:
+            -   NotBlank: ~
+            -   Length:
+                    max: 255
+        signingSecret:
+            -   NotBlank: ~
+            -   Length:
+                    max: 255
+        paymentAction:
+            -   NotBlank: ~
+        userMonitoring:
+            -   Type: bool
+        enableReAuthorize:
+            -   Type: bool
+        reAuthorizationErrorEmail:
+            -   Length:
+                    max: 255
+            -   When:
+                    expression: 'this.getPaymentAction() == "manual" && this.getEnableReAuthorize()'
+                    constraints:
+                        -   NotBlank: ~

@@ -14,7 +14,7 @@ class OroStripeBundleInstaller implements Installation
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v1_2';
+        return 'v1_2_1';
     }
 
     #[\Override]
@@ -34,15 +34,13 @@ class OroStripeBundleInstaller implements Installation
     {
         $table = $schema->getTable('oro_integration_transport');
         $table->addColumn('stripe_api_public_key', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('stripe_api_secret_key', 'string', [
+        $table->addColumn('stripe_api_secret_key', 'crypted_text', [
             'notnull' => false,
-            'length' => 255,
-            'comment' => '(DC2Type:crypted_string)'
+            'comment' => '(DC2Type:crypted_text)',
         ]);
-        $table->addColumn('stripe_signing_secret', 'string', [
+        $table->addColumn('stripe_signing_secret', 'crypted_text', [
             'notnull' => false,
-            'length' => 255,
-            'comment' => '(DC2Type:crypted_string)'
+            'comment' => '(DC2Type:crypted_text)',
         ]);
         $table->addColumn('stripe_payment_action', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('stripe_user_monitoring', 'boolean', ['notnull' => false, 'default' => false]);

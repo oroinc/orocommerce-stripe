@@ -62,10 +62,10 @@ class StripeTransportSettings extends Transport
     #[ORM\Column(name: 'stripe_api_public_key', type: Types::STRING, length: 255, nullable: true)]
     protected ?string $apiPublicKey = null;
 
-    #[ORM\Column(name: 'stripe_api_secret_key', type: 'crypted_string', length: 255, nullable: true)]
+    #[ORM\Column(name: 'stripe_api_secret_key', type: 'crypted_text', nullable: true)]
     protected ?string $apiSecretKey = null;
 
-    #[ORM\Column(name: 'stripe_signing_secret', type: 'crypted_string', length: 255, nullable: true)]
+    #[ORM\Column(name: 'stripe_signing_secret', type: 'crypted_text', nullable: true)]
     protected ?string $signingSecret = null;
 
     #[ORM\Column(name: 'stripe_payment_action', type: Types::STRING, length: 255, nullable: true)]

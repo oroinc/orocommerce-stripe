@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -40,21 +41,24 @@ class StripeSettingsType extends AbstractType
                 'tooltip'  => 'oro.stripe.settings.labels.tooltip',
                 'required' => true,
                 'entry_options'  => [
-                    'constraints' => [new NotBlank()]
-                ]
+                    'constraints' => [new NotBlank(), new Length(max: 255)],
+                ],
             ])
             ->add('shortLabels', LocalizedFallbackValueCollectionType::class, [
                 'label'    => 'oro.stripe.settings.short_labels.label',
                 'tooltip'  => 'oro.stripe.settings.short_labels.tooltip',
                 'required' => true,
                 'entry_options'  => [
-                    'constraints' => [new NotBlank()]
-                ]
+                    'constraints' => [new NotBlank(), new Length(max: 255)],
+                ],
             ])
             ->add('appleGooglePayLabels', LocalizedFallbackValueCollectionType::class, [
                 'label'    => 'oro.stripe.settings.apple_google_pay_labels.label',
                 'tooltip'  => 'oro.stripe.settings.apple_google_pay_labels.tooltip',
                 'required' => false,
+                'entry_options'  => [
+                    'constraints' => [new Length(max: 255)],
+                ],
             ])
             ->add('apiPublicKey', TextType::class, [
                 'label' => 'oro.stripe.settings.api_public_key.label',
