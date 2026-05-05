@@ -17,6 +17,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
@@ -52,13 +53,13 @@ final class StripePaymentElementSettingsType extends AbstractType
                 'label' => 'oro.stripe_payment.payment_element.payment_method_labels.label',
                 'tooltip' => 'oro.stripe_payment.payment_element.payment_method_labels.tooltip',
                 'required' => true,
-                'entry_options' => ['constraints' => [new NotBlank()]],
+                'entry_options' => ['constraints' => [new NotBlank(), new Length(max: 255)]],
             ])
             ->add('paymentMethodShortLabels', LocalizedFallbackValueCollectionType::class, [
                 'label' => 'oro.stripe_payment.payment_element.payment_method_short_labels.label',
                 'tooltip' => 'oro.stripe_payment.payment_element.payment_method_short_labels.tooltip',
                 'required' => true,
-                'entry_options' => ['constraints' => [new NotBlank()]],
+                'entry_options' => ['constraints' => [new NotBlank(), new Length(max: 255)]],
             ])
             ->add('webhookAccessId', HiddenType::class, [
                 'error_bubbling' => true,
