@@ -2,8 +2,10 @@
 
 namespace Oro\Bundle\StripePaymentBundle\Command\Cron;
 
+use Oro\Bundle\CronBundle\Command\CronCommandActivationInterface;
 use Oro\Bundle\CronBundle\Command\CronCommandScheduleDefinitionInterface;
 use Oro\Bundle\StripePaymentBundle\Async\Topic\ReAuthorizePaymentTransactionsInitTopic;
+use Oro\Bundle\StripePaymentBundle\Entity\Repository\StripePaymentElementSettingsRepository;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -19,12 +21,21 @@ use Symfony\Component\Console\Style\SymfonyStyle;
     description: 'Initiates renewal of payment authorization for uncaptured payments that are about to expire.'
 )]
 final class ReAuthorizeCronCommand extends Command implements
-    CronCommandScheduleDefinitionInterface
+    CronCommandScheduleDefinitionInterface,
+    CronCommandActivationInterface
 {
+    private ?StripePaymentElementSettingsRepository $stripePaymentElementSettingsRepository = null;
+
     public function __construct(
         private readonly MessageProducerInterface $messageProducer
     ) {
         parent::__construct();
+    }
+
+    public function setStripePaymentElementSettingsRepository(
+        StripePaymentElementSettingsRepository $stripePaymentElementSettingsRepository
+    ): void {
+        $this->stripePaymentElementSettingsRepository = $stripePaymentElementSettingsRepository;
     }
 
     #[\Override]
@@ -32,6 +43,12 @@ final class ReAuthorizeCronCommand extends Command implements
     {
         // At minute 0 past every hour.
         return '0 */1 * * *';
+    }
+
+    #[\Override]
+    public function isActive(): bool
+    {
+        return (bool) $this->stripePaymentElementSettingsRepository?->hasEnabledSettings();
     }
 
     #[\Override]

@@ -32,4 +32,17 @@ class StripePaymentElementSettingsRepository extends ServiceEntityRepository
 
         return $this->aclHelper->apply($qb)->getResult();
     }
+
+    public function hasEnabledSettings(): bool
+    {
+        $qb = $this->createQueryBuilder('settings');
+        $qb
+            ->select('1')
+            ->innerJoin('settings.channel', 'channel')
+            ->andWhere($qb->expr()->eq('channel.enabled', ':channelEnabled'))
+            ->setParameter('channelEnabled', true)
+            ->setMaxResults(1);
+
+        return $this->aclHelper->apply($qb)->getOneOrNullResult() !== null;
+    }
 }

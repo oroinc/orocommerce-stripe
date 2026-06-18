@@ -10,6 +10,9 @@ use Oro\Bundle\StripePaymentBundle\Tests\Functional\DataFixtures\LoadStripePayme
 use Oro\Bundle\StripePaymentBundle\Tests\Functional\DataFixtures\LoadStripePaymentElementSettingsData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+/**
+ * @dbIsolationPerTest
+ */
 final class StripePaymentElementSettingsRepositoryTest extends WebTestCase
 {
     private StripePaymentElementSettingsRepository $repository;
@@ -29,6 +32,11 @@ final class StripePaymentElementSettingsRepositoryTest extends WebTestCase
         self::assertCount(0, $enabledSettings);
     }
 
+    public function testHasEnabledSettingsWhenNoSettings(): void
+    {
+        self::assertFalse($this->repository->hasEnabledSettings());
+    }
+
     public function testFindEnabledSettings(): void
     {
         $this->loadFixtures([
@@ -46,5 +54,23 @@ final class StripePaymentElementSettingsRepositoryTest extends WebTestCase
             $this->getReference(LoadStripePaymentElementSettingsData::STRIPE_PAYMENT_ELEMENT_SETTINGS_2),
             $enabledSettings
         );
+    }
+
+    public function testHasEnabledSettingsWhenNoEnabledChannel(): void
+    {
+        $this->loadFixtures([
+            LoadStripePaymentElementSettingsData::class,
+        ]);
+
+        self::assertFalse($this->repository->hasEnabledSettings());
+    }
+
+    public function testHasEnabledSettings(): void
+    {
+        $this->loadFixtures([
+            LoadStripePaymentElementChannelData::class,
+        ]);
+
+        self::assertTrue($this->repository->hasEnabledSettings());
     }
 }

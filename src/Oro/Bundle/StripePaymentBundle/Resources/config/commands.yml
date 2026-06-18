@@ -4,5 +4,7 @@ services:
         class: 'Oro\Bundle\StripePaymentBundle\Command\Cron\ReAuthorizeCronCommand'
         arguments:
             - '@oro_message_queue.message_producer'
+        calls:
+            - ['setStripePaymentElementSettingsRepository', ['@oro_stripe_payment.entity.repository.stripe_payment_element_settings']]
         tags:
             - { name: 'console.command' }

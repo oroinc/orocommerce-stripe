@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\StripePaymentBundle\Tests\Functional\Command\Cron;
 
+use Oro\Bundle\CronBundle\Command\CronCommandActivationInterface;
 use Oro\Bundle\CronBundle\Command\CronCommandScheduleDefinitionInterface;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\StripePaymentBundle\Async\Topic\ReAuthorizePaymentTransactionsInitTopic;
+use Oro\Bundle\StripePaymentBundle\Tests\Functional\DataFixtures\LoadStripePaymentElementChannelData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Command\CommandTestingTrait;
 use Symfony\Component\Console\Command\Command;
@@ -85,5 +87,25 @@ HELP,
         self::assertInstanceOf(CronCommandScheduleDefinitionInterface::class, $command);
 
         self::assertEquals('0 */1 * * *', $command->getDefaultDefinition());
+    }
+
+    public function testIsActiveReturnsFalseWhenNoEnabledSettings(): void
+    {
+        $command = $this->findCommand('oro:cron:stripe-payment:re-authorize');
+
+        self::assertInstanceOf(CronCommandActivationInterface::class, $command);
+        self::assertFalse($command->isActive());
+    }
+
+    public function testIsActiveReturnsTrueWhenEnabledSettingsExist(): void
+    {
+        $this->loadFixtures([
+            LoadStripePaymentElementChannelData::class,
+        ]);
+
+        $command = $this->findCommand('oro:cron:stripe-payment:re-authorize');
+
+        self::assertInstanceOf(CronCommandActivationInterface::class, $command);
+        self::assertTrue($command->isActive());
     }
 }
