@@ -1,0 +1,228 @@
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer1:
+        name: 'Company A'
+        organization: '@organization'
+        owner: '@admin'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+    amanda:
+        email: 'AmandaRCole@example.org'
+        username: 'AmandaRCole@example.org'
+        password: <userPassword(@amanda->username)>
+        firstName: 'Amanda'
+        lastName: 'Cole'
+        enabled: '1'
+        confirmed: '1'
+        customer: '@customer1'
+        organization: '@organization'
+        userRoles: ['@buyer']
+        owner: '@admin'
+        website: '@website1'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
+    stripe_customer_address:
+        region: '@florida'
+        frontendOwner: '@customer1'
+        country: '@united_states'
+        owner: '@admin'
+        systemOrganization: '@organization'
+        firstName: Test
+        lastName: Customer
+        primary: true
+        label: 'Primary address'
+        street: '801 Scenic Hwy'
+        city: 'Haines City'
+        postalCode: '33844'
+        organization: 'ORO'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerAddressToAddressType:
+    stripe_customer_address_shipping_default:
+        address: '@stripe_customer_address'
+        type: '@shippingType'
+        default: true
+    stripe_customer_address_billing_default:
+        address: '@stripe_customer_address'
+        type: '@billingType'
+        default: true
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
+    stripe_customer_user_address:
+        region: '@florida'
+        frontendOwner: '@amanda'
+        country: '@united_states'
+        owner: '@admin'
+        systemOrganization: '@organization'
+        firstName: Test
+        lastName: Customer
+        primary: true
+        label: 'Primary address'
+        street: '801 Scenic Hwy'
+        city: 'Haines City'
+        postalCode: '33844'
+        organization: 'ORO'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
+    stripe_customer_user_address_shipping_default:
+        address: '@stripe_customer_user_address'
+        type: '@shippingType'
+        default: true
+    stripe_customer_user_address_billing_default:
+        address: '@stripe_customer_user_address'
+        type: '@billingType'
+        default: true
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    suborders_product1_precision:
+        unit: '@item'
+        precision: '0'
+    suborders_product2_precision:
+        unit: '@item'
+        precision: '0'
+    suborders_product3_precision:
+        unit: '@item'
+        precision: '0'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    suborders_product1_name:
+        string: 'Lighting Product 1'
+    suborders_product2_name:
+        string: 'Phone Product 1'
+    suborders_product3_name:
+        string: 'Phone Product 2'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
+    suborders_category_lighting_title:
+        string: 'Lighting Products'
+    suborders_category_phones_title:
+        string: 'Phones'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    suborders_product1:
+        sku: 'LIGHT001'
+        type: 'simple'
+        primaryUnitPrecision: '@suborders_product1_precision'
+        __calls:
+            - addName: ['@suborders_product1_name']
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        organization: '@organization'
+        owner: '@business_unit'
+        status: 'enabled'
+    suborders_product2:
+        sku: 'PHONE001'
+        type: 'simple'
+        primaryUnitPrecision: '@suborders_product2_precision'
+        __calls:
+            - addName: ['@suborders_product2_name']
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        organization: '@organization'
+        owner: '@business_unit'
+        status: 'enabled'
+    suborders_product3:
+        sku: 'PHONE002'
+        type: 'simple'
+        primaryUnitPrecision: '@suborders_product3_precision'
+        __calls:
+            - addName: ['@suborders_product3_name']
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        organization: '@organization'
+        owner: '@business_unit'
+        status: 'enabled'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    suborders_price_relation1:
+        product: '@suborders_product1'
+        priceList: '@defaultPriceList'
+    suborders_price_relation2:
+        product: '@suborders_product2'
+        priceList: '@defaultPriceList'
+    suborders_price_relation3:
+        product: '@suborders_product3'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    suborders_product1_price:
+        pricelist: '@defaultPriceList'
+        product: '@suborders_product1'
+        productSku: 'LIGHT001'
+        quantity: 1
+        unit: '@item'
+        value: 10
+        currency: 'USD'
+    suborders_product2_price:
+        pricelist: '@defaultPriceList'
+        product: '@suborders_product2'
+        productSku: 'PHONE001'
+        quantity: 1
+        unit: '@item'
+        value: 20
+        currency: 'USD'
+    suborders_product3_price:
+        pricelist: '@defaultPriceList'
+        product: '@suborders_product3'
+        productSku: 'PHONE002'
+        quantity: 1
+        unit: '@item'
+        value: 15
+        currency: 'USD'
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+    suborders_category_lighting:
+        __calls:
+            - addTitle: ['@suborders_category_lighting_title']
+            - setParentCategory: ['@root_category']
+            - addProduct: ['@suborders_product1']
+            - setOrganization: ['@organization']
+    suborders_category_phones:
+        __calls:
+            - addTitle: ['@suborders_category_phones_title']
+            - setParentCategory: ['@root_category']
+            - addProduct: ['@suborders_product2']
+            - addProduct: ['@suborders_product3']
+            - setOrganization: ['@organization']
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    suborders_shopping_list:
+        label: 'SubOrders Shopping List'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        owner: '@admin'
+        organization: '@organization'
+        website: '@website1'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    suborders_line_item1:
+        product: '@suborders_product1'
+        quantity: '2'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@suborders_shopping_list'
+        owner: '@admin'
+        organization: '@organization'
+    suborders_line_item2:
+        product: '@suborders_product2'
+        quantity: '1'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@suborders_shopping_list'
+        owner: '@admin'
+        organization: '@organization'
+    suborders_line_item3:
+        product: '@suborders_product3'
+        quantity: '2'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@suborders_shopping_list'
+        owner: '@admin'
+        organization: '@organization'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
+    suborders_shopping_list_total:
+        __construct: ['@suborders_shopping_list','USD']
+        shoppingList: '@suborders_shopping_list'
+        currency: 'USD'
+        subtotalValue: '70'
+        valid: true

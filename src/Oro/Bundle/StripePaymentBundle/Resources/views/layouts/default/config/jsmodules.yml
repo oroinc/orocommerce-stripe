@@ -1,3 +1,7 @@
 dynamic-imports:
     oropayment:
         - orostripepayment/js/app/components/invoice-payment/stripe-payment-element-invoice-payment-component
+        - orostripepayment/js/app/components/checkout-multi-step/stripe-payment-element-checkout-multi-step-component
+        - orostripepayment/js/app/views/checkout-multi-step/stripe-payment-element-checkout-multi-step-dialog-widget
+        - orostripepayment/js/app/components/checkout-single-step/stripe-payment-element-checkout-single-step-component
+        - orostripepayment/js/app/views/checkout-single-step/stripe-payment-element-checkout-single-step-dialog-widget

@@ -1,0 +1,121 @@
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer1:
+        name: 'Company A'
+        organization: '@organization'
+        owner: '@admin'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+    amanda:
+        email: 'AmandaRCole@example.org'
+        username: 'AmandaRCole@example.org'
+        password: <userPassword(@amanda->username)>
+        firstName: 'Amanda'
+        lastName: 'Cole'
+        enabled: '1'
+        confirmed: '1'
+        customer: '@customer1'
+        organization: '@organization'
+        userRoles: ['@buyer']
+        owner: '@admin'
+        website: '@website1'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    stripe_product_precision:
+        unit: '@item'
+        precision: '0'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    stripe_product_name:
+        string: '400-Watt Bulb Work Light'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    stripe_product:
+        sku: 'SKU123'
+        type: 'simple'
+        primaryUnitPrecision: '@stripe_product_precision'
+        __calls:
+            - addName: ['@stripe_product_name']
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        organization: '@organization'
+        owner: '@business_unit'
+        status: 'enabled'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    stripe_price_relation:
+        product: '@stripe_product'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    stripe_product_price:
+        pricelist: '@defaultPriceList'
+        product: '@stripe_product'
+        productSku: 'SKU123'
+        quantity: 1
+        unit: '@item'
+        value: 10
+        currency: 'USD'
+
+Oro\Bundle\OrderBundle\Entity\OrderAddress:
+    order_1_billing_address:
+        label: 'Primary address'
+        street: '801 Scenic Hwy'
+        city: 'Haines City'
+        postalCode: '33844'
+        country: '@united_states'
+        region: '@florida'
+        organization: 'ORO'
+        firstName: 'Test'
+        lastName: 'Customer'
+    order_1_shipping_address:
+        label: 'Primary address'
+        street: '801 Scenic Hwy'
+        city: 'Haines City'
+        postalCode: '33844'
+        country: '@united_states'
+        region: '@florida'
+        organization: 'ORO'
+        firstName: 'Test'
+        lastName: 'Customer'
+
+Oro\Bundle\CurrencyBundle\Entity\MultiCurrency:
+    order_1_subtotal:
+        value: 12345.67
+        baseCurrencyValue: 12345.67
+        currency: 'USD'
+    order_1_total:
+        value: 12345.67
+        baseCurrencyValue: 12345.67
+        currency: 'USD'
+
+Oro\Bundle\CurrencyBundle\Entity\Price:
+    order_1_line_item_price:
+        value: 10
+        currency: USD
+
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+    order_1_line_item:
+        product: '@stripe_product'
+        price: '@order_1_line_item_price'
+        quantity: 1234
+        productUnit: '@item'
+        productUnitCode: item
+        __calls:
+            - addOrder: ['@order_1']
+
+Oro\Bundle\OrderBundle\Entity\Order:
+    order_1:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        identifier: 'StripeOrder1'
+        website: '@website1'
+        currency: USD
+        poNumber: 'STRIPE-PO-001'
+        billingAddress: '@order_1_billing_address'
+        shippingAddress: '@order_1_shipping_address'
+        subtotalObject: '@order_1_subtotal'
+        totalObject: '@order_1_total'
+        lineItems: ['@order_1_line_item']

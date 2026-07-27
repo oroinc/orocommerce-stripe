@@ -1,0 +1,7 @@
+layout:
+    actions:
+        -   '@setBlockTheme':
+                themes:
+                    - 'oro_payment_method_options_checkout_multi_step.html.twig'
+
+    conditions: '!context["isSinglePageCheckout"]'

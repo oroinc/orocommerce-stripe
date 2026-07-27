@@ -55,7 +55,7 @@ class StripePaymentElementMethodView implements PaymentMethodViewInterface
     #[\Override]
     public function getBlock(): string
     {
-        return 'oro_stripe_payment_element_widget';
+        return '_oro_stripe_payment_element_widget';
     }
 
     #[\Override]

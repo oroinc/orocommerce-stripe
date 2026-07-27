@@ -12,12 +12,20 @@ use Oro\Component\MessageQueue\Job\Job;
 use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
 /**
  * Initiates renewal of payment transactions for uncaptured payments that are about to expire.
  */
-class ReAuthorizePaymentTransactionsInitProcessor implements MessageProcessorInterface, TopicSubscriberInterface
+class ReAuthorizePaymentTransactionsInitProcessor implements
+    MessageProcessorInterface,
+    TopicSubscriberInterface,
+    LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     private int $chunkSize = 10;
 
     public function __construct(
@@ -25,6 +33,7 @@ class ReAuthorizePaymentTransactionsInitProcessor implements MessageProcessorInt
         private readonly MessageProducerInterface $messageProducer,
         private readonly ReAuthorizePaymentTransactionsProviderInterface $reAuthorizePaymentTransactionsProvider
     ) {
+        $this->logger = new NullLogger();
     }
 
     public function setChunkSize(int $chunkSize): void
@@ -87,10 +96,15 @@ class ReAuthorizePaymentTransactionsInitProcessor implements MessageProcessorInt
 
         $jobRunner->createDelayed(
             $this->getChildJobName($rootJobName, $chunkNumber),
-            function (JobRunner $jobRunner, Job $child) use ($chunk) {
+            function (JobRunner $jobRunner, Job $child) use ($chunk, $chunkNumber) {
                 $this->messageProducer->send(
                     ReAuthorizePaymentTransactionsChunkTopic::getName(),
                     ['jobId' => $child->getId(), 'paymentTransactions' => $chunk]
+                );
+
+                $this->logger->info(
+                    'Sent chunk #{chunkNumber} with {count} payment transactions for renewal.',
+                    ['chunkNumber' => $chunkNumber, 'count' => count($chunk)]
                 );
             }
         );

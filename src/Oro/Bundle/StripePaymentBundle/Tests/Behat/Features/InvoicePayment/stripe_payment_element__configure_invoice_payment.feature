@@ -1,4 +1,4 @@
-@fixture-OroStripePaymentBundle:stripe_payment_element__configure_invoice_payment.yml
+@fixture-OroStripePaymentBundle:InvoicePayment/stripe_payment_element__configure_invoice_payment.yml
 
 Feature: Stripe Payment Element - Configure Invoice Payment
 

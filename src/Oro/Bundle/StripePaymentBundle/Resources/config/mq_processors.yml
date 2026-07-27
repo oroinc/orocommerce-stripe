@@ -10,6 +10,10 @@ services:
             - '@oro_message_queue.job.runner'
             - '@oro_message_queue.message_producer'
             - '@oro_stripe_payment.re_authorization.payment_transactions_provider'
+        calls:
+            - [ 'setLogger', [ '@logger' ] ]
+        tags:
+            - { name: 'monolog.logger', channel: 'oro_stripe_payment' }
 
     oro_stripe_payment.async.re_authorize_payment_transactions_chunk_processor:
         class: 'Oro\Bundle\StripePaymentBundle\Async\ReAuthorizePaymentTransactionsChunkProcessor'
@@ -19,6 +23,6 @@ services:
             - '@oro_stripe_payment.re_authorization.executor'
             - '@event_dispatcher'
         calls:
-            - ['setLogger', ['@logger']]
+            - [ 'setLogger', [ '@logger' ] ]
         tags:
             - { name: 'monolog.logger', channel: 'oro_stripe_payment' }

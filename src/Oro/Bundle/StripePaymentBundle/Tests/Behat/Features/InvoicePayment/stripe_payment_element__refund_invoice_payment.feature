@@ -1,7 +1,7 @@
 @regression
 @behat-test-env
-@fixture-OroStripePaymentBundle:stripe_payment_element__refund_invoice_payment.yml
-@fixture-OroStripePaymentBundle:stripe_payment_element__refund_invoice_payment__transactions.yml
+@fixture-OroStripePaymentBundle:InvoicePayment/stripe_payment_element__refund_invoice_payment.yml
+@fixture-OroStripePaymentBundle:InvoicePayment/stripe_payment_element__refund_invoice_payment__transactions.yml
 
 Feature: Stripe Payment Element - Refund Invoice Payment
 

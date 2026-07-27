@@ -44,8 +44,7 @@ final class ConfigurationTest extends TestCase
 
         self::assertEquals(
             [
-                'payment_method_types' => [],
-            ],
+                'payment_method_types' => [],            ],
             $config
         );
     }
@@ -108,8 +107,7 @@ final class ConfigurationTest extends TestCase
                     'maximum' => [],
                     'decimal_places' => [],
                 ],
-                'payment_method_types' => [],
-            ],
+                'payment_method_types' => [],            ],
             $processedConfig
         );
     }
@@ -140,8 +138,7 @@ final class ConfigurationTest extends TestCase
                     'minimum' => [],
                     'decimal_places' => [],
                 ],
-                'payment_method_types' => [],
-            ],
+                'payment_method_types' => [],            ],
             $processedConfig
         );
     }
@@ -170,8 +167,7 @@ final class ConfigurationTest extends TestCase
                         'HUF' => ['decimal_places' => 2, 'fractionless' => false],
                     ],
                 ],
-                'payment_method_types' => [],
-            ],
+                'payment_method_types' => [],            ],
             $processedConfig
         );
     }
@@ -200,8 +196,7 @@ final class ConfigurationTest extends TestCase
                     'minimum' => [],
                     'maximum' => [],
                 ],
-                'payment_method_types' => [],
-            ],
+                'payment_method_types' => [],            ],
             $processedConfig
         );
     }

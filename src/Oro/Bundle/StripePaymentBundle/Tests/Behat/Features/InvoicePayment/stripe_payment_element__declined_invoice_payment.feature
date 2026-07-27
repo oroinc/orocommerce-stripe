@@ -1,6 +1,6 @@
 @regression
 @behat-test-env
-@fixture-OroStripePaymentBundle:stripe_payment_element__declined_invoice_payment.yml
+@fixture-OroStripePaymentBundle:InvoicePayment/stripe_payment_element__declined_invoice_payment.yml
 
 Feature: Stripe Payment Element - Declined Invoice Payment
 

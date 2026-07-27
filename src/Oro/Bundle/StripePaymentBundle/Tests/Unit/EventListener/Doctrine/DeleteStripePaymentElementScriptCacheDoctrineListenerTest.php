@@ -17,374 +17,606 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\Cache\CacheInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 final class DeleteStripePaymentElementScriptCacheDoctrineListenerTest extends TestCase
 {
-    private DeleteStripePaymentElementScriptCacheDoctrineListener $listener;
-
     private CacheInterface&MockObject $cache;
-
-    private UnitOfWork&MockObject $unitOfWork;
-
-    private EntityManagerInterface&MockObject $entityManager;
+    private DeleteStripePaymentElementScriptCacheDoctrineListener $listener;
 
     protected function setUp(): void
     {
         $this->cache = $this->createMock(CacheInterface::class);
-
         $this->listener = new DeleteStripePaymentElementScriptCacheDoctrineListener($this->cache);
+    }
 
-        $this->entityManager = $this->createMock(EntityManagerInterface::class);
-        $this->unitOfWork = $this->createMock(UnitOfWork::class);
-        $this->entityManager
+    public function testOnFlushWithChannelInsertion(): void
+    {
+        $organization = new Organization();
+        $organization->setId(123);
+
+        $settings = new StripePaymentElementSettings();
+        $settings->setUserMonitoringEnabled(true);
+
+        $channel = new Channel();
+        $channel->setOrganization($organization);
+        $channel->setTransport($settings);
+        $settings->setChannel($channel);
+        $channel->setEnabled(true);
+
+        $unitOfWork = $this->createMock(UnitOfWork::class);
+        $unitOfWork
+            ->expects(self::once())
+            ->method('getScheduledEntityInsertions')
+            ->willReturn([$channel]);
+        $unitOfWork
+            ->expects(self::once())
+            ->method('getScheduledEntityUpdates')
+            ->willReturn([]);
+        $unitOfWork
+            ->expects(self::once())
+            ->method('getScheduledEntityDeletions')
+            ->willReturn([]);
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager
             ->method('getUnitOfWork')
-            ->willReturn($this->unitOfWork);
-    }
+            ->willReturn($unitOfWork);
+        $eventArgs = new OnFlushEventArgs($entityManager);
 
-    public function testOnFlushWhenInsertedWithUserMonitoring(): void
-    {
-        $organization = (new Organization())->setId(42);
-        $channel = (new Channel())->setOrganization($organization);
-        $settings = (new StripePaymentElementSettings())
-            ->setChannel($channel)
-            ->setUserMonitoringEnabled(true);
+        $this->listener->onFlush($eventArgs);
 
-        $this->unitOfWork
-            ->expects(self::once())
-            ->method('getScheduledEntityInsertions')
-            ->willReturn([$settings]);
-
-        $this->unitOfWork
-            ->expects(self::once())
-            ->method('getScheduledEntityUpdates')
-            ->willReturn([]);
-
-        $this->unitOfWork
-            ->expects(self::once())
-            ->method('getScheduledEntityDeletions')
-            ->willReturn([]);
-
-        $this->listener->onFlush(new OnFlushEventArgs($this->entityManager));
-
-        // Verify cache deletion happens in postFlush
         $this->cache
             ->expects(self::exactly(2))
             ->method('delete')
             ->withConsecutive(
-                [StripePaymentElementStripeScriptProvider::getStripeScriptEnabledCacheKey(42)],
-                [StripePaymentElementStripeScriptProvider::getStripeScriptVersionCacheKey(42)]
+                [StripePaymentElementStripeScriptProvider::getStripeScriptEnabledCacheKey(123)],
+                [StripePaymentElementStripeScriptProvider::getStripeScriptVersionCacheKey(123)]
             );
 
-        $this->listener->postFlush(new PostFlushEventArgs($this->entityManager));
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $postFlushArgs = new PostFlushEventArgs($entityManager);
+        $this->listener->postFlush($postFlushArgs);
     }
 
-    public function testOnFlushWhenInsertedWithoutUserMonitoring(): void
+    public function testOnFlushWithSettingsInsertion(): void
     {
-        $organization = (new Organization())->setId(42);
-        $channel = (new Channel())->setOrganization($organization);
-        $settings = (new StripePaymentElementSettings())
-            ->setChannel($channel)
-            ->setUserMonitoringEnabled(false);
+        $organization = new Organization();
+        $organization->setId(456);
 
-        $this->unitOfWork
+        $channel = new Channel();
+        $channel->setOrganization($organization);
+        $channel->setEnabled(true);
+
+        $settings = new StripePaymentElementSettings();
+        $settings->setUserMonitoringEnabled(true);
+        $settings->setChannel($channel);
+        $channel->setTransport($settings);
+
+        $unitOfWork = $this->createMock(UnitOfWork::class);
+        $unitOfWork
             ->expects(self::once())
             ->method('getScheduledEntityInsertions')
             ->willReturn([$settings]);
-
-        $this->unitOfWork
+        $unitOfWork
             ->expects(self::once())
             ->method('getScheduledEntityUpdates')
             ->willReturn([]);
-
-        $this->unitOfWork
+        $unitOfWork
             ->expects(self::once())
             ->method('getScheduledEntityDeletions')
             ->willReturn([]);
 
-        $this->listener->onFlush(new OnFlushEventArgs($this->entityManager));
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager
+            ->method('getUnitOfWork')
+            ->willReturn($unitOfWork);
+        $eventArgs = new OnFlushEventArgs($entityManager);
+
+        $this->listener->onFlush($eventArgs);
+
+        $this->cache
+            ->expects(self::exactly(2))
+            ->method('delete')
+            ->withConsecutive(
+                [StripePaymentElementStripeScriptProvider::getStripeScriptEnabledCacheKey(456)],
+                [StripePaymentElementStripeScriptProvider::getStripeScriptVersionCacheKey(456)]
+            );
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $postFlushArgs = new PostFlushEventArgs($entityManager);
+        $this->listener->postFlush($postFlushArgs);
+    }
+
+    public function testOnFlushWithChannelInsertionDisabledChannel(): void
+    {
+        $organization = new Organization();
+        $organization->setId(789);
+
+        $settings = new StripePaymentElementSettings();
+        $settings->setUserMonitoringEnabled(true);
+
+        $channel = new Channel();
+        $channel->setOrganization($organization);
+        $channel->setTransport($settings);
+        $settings->setChannel($channel);
+        $channel->setEnabled(false);
+
+        $unitOfWork = $this->createMock(UnitOfWork::class);
+        $unitOfWork
+            ->expects(self::once())
+            ->method('getScheduledEntityInsertions')
+            ->willReturn([$channel]);
+        $unitOfWork
+            ->expects(self::once())
+            ->method('getScheduledEntityUpdates')
+            ->willReturn([]);
+        $unitOfWork
+            ->expects(self::once())
+            ->method('getScheduledEntityDeletions')
+            ->willReturn([]);
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager
+            ->method('getUnitOfWork')
+            ->willReturn($unitOfWork);
+        $eventArgs = new OnFlushEventArgs($entityManager);
+
+        $this->listener->onFlush($eventArgs);
 
         $this->cache
             ->expects(self::never())
             ->method('delete');
 
-        $this->listener->postFlush(new PostFlushEventArgs($this->entityManager));
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $postFlushArgs = new PostFlushEventArgs($entityManager);
+        $this->listener->postFlush($postFlushArgs);
     }
 
-    public function testOnFlushWhenUpdatedWithUserMonitoring(): void
+    public function testOnFlushWithChannelUpdate(): void
     {
-        $organization = (new Organization())->setId(42);
-        $channel = (new Channel())->setOrganization($organization);
-        $settings = (new StripePaymentElementSettings())->setChannel($channel);
+        $organization = new Organization();
+        $organization->setId(321);
 
-        $this->unitOfWork
+        $settings = new StripePaymentElementSettings();
+        $settings->setUserMonitoringEnabled(true);
+
+        $channel = new Channel();
+        $channel->setOrganization($organization);
+        $channel->setTransport($settings);
+        $settings->setChannel($channel);
+        $channel->setEnabled(true);
+
+        $unitOfWork = $this->createMock(UnitOfWork::class);
+        $unitOfWork
             ->expects(self::once())
             ->method('getScheduledEntityInsertions')
             ->willReturn([]);
-
-        $this->unitOfWork
+        $unitOfWork
             ->expects(self::once())
             ->method('getScheduledEntityUpdates')
-            ->willReturn([$settings]);
-
-        $this->unitOfWork
-            ->expects(self::once())
+            ->willReturn([$channel]);
+        $unitOfWork
+            ->expects(self::exactly(2))
             ->method('getEntityChangeSet')
-            ->with($settings)
-            ->willReturn(['userMonitoringEnabled' => [false, true]]);
-
-        $this->unitOfWork
+            ->willReturnMap([
+                [$channel, ['enabled' => [false, true]]],
+                [$settings, []],
+            ]);
+        $unitOfWork
             ->expects(self::once())
             ->method('getScheduledEntityDeletions')
             ->willReturn([]);
 
-        $this->listener->onFlush(new OnFlushEventArgs($this->entityManager));
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager
+            ->method('getUnitOfWork')
+            ->willReturn($unitOfWork);
+        $eventArgs = new OnFlushEventArgs($entityManager);
+
+        $this->listener->onFlush($eventArgs);
 
         $this->cache
             ->expects(self::exactly(2))
             ->method('delete')
             ->withConsecutive(
-                [StripePaymentElementStripeScriptProvider::getStripeScriptEnabledCacheKey(42)],
-                [StripePaymentElementStripeScriptProvider::getStripeScriptVersionCacheKey(42)]
+                [StripePaymentElementStripeScriptProvider::getStripeScriptEnabledCacheKey(321)],
+                [StripePaymentElementStripeScriptProvider::getStripeScriptVersionCacheKey(321)]
             );
 
-        $this->listener->postFlush(new PostFlushEventArgs($this->entityManager));
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $postFlushArgs = new PostFlushEventArgs($entityManager);
+        $this->listener->postFlush($postFlushArgs);
     }
 
-    public function testOnFlushWhenUpdatedWithoutUserMonitoring(): void
+    public function testOnFlushWithSettingsUpdate(): void
     {
-        $organization = (new Organization())->setId(42);
-        $channel = (new Channel())->setOrganization($organization);
-        $settings = (new StripePaymentElementSettings())->setChannel($channel);
+        $organization = new Organization();
+        $organization->setId(654);
 
-        $this->unitOfWork
+        $channel = new Channel();
+        $channel->setOrganization($organization);
+        $channel->setEnabled(true);
+
+        $settings = new StripePaymentElementSettings();
+        $settings->setUserMonitoringEnabled(true);
+        $settings->setChannel($channel);
+        $channel->setTransport($settings);
+
+        $unitOfWork = $this->createMock(UnitOfWork::class);
+        $unitOfWork
             ->expects(self::once())
             ->method('getScheduledEntityInsertions')
             ->willReturn([]);
-
-        $this->unitOfWork
+        $unitOfWork
             ->expects(self::once())
             ->method('getScheduledEntityUpdates')
             ->willReturn([$settings]);
-
-        $this->unitOfWork
-            ->expects(self::once())
+        $unitOfWork
+            ->expects(self::exactly(2))
             ->method('getEntityChangeSet')
-            ->with($settings)
-            ->willReturn(['reAuthorizationEnabled' => [false, true]]);
-
-        $this->unitOfWork
+            ->willReturnMap([
+                [$channel, []],
+                [$settings, ['userMonitoringEnabled' => [false, true]]],
+            ]);
+        $unitOfWork
             ->expects(self::once())
             ->method('getScheduledEntityDeletions')
             ->willReturn([]);
 
-        $this->listener->onFlush(new OnFlushEventArgs($this->entityManager));
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager
+            ->method('getUnitOfWork')
+            ->willReturn($unitOfWork);
+        $eventArgs = new OnFlushEventArgs($entityManager);
 
-        $this->cache
-            ->expects(self::never())
-            ->method('delete');
-
-        $this->listener->postFlush(new PostFlushEventArgs($this->entityManager));
-    }
-
-    public function testOnFlushWhenDeletedWithUserMonitoring(): void
-    {
-        $organization = (new Organization())->setId(42);
-        $channel = (new Channel())->setOrganization($organization);
-        $settings = (new StripePaymentElementSettings())
-            ->setChannel($channel)
-            ->setUserMonitoringEnabled(true);
-
-        $this->unitOfWork
-            ->expects(self::once())
-            ->method('getScheduledEntityInsertions')
-            ->willReturn([]);
-
-        $this->unitOfWork
-            ->expects(self::once())
-            ->method('getScheduledEntityUpdates')
-            ->willReturn([]);
-
-        $this->unitOfWork
-            ->expects(self::once())
-            ->method('getScheduledEntityDeletions')
-            ->willReturn([$settings]);
-
-        $this->listener->onFlush(new OnFlushEventArgs($this->entityManager));
+        $this->listener->onFlush($eventArgs);
 
         $this->cache
             ->expects(self::exactly(2))
             ->method('delete')
             ->withConsecutive(
-                [StripePaymentElementStripeScriptProvider::getStripeScriptEnabledCacheKey(42)],
-                [StripePaymentElementStripeScriptProvider::getStripeScriptVersionCacheKey(42)]
+                [StripePaymentElementStripeScriptProvider::getStripeScriptEnabledCacheKey(654)],
+                [StripePaymentElementStripeScriptProvider::getStripeScriptVersionCacheKey(654)]
             );
 
-        $this->listener->postFlush(new PostFlushEventArgs($this->entityManager));
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $postFlushArgs = new PostFlushEventArgs($entityManager);
+        $this->listener->postFlush($postFlushArgs);
     }
 
-    public function testOnFlushWhenDeletedWithoutUserMonitoring(): void
+    public function testOnFlushWithSettingsDeletion(): void
     {
-        $organization = (new Organization())->setId(42);
-        $channel = (new Channel())->setOrganization($organization);
-        $settings = (new StripePaymentElementSettings())
-            ->setChannel($channel)
-            ->setUserMonitoringEnabled(false);
+        $organization = new Organization();
+        $organization->setId(987);
 
-        $this->unitOfWork
+        $channel = new Channel();
+        $channel->setOrganization($organization);
+        $channel->setEnabled(true);
+
+        $settings = new StripePaymentElementSettings();
+        $settings->setUserMonitoringEnabled(true);
+        $settings->setChannel($channel);
+        $channel->setTransport($settings);
+
+        $unitOfWork = $this->createMock(UnitOfWork::class);
+        $unitOfWork
             ->expects(self::once())
             ->method('getScheduledEntityInsertions')
             ->willReturn([]);
-
-        $this->unitOfWork
+        $unitOfWork
             ->expects(self::once())
             ->method('getScheduledEntityUpdates')
             ->willReturn([]);
-
-        $this->unitOfWork
+        $unitOfWork
             ->expects(self::once())
             ->method('getScheduledEntityDeletions')
             ->willReturn([$settings]);
 
-        $this->listener->onFlush(new OnFlushEventArgs($this->entityManager));
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager
+            ->method('getUnitOfWork')
+            ->willReturn($unitOfWork);
+        $eventArgs = new OnFlushEventArgs($entityManager);
+
+        $this->listener->onFlush($eventArgs);
 
         $this->cache
-            ->expects(self::never())
-            ->method('delete');
-
-        $this->listener->postFlush(new PostFlushEventArgs($this->entityManager));
-    }
-
-    public function testOnFlushWithNonRelevantEntities(): void
-    {
-        $otherEntity = new \stdClass();
-
-        $this->unitOfWork
-            ->expects(self::once())
-            ->method('getScheduledEntityInsertions')
-            ->willReturn([$otherEntity]);
-
-        $this->unitOfWork
-            ->expects(self::once())
-            ->method('getScheduledEntityUpdates')
-            ->willReturn([$otherEntity]);
-
-        $this->unitOfWork
-            ->expects(self::once())
-            ->method('getScheduledEntityDeletions')
-            ->willReturn([$otherEntity]);
-
-        $this->listener->onFlush(new OnFlushEventArgs($this->entityManager));
-
-        // No cache deletion should happen
-        $this->cache
-            ->expects(self::never())
-            ->method('delete');
-
-        $this->listener->postFlush(new PostFlushEventArgs($this->entityManager));
-    }
-
-    public function testPostFlushWithException(): void
-    {
-        $organization = (new Organization())->setId(42);
-        $channel = (new Channel())->setOrganization($organization);
-        $settings = (new StripePaymentElementSettings())
-            ->setChannel($channel)
-            ->setUserMonitoringEnabled(true);
-
-        $this->unitOfWork
-            ->expects(self::once())
-            ->method('getScheduledEntityInsertions')
-            ->willReturn([$settings]);
-
-        $this->unitOfWork
-            ->expects(self::once())
-            ->method('getScheduledEntityUpdates')
-            ->willReturn([]);
-
-        $this->unitOfWork
-            ->expects(self::once())
-            ->method('getScheduledEntityDeletions')
-            ->willReturn([]);
-
-        $this->listener->onFlush(new OnFlushEventArgs($this->entityManager));
-
-        $exception = new \RuntimeException('Cache error');
-        $this->cache
-            ->expects(self::once())
+            ->expects(self::exactly(2))
             ->method('delete')
-            ->willThrowException($exception);
+            ->withConsecutive(
+                [StripePaymentElementStripeScriptProvider::getStripeScriptEnabledCacheKey(987)],
+                [StripePaymentElementStripeScriptProvider::getStripeScriptVersionCacheKey(987)]
+            );
 
-        $this->expectExceptionObject($exception);
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $postFlushArgs = new PostFlushEventArgs($entityManager);
+        $this->listener->postFlush($postFlushArgs);
+    }
 
-        $this->listener->postFlush(new PostFlushEventArgs($this->entityManager));
+    public function testOnFlushWithSettingsDeletionUserMonitoringDisabled(): void
+    {
+        $settings = new StripePaymentElementSettings();
+        $settings->setUserMonitoringEnabled(false);
+
+        $unitOfWork = $this->createMock(UnitOfWork::class);
+        $unitOfWork
+            ->expects(self::once())
+            ->method('getScheduledEntityInsertions')
+            ->willReturn([]);
+        $unitOfWork
+            ->expects(self::once())
+            ->method('getScheduledEntityUpdates')
+            ->willReturn([]);
+        $unitOfWork
+            ->expects(self::once())
+            ->method('getScheduledEntityDeletions')
+            ->willReturn([$settings]);
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager
+            ->method('getUnitOfWork')
+            ->willReturn($unitOfWork);
+        $eventArgs = new OnFlushEventArgs($entityManager);
+
+        $this->listener->onFlush($eventArgs);
+
+        $this->cache
+            ->expects(self::never())
+            ->method('delete');
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $postFlushArgs = new PostFlushEventArgs($entityManager);
+        $this->listener->postFlush($postFlushArgs);
+    }
+
+    public function testOnFlushWithMultipleOrganizations(): void
+    {
+        $organization1 = new Organization();
+        $organization1->setId(111);
+        $organization2 = new Organization();
+        $organization2->setId(222);
+
+        $settings1 = new StripePaymentElementSettings();
+        $settings1->setUserMonitoringEnabled(true);
+        $channel1 = new Channel();
+        $channel1->setOrganization($organization1);
+        $channel1->setTransport($settings1);
+        $settings1->setChannel($channel1);
+        $channel1->setEnabled(true);
+
+        $settings2 = new StripePaymentElementSettings();
+        $settings2->setUserMonitoringEnabled(true);
+        $channel2 = new Channel();
+        $channel2->setOrganization($organization2);
+        $channel2->setTransport($settings2);
+        $settings2->setChannel($channel2);
+        $channel2->setEnabled(true);
+
+        $unitOfWork = $this->createMock(UnitOfWork::class);
+        $unitOfWork
+            ->expects(self::once())
+            ->method('getScheduledEntityInsertions')
+            ->willReturn([$channel1, $channel2]);
+        $unitOfWork
+            ->expects(self::once())
+            ->method('getScheduledEntityUpdates')
+            ->willReturn([]);
+        $unitOfWork
+            ->expects(self::once())
+            ->method('getScheduledEntityDeletions')
+            ->willReturn([]);
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager
+            ->method('getUnitOfWork')
+            ->willReturn($unitOfWork);
+        $eventArgs = new OnFlushEventArgs($entityManager);
+
+        $this->listener->onFlush($eventArgs);
+
+        $this->cache
+            ->expects(self::exactly(4))
+            ->method('delete')
+            ->withConsecutive(
+                [StripePaymentElementStripeScriptProvider::getStripeScriptEnabledCacheKey(111)],
+                [StripePaymentElementStripeScriptProvider::getStripeScriptVersionCacheKey(111)],
+                [StripePaymentElementStripeScriptProvider::getStripeScriptEnabledCacheKey(222)],
+                [StripePaymentElementStripeScriptProvider::getStripeScriptVersionCacheKey(222)]
+            );
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $postFlushArgs = new PostFlushEventArgs($entityManager);
+        $this->listener->postFlush($postFlushArgs);
+    }
+
+    public function testOnFlushWithNullOrganization(): void
+    {
+        $settings = new StripePaymentElementSettings();
+        $settings->setUserMonitoringEnabled(true);
+
+        $channel = new Channel();
+        $channel->setTransport($settings);
+        $settings->setChannel($channel);
+        $channel->setEnabled(true);
+
+        $unitOfWork = $this->createMock(UnitOfWork::class);
+        $unitOfWork
+            ->expects(self::once())
+            ->method('getScheduledEntityInsertions')
+            ->willReturn([$channel]);
+        $unitOfWork
+            ->expects(self::once())
+            ->method('getScheduledEntityUpdates')
+            ->willReturn([]);
+        $unitOfWork
+            ->expects(self::once())
+            ->method('getScheduledEntityDeletions')
+            ->willReturn([]);
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager
+            ->method('getUnitOfWork')
+            ->willReturn($unitOfWork);
+        $eventArgs = new OnFlushEventArgs($entityManager);
+
+        $this->listener->onFlush($eventArgs);
+
+        $this->cache
+            ->expects(self::exactly(2))
+            ->method('delete')
+            ->withConsecutive(
+                [StripePaymentElementStripeScriptProvider::getStripeScriptEnabledCacheKey(0)],
+                [StripePaymentElementStripeScriptProvider::getStripeScriptVersionCacheKey(0)],
+            );
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $postFlushArgs = new PostFlushEventArgs($entityManager);
+        $this->listener->postFlush($postFlushArgs);
+    }
+
+    public function testPostFlushResetsAffectedOrganizations(): void
+    {
+        $organization = new Organization();
+        $organization->setId(123);
+
+        $settings = new StripePaymentElementSettings();
+        $settings->setUserMonitoringEnabled(true);
+
+        $channel = new Channel();
+        $channel->setOrganization($organization);
+        $channel->setTransport($settings);
+        $settings->setChannel($channel);
+        $channel->setEnabled(true);
+
+        $unitOfWork = $this->createMock(UnitOfWork::class);
+        $unitOfWork
+            ->method('getScheduledEntityInsertions')
+            ->willReturn([$channel]);
+        $unitOfWork
+            ->method('getScheduledEntityUpdates')
+            ->willReturn([]);
+        $unitOfWork
+            ->method('getScheduledEntityDeletions')
+            ->willReturn([]);
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager
+            ->method('getUnitOfWork')
+            ->willReturn($unitOfWork);
+        $eventArgs = new OnFlushEventArgs($entityManager);
+
+        // First flush
+        $this->listener->onFlush($eventArgs);
+
+        $this->cache
+            ->expects(self::exactly(2))
+            ->method('delete')
+            ->withConsecutive(
+                [StripePaymentElementStripeScriptProvider::getStripeScriptEnabledCacheKey(123)],
+                [StripePaymentElementStripeScriptProvider::getStripeScriptVersionCacheKey(123)]
+            );
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $postFlushArgs = new PostFlushEventArgs($entityManager);
+        $this->listener->postFlush($postFlushArgs);
+
+        // Second flush should not delete cache as organizations were reset
+        $this->cache
+            ->expects(self::never())
+            ->method('delete');
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $postFlushArgs = new PostFlushEventArgs($entityManager);
+        $this->listener->postFlush($postFlushArgs);
     }
 
     public function testOnClear(): void
     {
-        $organization = (new Organization())->setId(42);
-        $channel = (new Channel())->setOrganization($organization);
-        $settings = (new StripePaymentElementSettings())
-            ->setChannel($channel)
-            ->setUserMonitoringEnabled(true);
+        $organization = new Organization();
+        $organization->setId(123);
 
-        $this->unitOfWork
-            ->expects(self::once())
+        $settings = new StripePaymentElementSettings();
+        $settings->setUserMonitoringEnabled(true);
+
+        $channel = new Channel();
+        $channel->setOrganization($organization);
+        $channel->setTransport($settings);
+        $settings->setChannel($channel);
+        $channel->setEnabled(true);
+
+        $unitOfWork = $this->createMock(UnitOfWork::class);
+        $unitOfWork
             ->method('getScheduledEntityInsertions')
-            ->willReturn([$settings]);
-
-        $this->unitOfWork
-            ->expects(self::once())
+            ->willReturn([$channel]);
+        $unitOfWork
             ->method('getScheduledEntityUpdates')
             ->willReturn([]);
-
-        $this->unitOfWork
-            ->expects(self::once())
+        $unitOfWork
             ->method('getScheduledEntityDeletions')
             ->willReturn([]);
 
-        $this->listener->onFlush(new OnFlushEventArgs($this->entityManager));
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager
+            ->method('getUnitOfWork')
+            ->willReturn($unitOfWork);
+        $eventArgs = new OnFlushEventArgs($entityManager);
 
+        $this->listener->onFlush($eventArgs);
         $this->listener->onClear();
 
-        // After onClear, postFlush should not delete anything
+        // After onClear, postFlush should not delete any cache
         $this->cache
             ->expects(self::never())
             ->method('delete');
 
-        $this->listener->postFlush(new PostFlushEventArgs($this->entityManager));
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $postFlushArgs = new PostFlushEventArgs($entityManager);
+        $this->listener->postFlush($postFlushArgs);
     }
 
     public function testReset(): void
     {
-        $organization = (new Organization())->setId(42);
-        $channel = (new Channel())->setOrganization($organization);
-        $settings = (new StripePaymentElementSettings())
-            ->setChannel($channel)
-            ->setUserMonitoringEnabled(true);
+        $organization = new Organization();
+        $organization->setId(123);
 
-        $this->unitOfWork
-            ->expects(self::once())
+        $settings = new StripePaymentElementSettings();
+        $settings->setUserMonitoringEnabled(true);
+
+        $channel = new Channel();
+        $channel->setOrganization($organization);
+        $channel->setTransport($settings);
+        $settings->setChannel($channel);
+        $channel->setEnabled(true);
+
+        $unitOfWork = $this->createMock(UnitOfWork::class);
+        $unitOfWork
             ->method('getScheduledEntityInsertions')
-            ->willReturn([$settings]);
-
-        $this->unitOfWork
-            ->expects(self::once())
+            ->willReturn([$channel]);
+        $unitOfWork
             ->method('getScheduledEntityUpdates')
             ->willReturn([]);
-
-        $this->unitOfWork
-            ->expects(self::once())
+        $unitOfWork
             ->method('getScheduledEntityDeletions')
             ->willReturn([]);
 
-        $this->listener->onFlush(new OnFlushEventArgs($this->entityManager));
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $entityManager
+            ->method('getUnitOfWork')
+            ->willReturn($unitOfWork);
+        $eventArgs = new OnFlushEventArgs($entityManager);
 
+        $this->listener->onFlush($eventArgs);
         $this->listener->reset();
 
-        // After reset, postFlush should not delete anything
+        // After reset, postFlush should not delete any cache
         $this->cache
             ->expects(self::never())
             ->method('delete');
 
-        $this->listener->postFlush(new PostFlushEventArgs($this->entityManager));
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $postFlushArgs = new PostFlushEventArgs($entityManager);
+        $this->listener->postFlush($postFlushArgs);
     }
 }

@@ -1,6 +1,6 @@
 @regression
 @behat-test-env
-@fixture-OroStripePaymentBundle:stripe_payment_element__invoice_amounts_below_the_supported_threshold.yml
+@fixture-OroStripePaymentBundle:InvoicePayment/stripe_payment_element__invoice_amounts_below_the_supported_threshold.yml
 
 Feature: Stripe Payment Element - invoice amounts below the supported threshold
 

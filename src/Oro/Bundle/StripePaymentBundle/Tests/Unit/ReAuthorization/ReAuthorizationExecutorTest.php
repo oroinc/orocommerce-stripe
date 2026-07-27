@@ -9,6 +9,7 @@ use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Bundle\StripePaymentBundle\PaymentMethod\StripePaymentElement\StripePaymentElementMethod;
 use Oro\Bundle\StripePaymentBundle\ReAuthorization\ReAuthorizationExecutor;
 use Oro\Bundle\StripePaymentBundle\ReAuthorization\ReAuthorizationExecutorInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -95,7 +96,7 @@ final class ReAuthorizationExecutorTest extends TestCase
         self::assertFalse($this->executor->isApplicable($transaction));
     }
 
-    public function testIsApplicableWhenMethodNotSupports(): void
+    public function testIsApplicableWhenMethodNotStripePaymentElement(): void
     {
         $transaction = $this->createTransaction();
 
@@ -115,12 +116,6 @@ final class ReAuthorizationExecutorTest extends TestCase
             ->method('getPaymentMethod')
             ->with('stripe_payment_element_11')
             ->willReturn($paymentMethod);
-
-        $paymentMethod
-            ->expects(self::once())
-            ->method('supports')
-            ->with(PaymentMethodInterface::RE_AUTHORIZE)
-            ->willReturn(false);
 
         self::assertFalse($this->executor->isApplicable($transaction));
     }
@@ -139,18 +134,12 @@ final class ReAuthorizationExecutorTest extends TestCase
             ->method('hasPaymentMethod')
             ->willReturn(true);
 
-        $paymentMethod = $this->createMock(PaymentMethodInterface::class);
+        $paymentMethod = $this->createMock(StripePaymentElementMethod::class);
         $this->paymentMethodProvider
             ->expects(self::once())
             ->method('getPaymentMethod')
             ->with('stripe_payment_element_11')
             ->willReturn($paymentMethod);
-
-        $paymentMethod
-            ->expects(self::once())
-            ->method('supports')
-            ->with(PaymentMethodInterface::RE_AUTHORIZE)
-            ->willReturn(true);
 
         self::assertTrue($this->executor->isApplicable($transaction));
     }
@@ -167,7 +156,7 @@ final class ReAuthorizationExecutorTest extends TestCase
             ->with(PaymentMethodInterface::RE_AUTHORIZE, $transaction)
             ->willReturn($reAuthorizeTransaction);
 
-        $paymentMethod = $this->createMock(PaymentMethodInterface::class);
+        $paymentMethod = $this->createMock(StripePaymentElementMethod::class);
         $paymentMethod->expects(self::once())
             ->method('execute')
             ->with(PaymentMethodInterface::RE_AUTHORIZE, $reAuthorizeTransaction)

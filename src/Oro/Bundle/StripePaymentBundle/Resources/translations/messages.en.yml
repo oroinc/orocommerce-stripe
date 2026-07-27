@@ -83,6 +83,23 @@ oro:
                     An error occurred while deleting the Stripe webhook endpoint.
                     Details: %message%
         operation:
+            cancel:
+                cancel_reason:
+                    label: Cancellation reason
+                    choices:
+                        request_by_customer: Request By Customer
+                        duplicate: Duplicate
+                        fraudulent: Fraudulent
+                        abandoned: Abandoned
+            refund:
+                amount:
+                    label: Amount
+                refund_reason:
+                    label: Refund Reason
+                    choices:
+                        request_by_customer: Request By Customer
+                        duplicate: Duplicate
+                        fraudulent: Fraudulent
             re_authorize:
                 label: Re-Authorize Payment
                 confirmation:
@@ -106,3 +123,24 @@ oro:
             revolut_pay.label: 'Revolut Pay'
             sequra.label: 'SeQura'
             vipps.label: 'Vipps'
+        multi_step_checkout:
+            payment_method_selection_info: |-
+                Stripe payment dialog will be opened after the final step of the checkout.
+            payment_dialog:
+                submit:
+                    label: Pay Order
+                cancel:
+                    label: Cancel
+        single_step_checkout:
+            payment_method_selection_info: |-
+                The Stripe payment dialog will be displayed after the order is submitted.
+            payment_dialog:
+                submit:
+                    label: Pay Order
+                cancel:
+                    label: Cancel
+        system_configuration:
+            fields:
+                apple_pay_domain_verification:
+                    label: Apple Pay Domain Verification
+                    tooltip: Domain verification is just one of the required prerequisites for Apple Pay to work. Whether Apple Pay will be offered as a payment option during checkout also depends on what payment integrations (see System > Integrations > Manage Integrations) are allowed on a specific website by the payment rules (see System > Payment Rules).

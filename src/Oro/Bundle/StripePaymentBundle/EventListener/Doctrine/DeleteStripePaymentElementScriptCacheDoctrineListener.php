@@ -5,6 +5,7 @@ namespace Oro\Bundle\StripePaymentBundle\EventListener\Doctrine;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
+use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\StripePaymentBundle\Entity\StripePaymentElementSettings;
 use Oro\Bundle\StripePaymentBundle\StripeScript\Provider\StripePaymentElementStripeScriptProvider;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -35,8 +36,18 @@ final class DeleteStripePaymentElementScriptCacheDoctrineListener implements Res
     private function handleEntityInsertions(UnitOfWork $unitOfWork): void
     {
         foreach ($unitOfWork->getScheduledEntityInsertions() as $entity) {
-            if ($entity instanceof StripePaymentElementSettings && $entity->isUserMonitoringEnabled()) {
-                $organizationId = $entity->getChannel()?->getOrganization()?->getId();
+            if ($entity instanceof Channel && $entity->getTransport() instanceof StripePaymentElementSettings) {
+                $channel = $entity;
+                $settings = $entity->getTransport();
+            } elseif ($entity instanceof StripePaymentElementSettings) {
+                $channel = $entity->getChannel();
+                $settings = $entity;
+            } else {
+                continue;
+            }
+
+            if ($channel && $channel->isEnabled() && $settings->isUserMonitoringEnabled()) {
+                $organizationId = (int) $channel->getOrganization()?->getId();
                 $this->affectedOrganizationIds[$organizationId] = $organizationId;
             }
         }
@@ -45,12 +56,21 @@ final class DeleteStripePaymentElementScriptCacheDoctrineListener implements Res
     private function handleEntityUpdates(UnitOfWork $unitOfWork): void
     {
         foreach ($unitOfWork->getScheduledEntityUpdates() as $entity) {
-            if ($entity instanceof StripePaymentElementSettings) {
-                $changeset = $unitOfWork->getEntityChangeSet($entity);
-                if (!empty($changeset['userMonitoringEnabled'])) {
-                    $organizationId = $entity->getChannel()?->getOrganization()?->getId();
-                    $this->affectedOrganizationIds[$organizationId] = $organizationId;
-                }
+            if ($entity instanceof Channel && $entity->getTransport() instanceof StripePaymentElementSettings) {
+                $channel = $entity;
+                $settings = $entity->getTransport();
+            } elseif ($entity instanceof StripePaymentElementSettings) {
+                $channel = $entity->getChannel();
+                $settings = $entity;
+            } else {
+                continue;
+            }
+
+            $channelChangeset = $unitOfWork->getEntityChangeSet($channel);
+            $settingsChangeset = $unitOfWork->getEntityChangeSet($settings);
+            if (!empty($channelChangeset['enabled']) || !empty($settingsChangeset['userMonitoringEnabled'])) {
+                $organizationId = (int) $channel->getOrganization()?->getId();
+                $this->affectedOrganizationIds[$organizationId] = $organizationId;
             }
         }
     }
@@ -59,7 +79,7 @@ final class DeleteStripePaymentElementScriptCacheDoctrineListener implements Res
     {
         foreach ($unitOfWork->getScheduledEntityDeletions() as $entity) {
             if ($entity instanceof StripePaymentElementSettings && $entity->isUserMonitoringEnabled()) {
-                $organizationId = $entity->getChannel()?->getOrganization()?->getId();
+                $organizationId = (int) $entity->getChannel()?->getOrganization()?->getId();
                 $this->affectedOrganizationIds[$organizationId] = $organizationId;
             }
         }
@@ -70,14 +90,10 @@ final class DeleteStripePaymentElementScriptCacheDoctrineListener implements Res
         try {
             foreach ($this->affectedOrganizationIds as $affectedOrganizationId) {
                 $this->cache->delete(
-                    StripePaymentElementStripeScriptProvider::getStripeScriptEnabledCacheKey(
-                        $affectedOrganizationId
-                    )
+                    StripePaymentElementStripeScriptProvider::getStripeScriptEnabledCacheKey($affectedOrganizationId)
                 );
                 $this->cache->delete(
-                    StripePaymentElementStripeScriptProvider::getStripeScriptVersionCacheKey(
-                        $affectedOrganizationId
-                    )
+                    StripePaymentElementStripeScriptProvider::getStripeScriptVersionCacheKey($affectedOrganizationId)
                 );
             }
         } finally {

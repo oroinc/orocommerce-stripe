@@ -13,6 +13,9 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Contracts\Cache\CacheInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 final class StripePaymentElementStripeScriptProviderTest extends TestCase
 {
     private StripePaymentElementStripeScriptProvider $provider;
@@ -138,6 +141,73 @@ final class StripePaymentElementStripeScriptProviderTest extends TestCase
         self::assertTrue($this->provider->isStripeScriptEnabled());
     }
 
+    public function testIsStripeScriptEnabledWithAllConfigsDisabled(): void
+    {
+        $organizationId = 42;
+        $cacheKey = StripePaymentElementStripeScriptProvider::getStripeScriptEnabledCacheKey($organizationId);
+
+        $this->frontendHelper
+            ->expects(self::once())
+            ->method('isFrontendRequest')
+            ->willReturn(true);
+
+        $this->tokenAccessor
+            ->expects(self::once())
+            ->method('getOrganizationId')
+            ->willReturn($organizationId);
+
+        $this->cache
+            ->expects(self::once())
+            ->method('get')
+            ->with($cacheKey, self::isType('callable'))
+            ->willReturnCallback(static fn ($key, $callback) => $callback());
+
+        $disabledConfig1 = $this->createMock(StripePaymentElementConfig::class);
+        $disabledConfig1
+            ->expects(self::once())
+            ->method('isUserMonitoringEnabled')
+            ->willReturn(false);
+
+        $disabledConfig2 = $this->createMock(StripePaymentElementConfig::class);
+        $disabledConfig2
+            ->expects(self::once())
+            ->method('isUserMonitoringEnabled')
+            ->willReturn(false);
+
+        $this->stripePaymentElementConfigProvider
+            ->expects(self::once())
+            ->method('getPaymentConfigs')
+            ->willReturn([
+                'stripe_payment_element_1' => $disabledConfig1,
+                'stripe_payment_element_2' => $disabledConfig2,
+            ]);
+
+        self::assertFalse($this->provider->isStripeScriptEnabled());
+    }
+
+    public function testIsStripeScriptEnabledWithNullOrganizationId(): void
+    {
+        $cacheKey = StripePaymentElementStripeScriptProvider::getStripeScriptEnabledCacheKey(0);
+
+        $this->frontendHelper
+            ->expects(self::once())
+            ->method('isFrontendRequest')
+            ->willReturn(true);
+
+        $this->tokenAccessor
+            ->expects(self::once())
+            ->method('getOrganizationId')
+            ->willReturn(null);
+
+        $this->cache
+            ->expects(self::once())
+            ->method('get')
+            ->with($cacheKey, self::isType('callable'))
+            ->willReturn(false);
+
+        self::assertFalse($this->provider->isStripeScriptEnabled());
+    }
+
     public function testGetStripeScriptVersionWhenCached(): void
     {
         $organizationId = 42;
@@ -215,6 +285,63 @@ final class StripePaymentElementStripeScriptProviderTest extends TestCase
             ->willReturn(['stripe_payment_element_11' => $stripePaymentElementConfig]);
 
         self::assertSame($stripeVersion, $this->provider->getStripeScriptVersion());
+    }
+
+    public function testGetStripeScriptVersionWithAllConfigsDisabled(): void
+    {
+        $organizationId = 42;
+        $cacheKey = StripePaymentElementStripeScriptProvider::getStripeScriptVersionCacheKey($organizationId);
+
+        $this->tokenAccessor
+            ->expects(self::once())
+            ->method('getOrganizationId')
+            ->willReturn($organizationId);
+
+        $this->cache
+            ->expects(self::once())
+            ->method('get')
+            ->with($cacheKey, self::isType('callable'))
+            ->willReturnCallback(fn ($key, $callback) => $callback());
+
+        $disabledConfig1 = $this->createMock(StripePaymentElementConfig::class);
+        $disabledConfig1
+            ->expects(self::once())
+            ->method('isUserMonitoringEnabled')
+            ->willReturn(false);
+
+        $disabledConfig2 = $this->createMock(StripePaymentElementConfig::class);
+        $disabledConfig2
+            ->expects(self::once())
+            ->method('isUserMonitoringEnabled')
+            ->willReturn(false);
+
+        $this->stripePaymentElementConfigProvider
+            ->expects(self::once())
+            ->method('getPaymentConfigs')
+            ->willReturn([
+                'stripe_payment_element_1' => $disabledConfig1,
+                'stripe_payment_element_2' => $disabledConfig2,
+            ]);
+
+        self::assertSame('', $this->provider->getStripeScriptVersion());
+    }
+
+    public function testGetStripeScriptVersionWithNullOrganizationId(): void
+    {
+        $cacheKey = StripePaymentElementStripeScriptProvider::getStripeScriptVersionCacheKey(0);
+
+        $this->tokenAccessor
+            ->expects(self::once())
+            ->method('getOrganizationId')
+            ->willReturn(null);
+
+        $this->cache
+            ->expects(self::once())
+            ->method('get')
+            ->with($cacheKey, self::isType('callable'))
+            ->willReturn('');
+
+        self::assertSame('', $this->provider->getStripeScriptVersion());
     }
 
     public function testStaticCacheKeyMethods(): void

@@ -1,0 +1,28 @@
+Oro\Bundle\PaymentBundle\Entity\PaymentTransaction:
+    payment_transaction_1:
+        owner: '@admin'
+        organization: '@organization'
+        frontendOwner: '@amanda'
+        entityClass: 'Oro\Bundle\OrderBundle\Entity\Order'
+        entityIdentifier: '@order_1->id'
+        accessIdentifier: 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d'
+        accessToken: 'f6e5d4c3-b2a1-4f5e-9d8c-7b6a5f4e3d2c'
+        paymentMethod: '<("stripe_payment_element_".@stripe_payment_element_channel->getId())>'
+        action: 'authorize'
+        amount: '12345.67'
+        currency: 'USD'
+        active: true
+        successful: true
+        createdAt: '<dateTimeBetween("now - 165 hours", "now - 165 hours")>'
+        updatedAt: '<dateTimeBetween("now - 165 hours", "now - 165 hours")>'
+        transactionOptions:
+            isReAuthorizationEnabled: true
+            stripePaymentIntentId: 'pi_reauth_test_123'
+            stripeCustomerId: 'cus_test_123'
+            stripePaymentMethodId: 'pm_test_failing_card_visa'
+
+Oro\Bundle\PaymentBundle\Entity\PaymentStatus:
+    payment_status_1:
+        entityClass: 'Oro\Bundle\OrderBundle\Entity\Order'
+        entityIdentifier: '@order_1->id'
+        paymentStatus: 'authorized'
