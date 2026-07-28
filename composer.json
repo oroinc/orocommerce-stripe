@@ -15,7 +15,7 @@
     "exclude-from-classmap": ["**/Tests/"]
   },
   "require": {
-    "oro/commerce": "7.0.*",
+    "oro/commerce": "7.1.*",
     "stripe/stripe-php": "^16.6.0"
   },
   "repositories": {
@@ -28,7 +28,7 @@
   "prefer-stable": true,
   "extra": {
     "branch-alias": {
-      "dev-master": "7.0-dev"
+      "dev-master": "7.1-dev"
     }
   }
 }
