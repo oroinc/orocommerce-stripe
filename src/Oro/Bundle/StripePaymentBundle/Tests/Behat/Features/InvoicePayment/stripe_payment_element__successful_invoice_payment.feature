@@ -56,7 +56,8 @@ Feature: Stripe Payment Element - Successful Invoice Payment
     And I should not see a "Invoice Pay Button" element
 
   Scenario: Check Payment Method and Payment Status column on invoices storefront page
-    When I click "Back"
+    When I click "Account Dropdown"
+    And I click "Invoices"
     And I click on "FrontendGridColumnManagerButton"
     And I click "Select All"
     And I click on "FrontendGridColumnManagerButton"
