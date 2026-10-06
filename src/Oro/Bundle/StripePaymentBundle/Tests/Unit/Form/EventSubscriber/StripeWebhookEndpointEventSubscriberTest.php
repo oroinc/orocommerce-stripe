@@ -14,7 +14,7 @@ use Oro\Bundle\StripePaymentBundle\StripeWebhookEndpoint\Action\DeleteStripeWebh
 use Oro\Bundle\StripePaymentBundle\StripeWebhookEndpoint\Executor\StripeWebhookEndpointActionExecutorInterface;
 use Oro\Bundle\StripePaymentBundle\StripeWebhookEndpoint\Result\StripeWebhookEndpointActionResult;
 use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareTraitTestTrait;
-use Oro\Bundle\UIBundle\Tools\UrlHelper;
+use Oro\Bundle\UIBundle\Tools\UrlHelperInterface;
 use Oro\Component\ConfigExpression\Condition\NotBlank;
 use Oro\Component\Testing\ReflectionUtil;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -51,7 +51,7 @@ final class StripeWebhookEndpointEventSubscriberTest extends TestCase
 
     private MockObject&StripeWebhookEndpointActionExecutorInterface $stripeWebhookEndpointActionExecutor;
 
-    private MockObject&UrlHelper $urlHelper;
+    private MockObject&UrlHelperInterface $urlHelper;
 
     private MockObject&TranslatorInterface $translator;
 
@@ -61,7 +61,7 @@ final class StripeWebhookEndpointEventSubscriberTest extends TestCase
         $this->stripeWebhookEndpointActionExecutor = $this->createMock(
             StripeWebhookEndpointActionExecutorInterface::class
         );
-        $this->urlHelper = $this->createMock(UrlHelper::class);
+        $this->urlHelper = $this->createMock(UrlHelperInterface::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
 
         $this->subscriber = new StripeWebhookEndpointEventSubscriber(
