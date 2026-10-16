@@ -11,7 +11,7 @@ use Oro\Bundle\StripePaymentBundle\PaymentMethod\StripePaymentElement\Config\Str
 use Oro\Bundle\StripePaymentBundle\StripeWebhookEndpoint\Action\CreateOrUpdateStripeWebhookEndpointAction;
 use Oro\Bundle\StripePaymentBundle\StripeWebhookEndpoint\Action\DeleteStripeWebhookEndpointAction;
 use Oro\Bundle\StripePaymentBundle\StripeWebhookEndpoint\Executor\StripeWebhookEndpointActionExecutorInterface;
-use Oro\Bundle\UIBundle\Tools\UrlHelper;
+use Oro\Bundle\UIBundle\Tools\UrlHelperInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
@@ -36,7 +36,7 @@ final class StripeWebhookEndpointEventSubscriber implements EventSubscriberInter
     public function __construct(
         private readonly StripePaymentElementConfigFactory $stripePaymentElementConfigFactory,
         private readonly StripeWebhookEndpointActionExecutorInterface $stripeWebhookEndpointActionExecutor,
-        private readonly UrlHelper $urlHelper,
+        private readonly UrlHelperInterface $urlHelper,
         private readonly TranslatorInterface $translator,
         private readonly string $applicableChannelType
     ) {
