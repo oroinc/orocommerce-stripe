@@ -1,6 +1,7 @@
 import mediator from 'oroui/js/mediator';
 import BaseComponent from 'oroui/js/app/components/base/component';
 import validationErrorTemplate from 'tpl-loader!orostripepayment/templates/validation-error.html';
+import mergeThemeAppearanceStyles from 'orostripepayment/js/app/utils/stripe-payment-element-appearance';
 import _ from 'underscore';
 import __ from 'orotranslation/js/translator';
 
@@ -163,7 +164,13 @@ const StripePaymentElementInvoicePaymentComponent = BaseComponent.extend({
         this.$paymentContainer.show();
 
         try {
-            this.stripeElementsInstance = this.getStripeInstance().elements(this.stripeElementsObjectOptions);
+            this.stripeElementsInstance = this.getStripeInstance().elements({
+                ...this.stripeElementsObjectOptions,
+                appearance: mergeThemeAppearanceStyles(
+                    this.stripeElementsObjectOptions.appearance,
+                    this.$paymentContainer[0]
+                )
+            });
             this.stripePaymentElement = this.stripeElementsInstance
                 .create(this.stripeElementType, this.stripePaymentElementOptions);
 

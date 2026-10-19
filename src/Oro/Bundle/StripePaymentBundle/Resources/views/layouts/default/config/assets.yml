@@ -1,0 +1,5 @@
+styles:
+    inputs:
+        - 'bundles/orostripepayment/default/scss/variables/stripe-payment-element-appearance-config.scss'
+
+        - 'bundles/orostripepayment/default/scss/styles.scss'

@@ -1,0 +1,5 @@
+.stripe-payment-element-container {
+    --stripe-payment-element-error-color: #{$stripe-payment-element-error-color};
+    --stripe-payment-element-font-size-sm: #{$stripe-payment-element-font-size-sm};
+    --stripe-payment-element-error-margin-top: #{$stripe-payment-element-error-margin-top};
+}

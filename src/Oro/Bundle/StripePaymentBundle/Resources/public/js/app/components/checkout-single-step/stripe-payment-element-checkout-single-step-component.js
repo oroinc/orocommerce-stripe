@@ -4,6 +4,7 @@ import BaseComponent from 'oroui/js/app/components/base/component';
 import DialogWidget
     from 'orostripepayment/js/app/views/checkout-single-step/stripe-payment-element-checkout-single-step-dialog-widget';
 import validationErrorTemplate from 'tpl-loader!orostripepayment/templates/validation-error.html';
+import mergeThemeAppearanceStyles from 'orostripepayment/js/app/utils/stripe-payment-element-appearance';
 import _ from 'underscore';
 import __ from 'orotranslation/js/translator';
 
@@ -230,7 +231,13 @@ const StripePaymentElementCheckoutSingleStepComponent = BaseComponent.extend({
         this.dialogWidget.setContent($widgetContent);
 
         try {
-            this.stripeElementsInstance = this.getStripeInstance().elements(this.stripeElementsObjectOptions);
+            this.stripeElementsInstance = this.getStripeInstance().elements({
+                ...this.stripeElementsObjectOptions,
+                appearance: mergeThemeAppearanceStyles(
+                    this.stripeElementsObjectOptions.appearance,
+                    this.$paymentContainer[0]
+                )
+            });
             this.stripePaymentElement = this.stripeElementsInstance
                 .create(this.stripeElementType, this.stripePaymentElementOptions);
 

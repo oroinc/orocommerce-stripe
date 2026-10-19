@@ -1,21 +1,13 @@
-import DialogWidget from 'oro/dialog-widget';
+import StripePaymentElementDialogWidget from 'orostripepayment/js/app/views/stripe-payment-element-dialog-widget';
 import _ from 'underscore';
 import __ from 'orotranslation/js/translator';
 
-const StripePaymentElementCheckoutSingleStepDialogWidget = DialogWidget.extend({
+const StripePaymentElementCheckoutSingleStepDialogWidget = StripePaymentElementDialogWidget.extend({
     /**
      * @inheritDoc
      */
-    options: _.extend({}, DialogWidget.prototype.options, {
-        title: __('oro.stripe_payment.single_step_checkout.payment_dialog.title'),
-        stateEnabled: false,
-        incrementalPosition: false,
-        dialogOptions: {
-            modal: true,
-            resizable: true,
-            autoResize: true,
-            allowMaximize: false
-        }
+    options: _.extend({}, StripePaymentElementDialogWidget.prototype.options, {
+        title: __('oro.stripe_payment.single_step_checkout.payment_dialog.title')
     }),
 
     /**
@@ -23,12 +15,7 @@ const StripePaymentElementCheckoutSingleStepDialogWidget = DialogWidget.extend({
      */
     constructor: function StripePaymentElementCheckoutSingleStepDialogWidget(options) {
         StripePaymentElementCheckoutSingleStepDialogWidget.__super__.constructor.call(this, options);
-    },
-
-    /**
-     * @inheritDoc
-     */
-    _onAdoptedFormSubmitClick: function() {}
+    }
 });
 
 export default StripePaymentElementCheckoutSingleStepDialogWidget;
