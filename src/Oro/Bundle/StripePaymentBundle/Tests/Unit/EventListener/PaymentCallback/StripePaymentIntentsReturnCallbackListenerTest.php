@@ -222,7 +222,7 @@ final class StripePaymentIntentsReturnCallbackListenerTest extends TestCase
         $this->event
             ->expects(self::once())
             ->method('setResponse')
-            ->with(new RedirectResponse('/partial'));
+            ->with(self::callback(static fn (RedirectResponse $response) => $response->getTargetUrl() === '/partial'));
 
         $this->listener->onPaymentCallback($this->event);
 
@@ -275,7 +275,7 @@ final class StripePaymentIntentsReturnCallbackListenerTest extends TestCase
         $this->event
             ->expects(self::once())
             ->method('setResponse')
-            ->with(new RedirectResponse('/failure'));
+            ->with(self::callback(static fn (RedirectResponse $response) => $response->getTargetUrl() === '/failure'));
 
         $this->loggerMock
             ->expects(self::once())
