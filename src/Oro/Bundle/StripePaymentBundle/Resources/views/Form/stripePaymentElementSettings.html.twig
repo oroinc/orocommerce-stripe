@@ -17,20 +17,20 @@
             {{ form_row(form.paymentMethodShortLabels) }}
             <div class="control-group-container control-group-wrapper">
                 {%- if form.webhookCreate is defined -%}
-                    {{ form_row(form.webhookCreate, { 'attr': { 'data-page-component-module': 'orosale/js/app/components/dependent-field-component', 'data-dependee-id': form.webhookCreate.vars.name } }) }}
-                    {%- set webhook_secret_row_attr = { 'attr': { 'data-page-component-module': 'orosale/js/app/components/dependent-field-component', 'data-depend-on': form.webhookCreate.vars.name, 'data-show-if': 'unchecked', 'data-clear-if': 'unchecked' } } -%}
+                    {{ form_row(form.webhookCreate, { 'attr': { 'data-page-component-module': 'oroform/js/app/components/dependent-field-component', 'data-dependee-id': form.webhookCreate.vars.name } }) }}
+                    {%- set webhook_secret_row_attr = { 'attr': { 'data-page-component-module': 'oroform/js/app/components/dependent-field-component', 'data-depend-on': form.webhookCreate.vars.name, 'data-show-if': 'unchecked', 'data-clear-if': 'unchecked' } } -%}
                 {%- endif -%}
                 {{ form_row(form.webhookAccessId) }}
                 {{ form_row(form.webhookSecret, webhook_secret_row_attr|default({})) }}
             </div>
             <div class="control-group-container control-group-wrapper">
-                {{ form_row(form.captureMethod, { 'attr': { 'data-page-component-module': 'orosale/js/app/components/dependent-field-component', 'data-dependee-id': form.captureMethod.vars.name } }) }}
+                {{ form_row(form.captureMethod, { 'attr': { 'data-page-component-module': 'oroform/js/app/components/dependent-field-component', 'data-dependee-id': form.captureMethod.vars.name } }) }}
                 <div class="control-group-container"
-                     data-page-component-module="orosale/js/app/components/dependent-field-component"
+                     data-page-component-module="oroform/js/app/components/dependent-field-component"
                      data-page-component-options="{{ { selectors: { rowContainer: '.control-group-container' } }|json_encode }}"
                      data-depend-on="{{ form.captureMethod.vars.name }}" data-show-if="manual">
-                    {{ form_row(form.reAuthorizationEnabled, { 'attr': { 'data-page-component-module': 'orosale/js/app/components/dependent-field-component', 'data-dependee-id': form.reAuthorizationEnabled.vars.name } }) }}
-                    {{ form_row(form.reAuthorizationEmail, { 'attr': { 'data-page-component-module': 'orosale/js/app/components/dependent-field-component', 'data-depend-on': form.reAuthorizationEnabled.vars.name, 'data-show-if': 'checked' } }) }}
+                    {{ form_row(form.reAuthorizationEnabled, { 'attr': { 'data-page-component-module': 'oroform/js/app/components/dependent-field-component', 'data-dependee-id': form.reAuthorizationEnabled.vars.name } }) }}
+                    {{ form_row(form.reAuthorizationEmail, { 'attr': { 'data-page-component-module': 'oroform/js/app/components/dependent-field-component', 'data-depend-on': form.reAuthorizationEnabled.vars.name, 'data-show-if': 'checked' } }) }}
                 </div>
             </div>
             <div class="control-group">
